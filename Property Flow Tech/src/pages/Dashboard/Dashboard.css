@@ -1,0 +1,68 @@
+/* Dashboard page styles.
+   If you already have a Dashboard.css in your project,
+   copy its contents over this file instead of deleting it. */
+
+.dashboard-root {
+  min-height: 100vh;
+  padding-bottom: 110px; /* space for Dock */
+}
+
+.dashboard-content {
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.dashboard-section {
+  color: #e5e7eb;
+}
+
+.dashboard-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.dashboard-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.dashboard-card {
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+.dashboard-placeholder {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.85);
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
+
+/* Simple fade / slide transition for tab changes */
+.tab-transition {
+  animation: tabFade 0.2s ease-out;
+}
+
+@keyframes tabFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

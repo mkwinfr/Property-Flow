@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum OccupancyStatus {
+  OCCUPIED
+  NOTICE
+  VACANT
+  DOWN
+}
+
+enum TurnStatus {
+  NONE
+  NOT_STARTED
+  IN_PROGRESS
+  READY
+  ON_HOLD
+  CANCELLED
+}
+
+enum TurnType {
+  FULL_TURN
+  MINI_TURN
+  DOWN_REHAB
+}
+
+model Apartment {
+  id              Int              @id @default(autoincrement())
+  propertyId      Int?
+  building        String?
+  unitNumber      String
+
+  bedrooms        Int?
+  bathrooms       Int?
+  sqft            Int?
+
+  occupancyStatus OccupancyStatus  @default(OCCUPIED)
+  turnStatus      TurnStatus       @default(NONE)
+  canShow         Boolean          @default(true)
+  canLease        Boolean          @default(true)
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  turns           Turn[]
+}
+
+model Turn {
+  id              Int              @id @default(autoincrement())
+  apartmentId     Int
+  apartment       Apartment        @relation(fields: [apartmentId], references: [id])
+
+  type            TurnType
+  status          TurnStatus       @default(NOT_STARTED)
+
+  moveOutDate     DateTime?
+  targetReadyDate DateTime?
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}

@@ -1,0 +1,150 @@
+.bottom-nav-shell {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Full-width dark bar with safe area support */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(95px + env(safe-area-inset-bottom));
+  background: #17191f;
+  padding: 0 1.4rem;
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.75);
+  pointer-events: auto;
+}
+
+.bottom-nav-row {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+/* kill tap highlight everywhere in the nav */
+.bottom-nav * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* icon-only buttons with larger hit area */
+.icon-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  color: #8b929f;
+  transition:
+    color 0.16s ease-out,
+    background-color 0.16s ease-out,
+    transform 0.14s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+/* No labels, just icons */
+.icon-button__icon {
+  width: 26px;      /* bigger, sharper */
+  height: 26px;
+  stroke-width: 1.9;
+  transform: translateY(1px); /* maintains vertical alignment */
+}
+
+
+/* Hover for desktop only */
+@media (hover: hover) and (pointer: fine) {
+  .icon-button:hover {
+    color: #c7ccd8;
+    transform: translateY(-1px);
+  }
+}
+
+/* Active tab: subtle lift + stronger shadow */
+.icon-button--active {
+  background-color: #f5f7fb;
+  color: #1b1f27;
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(245, 247, 251, 0.7);
+}
+
+/* SUPER DELUXE: active icon spring pop */
+.icon-button--active .icon-button__icon {
+  animation: iconSpring 0.26s cubic-bezier(0.22, 1.5, 0.36, 1);
+}
+
+/* Center drawer button variant: gradient + rounded square */
+.icon-button--drawer {
+  width: 64px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3f8cff, #7b61ff);
+  color: #ffffff;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(68, 74, 88, 0.9);
+  transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon-button--drawer:hover {
+    filter: brightness(1.1);
+    transform: translateY(-3px);
+  }
+}
+
+/* Drawer open: soft glow pulse */
+.icon-button--drawer-open {
+  animation: drawerGlowPulse 1.8s ease-in-out infinite;
+}
+
+/* Icon spring pop */
+@keyframes iconSpring {
+  0% {
+    transform: scale(0.9) translateY(1px);
+  }
+  55% {
+    transform: scale(1.14) translateY(-2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Drawer glow pulse */
+@keyframes drawerGlowPulse {
+  0% {
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(68, 74, 88, 0.9),
+      0 0 0px rgba(63, 140, 255, 0.0);
+  }
+  50% {
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.85),
+      0 0 0 1px rgba(68, 74, 88, 1),
+      0 0 16px rgba(63, 140, 255, 0.85);
+  }
+  100% {
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(68, 74, 88, 0.9),
+      0 0 0px rgba(63, 140, 255, 0.0);
+  }
+}

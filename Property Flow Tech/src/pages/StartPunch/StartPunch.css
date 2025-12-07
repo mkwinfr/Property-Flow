@@ -1,0 +1,36 @@
+.page-root {
+  min-height: 100vh;
+  padding: 1.25rem 1.25rem 6rem; /* bottom space if Dock is visible */
+  color: #e5e7eb;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.16rem;
+}
+
+.page-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.page-placeholder {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.85);
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
