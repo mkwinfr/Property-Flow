@@ -14,39 +14,6 @@ interface MakeReadyUnit {
   notes?: string;
 }
 
-const fallbackUnits: MakeReadyUnit[] = [
-  {
-    id: "101",
-    unitNumber: "101",
-    building: "A",
-    status: "In Progress",
-    technician: "Robin M.",
-    priority: "High",
-    dueDate: "2024-08-15",
-    notes: "Paint and flooring scheduled.",
-  },
-  {
-    id: "204",
-    unitNumber: "204",
-    building: "B",
-    status: "Scheduled",
-    technician: "Kayla R.",
-    priority: "Medium",
-    dueDate: "2024-08-18",
-    notes: "Awaiting countertop delivery.",
-  },
-  {
-    id: "305",
-    unitNumber: "305",
-    building: "C",
-    status: "Ready for QC",
-    technician: "Samir P.",
-    priority: "Low",
-    dueDate: "2024-08-12",
-    notes: "Need final walk before move-in.",
-  },
-];
-
 const MakeReadyBoard: React.FC = () => {
   const [units, setUnits] = useState<MakeReadyUnit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,16 +60,44 @@ const MakeReadyBoard: React.FC = () => {
   const unitsToDisplay = useMemo(() => {
     if (loading) return [];
     if (units.length > 0) return units;
-    return fallbackUnits;
-  }, [loading, units]);
+    if (error) {
+      return [
+        {
+          id: "error",
+          unitNumber: "Error connecting to the Back End",
+          status: "Error connecting to the Back End",
+          notes: "Error connecting to the Back End",
+        },
+      ];
+    }
+
+    return [];
+  }, [error, loading, units]);
+
+  const connectionStatus = useMemo(() => {
+    if (loading) return { label: "Checking connection...", tone: "neutral" };
+    if (error) return { label: "Offline", tone: "error" };
+    return { label: "Online", tone: "success" };
+  }, [error, loading]);
 
   return (
     <div className="page-root make-ready-root">
       <header className="page-header">
-        <h1 className="page-title">Make Ready Board</h1>
-        <p className="page-subtitle">
-          Live snapshot of upcoming turns with assignments and due dates.
-        </p>
+        <div className="page-header__titles">
+          <h1 className="page-title">Make Ready Board</h1>
+          <p className="page-subtitle">
+            Live snapshot of upcoming turns with assignments and due dates.
+          </p>
+        </div>
+
+        <div
+          className={`connection-indicator connection-indicator--${connectionStatus.tone}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className="connection-indicator__dot" aria-hidden="true" />
+          <span className="connection-indicator__label">{connectionStatus.label}</span>
+        </div>
       </header>
 
       <div className="divider" role="presentation" />
@@ -111,12 +106,6 @@ const MakeReadyBoard: React.FC = () => {
         {loading && (
           <div className="status-banner" role="status">
             Loading latest make ready data...
-          </div>
-        )}
-
-        {error && !loading && (
-          <div className="status-banner status-banner--error" role="alert">
-            Couldn&apos;t reach {API_URL}. Showing demo data while we retry.
           </div>
         )}
 
