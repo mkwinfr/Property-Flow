@@ -13,19 +13,15 @@ type Apartment = {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
-const formatDate = (value?: string) => {
-  if (!value) return "—";
+type ApartmentsResponse =
+  | Apartment[]
+  | { apartments?: Apartment[] | null; units?: Apartment[] | null };
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return value;
-  }
-
-  return parsed.toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.apartments)) return payload.apartments;
+  if (Array.isArray(payload.units)) return payload.units;
+  return [];
 };
 
 function ApartmentDetailPageContent() {
