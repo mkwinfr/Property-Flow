@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { MemoryRouter, useInRouterContext, useLocation, useParams } from "react-router-dom";
 import "./ApartmentDetail.css";
 
 type PunchItem = {
@@ -45,7 +45,7 @@ const formatDate = (value?: string) => {
   });
 };
 
-function ApartmentDetailPage() {
+function ApartmentDetailPageContent() {
   const { id: routeId } = useParams<{ id: string }>();
   const location = useLocation();
   const state =
@@ -273,4 +273,16 @@ function ApartmentDetailPage() {
   );
 }
 
-export default ApartmentDetailPage;
+export default function ApartmentDetailPage() {
+  const inRouter = useInRouterContext();
+
+  if (!inRouter) {
+    return (
+      <MemoryRouter>
+        <ApartmentDetailPageContent />
+      </MemoryRouter>
+    );
+  }
+
+  return <ApartmentDetailPageContent />;
+}
