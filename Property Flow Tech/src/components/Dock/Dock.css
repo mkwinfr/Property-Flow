@@ -1,4 +1,4 @@
-/* Full-width bottom bar */
+/* Bottom bar that spans the full screen */
 .dock {
   position: fixed;
   left: 0;
@@ -10,56 +10,51 @@
   justify-content: center;
   padding-inline: 1.5rem;
   z-index: 50;
-  background: #050814;
-  border-top: 1px solid rgba(15, 23, 42, 0.9);
+
+  /* Match app background, no visible outline */
+  background-color: #050814;
+  border: none;
 }
 
-/* Center pill container */
+/* Simple flex row holder, no visible container styling */
 .dock-inner {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1.1rem;
-  padding: 0.7rem 1.6rem;
-  border-radius: 999px;
-  background: #050814;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  box-shadow:
-    0 18px 46px rgba(0, 0, 0, 0.95),
-    0 0 0 1px rgba(15, 23, 42, 0.9) inset;
 }
 
-/* Left and right icon groups */
+/* Left and right groups */
 .dock-group {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.9rem;
 }
 
-/* Icon-only buttons */
+/* Base icon-only buttons: invisible background, no outline */
 .dock-item {
-  width: 46px;
-  height: 46px;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  background: #050814;
+  background: none;
   color: #e5e9f0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   outline: none;
-  padding: 0;
   transition:
-    transform 0.16s ease-out,
-    box-shadow 0.16s ease-out,
-    background-color 0.16s ease-out,
-    border-color 0.16s ease-out,
-    color 0.16s ease-out;
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.02) inset;
-  font-size: 0;
+    transform 0.14s ease-out,
+    color 0.14s ease-out;
+  font-size: 0; /* prevent label from affecting layout */
+}
+
+/* No labels visible; we keep them only for accessibility / future use */
+.dock-item__label {
+  display: none;
 }
 
 .dock-item__icon {
@@ -68,48 +63,82 @@
   justify-content: center;
 }
 
-.dock-item__label {
-  display: none; /* icon-only look */
+/* White highlight circle only when selected */
+.dock-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background-color: #ffffff;
+  opacity: 0;
+  transform: scale(0.7);
+  transition:
+    opacity 0.16s ease-out,
+    transform 0.16s ease-out;
+  z-index: -1;
 }
 
-/* Hover lift */
+/* Selected state: show white circle, keep icon dark */
+.dock-item--active {
+  color: #050814;
+}
+
+.dock-item--active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover: small lift only, no extra color */
 .dock-item:hover {
   transform: translateY(-2px);
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 1),
-    0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
 
-/* Active state: slightly wider pill, gradient fill */
-.dock-item--active {
-  width: 52px;
-  background: linear-gradient(90deg, #4f46e5, #6366f1);
-  border-color: rgba(191, 219, 254, 0.9);
-  box-shadow:
-    0 14px 34px rgba(15, 23, 42, 0.98),
-    0 1px 0 rgba(255, 255, 255, 0.34) inset;
-}
-
-/* Center Apps button */
+/* Center Apps button - always purple and always "selected" */
 .dock-item--apps {
-  margin: 0 0.3rem;
-  border-style: dashed;
+  width: auto;
+  min-width: 72px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px; /* sharp rounded edges */
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  border: none;
 }
 
-.dock-item--apps.dock-item--active {
-  border-style: solid;
+/* Apps button should never get the white circle; override pseudo */
+.dock-item--apps::before {
+  display: none;
 }
 
-/* Small screen tweaks */
+/* Optional subtle state if drawer open – slightly brighter, but stays purple */
+.dock-item--apps-active {
+  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.6);
+}
+
+/* Square icon container for Apps only */
+.dock-item__icon--apps {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background-color: rgba(15, 23, 42, 0.72);
+}
+
+/* Keep grid icon centered inside its square */
+.dock-item__icon--apps svg {
+  display: block;
+  margin: auto;
+}
+
+/* Small screen adjustments */
 @media (max-width: 640px) {
   .dock {
     height: 90px;
     padding-inline: 1rem;
-  }
-
-  .dock-inner {
-    gap: 0.9rem;
-    padding: 0.6rem 1.3rem;
   }
 
   .dock-group {
@@ -117,11 +146,17 @@
   }
 
   .dock-item {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
   }
 
-  .dock-item--active {
-    width: 48px;
+  .dock-item::before {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dock-item--apps {
+    min-width: 68px;
+    height: 40px;
   }
 }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Dock, { type DockTabId } from "../../components/Dock/Dock";
 import AppDrawer from "../../components/AppDrawer/AppDrawer";
 import MakeReadyBoard from "../MakeReadyBoard/MakeReadyBoard.tsx";
+import ApartmentDetailPage from "../../pages/ApartmentDetail/ApartmentDetail";
 
 import StartPunch from "../StartPunch/StartPunch";
 import "./Dashboard.css";
@@ -26,40 +27,47 @@ const Dashboard: React.FC = () => {
   };
 
   const renderTab = () => {
-    switch (activeTab) {
-      case "makeReady":
-        return <MakeReadyBoard />;
-      case "startPunch":
-        return <StartPunch />;
-      case "chat":
-        return (
-          <div className="dashboard-section">
-            <h1 className="dashboard-title">Chat</h1>
-            <p className="dashboard-subtitle">
-              Messaging and collaboration workspace coming soon.
-            </p>
-            <div className="dashboard-placeholder">
-              Connect your team here to coordinate make readies and share
-              updates in real time.
-            </div>
+  switch (activeTab) {
+    case "makeReady":
+      return <MakeReadyBoard />;
+
+    case "startPunch":
+      return <StartPunch />;
+
+    case "chat":
+      return (
+        <div className="dashboard-section">
+          <h1 className="dashboard-title">Chat</h1>
+          <p className="dashboard-subtitle">
+            Messaging and collaboration workspace coming soon.
+          </p>
+          <div className="dashboard-placeholder">
+            Connect your team here to coordinate make readies and share
+            updates in real time.
           </div>
-        );
-      case "home":
-      default:
-        return (
-          <div className="dashboard-section">
-            <h1 className="dashboard-title">Dashboard</h1>
-            <p className="dashboard-subtitle">
-              At-a-glance view of your property operations.
-            </p>
-            <div className="dashboard-placeholder">
-              Use the dock to open the Make Ready Board, start a new punch, or
-              explore upcoming tools in the drawer.
-            </div>
+        </div>
+      );
+
+    case "apartmentDetail":   // ⭐ NEW
+      return <ApartmentDetailPage />;
+
+    case "home":
+    default:
+      return (
+        <div className="dashboard-section">
+          <h1 className="dashboard-title">Dashboard</h1>
+          <p className="dashboard-subtitle">
+            At-a-glance view of your property operations.
+          </p>
+          <div className="dashboard-placeholder">
+            Use the dock to open the Make Ready Board, start a new punch, or
+            explore upcoming tools in the drawer.
           </div>
-        );
-    }
-  };
+        </div>
+      );
+  }
+};
+
 
   return (
     <div className="dashboard-root">

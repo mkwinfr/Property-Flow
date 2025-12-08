@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import "./ApartmentDetail.css";
 
 type PunchItem = {
@@ -44,33 +45,15 @@ const formatDate = (value?: string) => {
   });
 };
 
-type ApartmentDetailPageProps = {
-  apartmentId?: string | number;
-};
-
-function ApartmentDetailPage({ apartmentId: propApartmentId }: ApartmentDetailPageProps) {
-  const resolvedApartmentId = useMemo(() => {
-    if (propApartmentId !== undefined && propApartmentId !== null) {
-      return String(propApartmentId);
-    }
-
-    if (typeof window !== "undefined") {
-      const historyState = (window.history.state ?? {}) as {
-        apartmentId?: string;
-        id?: string;
-      };
-
-      const searchParams = new URLSearchParams(window.location.search);
-      const searchId = searchParams.get("id");
-
-      const pathIdMatch = window.location.pathname.match(/apartment[s]?\/?(\w+)/i);
-      const pathId = pathIdMatch?.[1];
-
-      return historyState.apartmentId ?? historyState.id ?? searchId ?? pathId ?? null;
-    }
-
-    return null;
-  }, [propApartmentId]);
+function ApartmentDetailPage() {
+  const { id: routeId } = useParams<{ id: string }>();
+  const location = useLocation();
+  const state =
+    (location.state as { apartmentId?: string; id?: string } | undefined) ??
+    undefined;
+  const searchParams = new URLSearchParams(location.search || window.location.search);
+  const searchId = searchParams.get("id");
+  const apartmentId = routeId ?? state?.apartmentId ?? state?.id ?? searchId ?? null;
 
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [punchItems, setPunchItems] = useState<PunchItem[]>([]);
@@ -81,7 +64,7 @@ function ApartmentDetailPage({ apartmentId: propApartmentId }: ApartmentDetailPa
   useEffect(() => {
     let cancelled = false;
 
-    if (!resolvedApartmentId) {
+    if (!apartmentId) {
       setApartment(null);
       setPunchItems([]);
       setNotes("");
@@ -94,7 +77,7 @@ function ApartmentDetailPage({ apartmentId: propApartmentId }: ApartmentDetailPa
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${API_BASE}/api/apartments/${resolvedApartmentId}`);
+        const response = await fetch(`${API_BASE}/api/apartments/${apartmentId}`);
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
@@ -123,7 +106,7 @@ function ApartmentDetailPage({ apartmentId: propApartmentId }: ApartmentDetailPa
     return () => {
       cancelled = true;
     };
-  }, [resolvedApartmentId]);
+  }, [apartmentId]);
 
   const punchSummary = useMemo(() => {
     const total = punchItems.length;
