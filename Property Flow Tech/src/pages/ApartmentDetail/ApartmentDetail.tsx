@@ -1,99 +1,59 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./ApartmentDetail.css";
 
-type PunchItem = {
-  id: number | string;
-  task: string;
-  completed: boolean;
-};
-
-type TimelineEntry = {
-  id?: number | string;
-  timestamp?: string;
-  description?: string;
-  label?: string;
-};
-
 type Apartment = {
-  id: number;
-  unitNumber: string;
-  building?: string;
-  status?: string;
-  moveIn?: string;
-  turnType?: string;
-  priority?: string;
-  notes?: string;
-  punchItems?: PunchItem[];
-  timeline?: TimelineEntry[];
+  id: number | string;
+  unitNumber?: string;
+  building?: string | null;
+  beds?: number | null;
+  baths?: number | null;
+  status?: string | null;
 };
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
-const formatDate = (value?: string) => {
-  if (!value) return "—";
+type ApartmentsResponse =
+  | Apartment[]
+  | { apartments?: Apartment[] | null; units?: Apartment[] | null };
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return value;
-  }
-
-  return parsed.toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.apartments)) return payload.apartments;
+  if (Array.isArray(payload.units)) return payload.units;
+  return [];
 };
 
-function ApartmentDetailPage() {
-  const { id: routeId } = useParams<{ id: string }>();
-  const location = useLocation();
-  const state =
-    (location.state as { apartmentId?: string; id?: string } | undefined) ??
-    undefined;
-  const searchParams = new URLSearchParams(location.search || window.location.search);
-  const searchId = searchParams.get("id");
-  const apartmentId = routeId ?? state?.apartmentId ?? state?.id ?? searchId ?? null;
-
-  const [apartment, setApartment] = useState<Apartment | null>(null);
-  const [punchItems, setPunchItems] = useState<PunchItem[]>([]);
-  const [notes, setNotes] = useState("");
+export default function ApartmentDetailPage() {
+  const navigate = useNavigate();
+  const [apartments, setApartments] = useState<Apartment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [buildingFilter, setBuildingFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     let cancelled = false;
 
-    if (!apartmentId) {
-      setApartment(null);
-      setPunchItems([]);
-      setNotes("");
-      setError("Apartment ID not provided.");
-      return undefined;
-    }
-
-    const fetchApartment = async () => {
+    const fetchApartments = async () => {
       try {
         setLoading(true);
         setError(null);
+        const response = await fetch(`${API_BASE}/api/apartments`);
 
-        const response = await fetch(`${API_BASE}/api/apartments/${apartmentId}`);
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
 
-        const data: Apartment = await response.json();
+        const data = (await response.json()) as ApartmentsResponse;
         if (cancelled) return;
 
-        setApartment(data);
-        setPunchItems(Array.isArray(data.punchItems) ? data.punchItems : []);
-        setNotes(data.notes ?? "");
+        setApartments(normalizeApartments(data));
       } catch (err: unknown) {
         if (cancelled) return;
-        const message = err instanceof Error ? err.message : "Failed to load apartment.";
+        const message = err instanceof Error ? err.message : "Failed to load apartments.";
         setError(message);
-        setApartment(null);
-        setPunchItems([]);
+        setApartments([]);
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -101,176 +61,156 @@ function ApartmentDetailPage() {
       }
     };
 
-    fetchApartment();
+    fetchApartments();
 
     return () => {
       cancelled = true;
     };
-  }, [apartmentId]);
+  }, []);
 
-  const punchSummary = useMemo(() => {
-    const total = punchItems.length;
-    const completed = punchItems.filter((item) => item.completed).length;
-    return { total, completed };
-  }, [punchItems]);
+  const buildings = useMemo(() => {
+    const unique = new Set<string>();
+    apartments.forEach((apartment) => {
+      if (apartment.building) {
+        unique.add(apartment.building);
+      }
+    });
+
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [apartments]);
+
+  const filteredApartments = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+
+    return apartments.filter((apartment) => {
+      const matchesBuilding =
+        buildingFilter === "all" || (apartment.building ?? "").toLowerCase() === buildingFilter;
+
+      const label = `${apartment.unitNumber ?? ""} ${apartment.building ?? ""}`.toLowerCase();
+      const matchesSearch = search === "" || label.includes(search);
+
+      return matchesBuilding && matchesSearch;
+    });
+  }, [apartments, buildingFilter, searchTerm]);
+
+  const handleOpenDetail = (id: number | string) => {
+    navigate(`/apartments/${id}`);
+  };
 
   return (
-    <div className="apartment-page">
-      <div className="apartment-container">
-        <header className="apartment-header">
+    <div className="apartments-page">
+      <div className="apartments-container">
+        <header className="apartments-header">
           <div>
-            <p className="apartment-kicker">Apartment Detail</p>
-            <h1 className="apartment-title">
-              {apartment?.unitNumber ? `Unit ${apartment.unitNumber}` : "Apartment"}
-            </h1>
-            {apartment?.building && <p className="apartment-subtitle">Building {apartment.building}</p>}
+            <p className="apartments-kicker">Apartments</p>
+            <h1 className="apartments-title">Unit Directory</h1>
+            <p className="apartments-subtitle">
+              Browse every unit, filter by building, or search by number.
+            </p>
           </div>
-          {apartment?.status && <span className="status-pill">{apartment.status}</span>}
+          <div className="apartments-meta">
+            <div>
+              <p className="meta-label">Total units</p>
+              <strong className="meta-value">{apartments.length}</strong>
+            </div>
+            <div>
+              <p className="meta-label">Showing</p>
+              <strong className="meta-value">{filteredApartments.length}</strong>
+            </div>
+          </div>
         </header>
 
-        {loading && <div className="apartment-state">Loading apartment...</div>}
-        {error && !loading && <div className="apartment-state error">{error}</div>}
+        <section className="apartments-controls">
+          <label className="control-group">
+            <span>Building</span>
+            <select
+              value={buildingFilter}
+              onChange={(event) => setBuildingFilter(event.target.value)}
+              aria-label="Filter apartments by building"
+            >
+              <option value="all">All buildings</option>
+              {buildings.map((building) => (
+                <option key={building} value={building.toLowerCase()}>
+                  {building}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        {!loading && !error && apartment && (
-          <>
-            <section className="apartment-section">
-              <div className="apartment-info-grid">
-                <div className="apartment-info-card">
-                  <div className="card-header">
-                    <h2>Unit Overview</h2>
-                    {apartment.priority && <span className="badge priority">{apartment.priority}</span>}
-                  </div>
-                  <ul className="info-list">
-                    <li>
-                      <span>Unit Number</span>
-                      <strong>{apartment.unitNumber ?? "—"}</strong>
-                    </li>
-                    <li>
-                      <span>Building</span>
-                      <strong>{apartment.building ?? "—"}</strong>
-                    </li>
-                    <li>
-                      <span>Turn Type</span>
-                      <strong>{apartment.turnType ?? "—"}</strong>
-                    </li>
-                    <li>
-                      <span>Status</span>
-                      <strong>{apartment.status ?? "—"}</strong>
-                    </li>
-                    <li>
-                      <span>Move-In Date</span>
-                      <strong>{formatDate(apartment.moveIn)}</strong>
-                    </li>
-                    <li>
-                      <span>Priority</span>
-                      <strong>{apartment.priority ?? "—"}</strong>
-                    </li>
-                  </ul>
-                </div>
+          <label className="control-group search">
+            <span>Search</span>
+            <input
+              type="search"
+              placeholder="Search by unit or building"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              aria-label="Search apartments"
+            />
+          </label>
+        </section>
 
-                <div className="apartment-info-card">
-                  <div className="card-header">
-                    <h2>Quick Summary</h2>
-                  </div>
-                  <div className="summary-row">
+        {loading && <div className="apartments-state">Loading apartments…</div>}
+        {error && !loading && <div className="apartments-state error">{error}</div>}
+
+        {!loading && !error && (
+          <section className="apartments-list">
+            {filteredApartments.length === 0 ? (
+              <div className="apartments-state muted">No apartments match your filters.</div>
+            ) : (
+              filteredApartments.map((apartment) => (
+                <article
+                  key={apartment.id}
+                  className="apartment-card"
+                  onClick={() => handleOpenDetail(apartment.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleOpenDetail(apartment.id);
+                    }
+                  }}
+                >
+                  <div className="card-top">
                     <div>
-                      <p className="summary-label">Punch Items</p>
-                      <p className="summary-value">
-                        {punchSummary.completed} of {punchSummary.total} complete
-                      </p>
+                      <p className="card-kicker">Unit</p>
+                      <h2 className="card-title">{apartment.unitNumber ?? "—"}</h2>
+                      {apartment.building && <p className="card-subtitle">{apartment.building}</p>}
+                    </div>
+                    {apartment.status && <span className="status-pill">{apartment.status}</span>}
+                  </div>
+
+                  <div className="card-grid">
+                    <div>
+                      <p className="meta-label">Beds</p>
+                      <p className="meta-value">{apartment.beds ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="summary-label">Move-In</p>
-                      <p className="summary-value">{formatDate(apartment.moveIn)}</p>
-                    </div>
-                  </div>
-                  <div className="summary-row">
-                    <div>
-                      <p className="summary-label">Turn Type</p>
-                      <p className="summary-value">{apartment.turnType ?? "—"}</p>
+                      <p className="meta-label">Baths</p>
+                      <p className="meta-value">{apartment.baths ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="summary-label">Status</p>
-                      <p className="summary-value">{apartment.status ?? "—"}</p>
+                      <p className="meta-label">Building</p>
+                      <p className="meta-value">{apartment.building ?? "—"}</p>
                     </div>
                   </div>
-                </div>
-              </div>
-            </section>
 
-            <section className="apartment-section apartment-layout">
-              <div className="apartment-main">
-                <div className="apartment-info-card">
-                  <div className="card-header">
-                    <h2>Punch List</h2>
-                    <span className="badge subtle">
-                      {punchSummary.completed} / {punchSummary.total} complete
-                    </span>
-                  </div>
-                  <ul className="punch-list">
-                    {punchItems.length === 0 && <li className="punch-item empty">No punch items listed.</li>}
-                    {punchItems.map((item) => (
-                      <li key={item.id} className="punch-item">
-                        <label>
-                          <input
-                            type="checkbox"
-                            checked={item.completed}
-                            onChange={() => {
-                              setPunchItems((prev) =>
-                                prev.map((punch) =>
-                                  punch.id === item.id ? { ...punch, completed: !punch.completed } : punch
-                                )
-                              );
-                            }}
-                          />
-                          <span>{item.task}</span>
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="apartment-info-card">
-                  <div className="card-header">
-                    <h2>Notes</h2>
-                  </div>
-                  <textarea
-                    className="notes-box"
-                    value={notes}
-                    onChange={(event) => setNotes(event.target.value)}
-                    placeholder="Add quick unit notes, vendor info, or walk findings..."
-                  />
-                </div>
-              </div>
-
-              {apartment.timeline && apartment.timeline.length > 0 && (
-                <div className="apartment-sidebar">
-                  <div className="apartment-info-card timeline">
-                    <div className="card-header">
-                      <h2>Timeline</h2>
-                    </div>
-                    <ul>
-                      {apartment.timeline.map((entry) => (
-                        <li
-                          key={entry.id ?? `${entry.timestamp}-${entry.description}`}
-                          className="timeline-item"
-                        >
-                          <p className="timeline-date">{formatDate(entry.timestamp)}</p>
-                          <p className="timeline-description">
-                            {entry.description ?? entry.label ?? "Update"}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </section>
-          </>
+                  <button
+                    className="card-action"
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleOpenDetail(apartment.id);
+                    }}
+                  >
+                    View details
+                  </button>
+                </article>
+              ))
+            )}
+          </section>
         )}
       </div>
     </div>
   );
 }
-
-export default ApartmentDetailPage;
