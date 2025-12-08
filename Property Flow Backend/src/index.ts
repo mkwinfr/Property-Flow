@@ -1,39 +1,50 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { prisma } from './db/prisma';
-import apartmentsRouter from './routes/apartments';
-import makeReadyBoardRouter from './routes/makeReadyBoard';
-import turnsRouter from './routes/turns';
+import express from "express";
+import "dotenv/config";
+import cors from "cors";
+import morgan from "morgan";
 
-dotenv.config();
+//import authRoutes from "./routes/auth";
+//import userRoutes from "./routes/user";
+//import workOrderRoutes from "./routes/workorders";
+//import turnRoutes from "./routes/turns";
+//import vendorRoutes from "./routes/vendors";
+import apartmentRoutes from "./routes/apartments";   // ⭐ ADD THIS LINE
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
+app.use(cors());
+app.use(morgan("dev"));
+
+// ----------------------
+// ⭐ MOUNT YOUR ROUTERS
+// ----------------------
+
+// Auth
+//app.use("/api/auth", authRoutes);
+
+// Users
+//app.use("/api/users", userRoutes);
+
+// Work Orders
+//app.use("/api/workorders", workOrderRoutes);
+
+// Turns
+//app.use("/api/turns", turnRoutes);
+
+// Vendors
+//app.use("/api/vendors", vendorRoutes);
+
+// ⭐ NEW APARTMENT DETAIL ROUTE
+app.use("/api/apartments", apartmentRoutes);
 
 // Health check
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'Property Flow backend is alive' });
+app.get("/", (req, res) => {
+  res.send("Property Flow Backend Running");
 });
 
-// Simple test route to verify DB connectivity
-app.get('/api/test-db', async (_req, res) => {
-  try {
-    const count = await prisma.apartment.count();
-    res.json({ ok: true, apartmentCount: count });
-  } catch (err) {
-    console.error('DB test failed', err);
-    res.status(500).json({ ok: false, error: 'DB connection failed' });
-  }
-});
+const PORT = process.env.PORT || 3001;
 
-// Feature routers
-app.use('/api/apartments', apartmentsRouter);
-app.use('/api/make-ready-board', makeReadyBoardRouter);
-app.use('/api/turns', turnsRouter);
-
-const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Property Flow backend listening on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

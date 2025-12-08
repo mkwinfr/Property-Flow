@@ -1,0 +1,2690 @@
+[
+  {
+    "unitNumber": "101",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "102",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "103",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "104",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "105",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "106",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "107",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "108",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "109",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "110",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "111",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "112",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "113",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "114",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "115",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "116",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "117",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "118",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "119",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "120",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "121",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "122",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "123",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "124",
+    "building": "100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "201",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "202",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "203",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "204",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "205",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "206",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "207",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "208",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "209",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "210",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "211",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "212",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "213",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "214",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "215",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "216",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "217",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "218",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "219",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "220",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "221",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "222",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "223",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "224",
+    "building": "200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "301",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "302",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "303",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "304",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "305",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "306",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "307",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "308",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "309",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "310",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "311",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "312",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "313",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "314",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "315",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "316",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "317",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "318",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "319",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "320",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "321",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "322",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "323",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "324",
+    "building": "300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "401",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "402",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "403",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "404",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "405",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "406",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "407",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "408",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "409",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "410",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "411",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "412",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "413",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "414",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "415",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "416",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "417",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "418",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "419",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "420",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "421",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "422",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "423",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "424",
+    "building": "400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "501",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "502",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "503",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "504",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "505",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "506",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "507",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "508",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "509",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "510",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "511",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "512",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "513",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "514",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "515",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "516",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "517",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "518",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "519",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "520",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "521",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "522",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "523",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "524",
+    "building": "500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1201",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1202",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1203",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1204",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1205",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1206",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1207",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1208",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1209",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1210",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1211",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1212",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1213",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1214",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1215",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1216",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1217",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1218",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1219",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1220",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1221",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1222",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1223",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1224",
+    "building": "1200",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1301",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1302",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1303",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1304",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1305",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1306",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1307",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1308",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1309",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1310",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1311",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1312",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1313",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1314",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1315",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1316",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1317",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1318",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1319",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1320",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1321",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1322",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1323",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1324",
+    "building": "1300",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1401",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1402",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1403",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1404",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1405",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1406",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1407",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1408",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1409",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1410",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1411",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1412",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1413",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1414",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1415",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1416",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1417",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1418",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1419",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1420",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1421",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1422",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1423",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1424",
+    "building": "1400",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1501",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1502",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1503",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1504",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1505",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1506",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1507",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1508",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1509",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1510",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1511",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1512",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1513",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1514",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1515",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1516",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1517",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1518",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1519",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1520",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1521",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1522",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1523",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1524",
+    "building": "1500",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1601",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1602",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1603",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1604",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1605",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1606",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1607",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1608",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1609",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1610",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1611",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1612",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1613",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1614",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1615",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1616",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1617",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1618",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1619",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1620",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1621",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1622",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1623",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1624",
+    "building": "1600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1701",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1702",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1703",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1704",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1705",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1706",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1707",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1708",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1709",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1710",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1711",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1712",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1713",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1714",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1715",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1716",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1717",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1718",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1719",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1720",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1721",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1722",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1723",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1724",
+    "building": "1700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "601",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "602",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "603",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "604",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "605",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "606",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "607",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "608",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "609",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "610",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "611",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "612",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "613",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "614",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "615",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "616",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "617",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "618",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "619",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "620",
+    "building": "600",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "701",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "702",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "703",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "704",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "705",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "706",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "707",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "708",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "709",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "710",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "711",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "712",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "713",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "714",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "715",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "716",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "717",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "718",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "719",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "720",
+    "building": "700",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "801",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "802",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "803",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "804",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "805",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "806",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "807",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "808",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "809",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "810",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "811",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "812",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "813",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "814",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "815",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "816",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "817",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "818",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "819",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "820",
+    "building": "800",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "901",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "902",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "903",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "904",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "905",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "906",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "907",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "908",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "909",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "910",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "911",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "912",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "913",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "914",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "915",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "916",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "917",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "918",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "919",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "920",
+    "building": "900",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1001",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1002",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1003",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1004",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1005",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1006",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1007",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1008",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1009",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1010",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1011",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1012",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1013",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1014",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1015",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1016",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1017",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1018",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1019",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1020",
+    "building": "1000",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1101",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1102",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1103",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1104",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1105",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1106",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1107",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1108",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1109",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1110",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1111",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1112",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1113",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1114",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1115",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1116",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1117",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1118",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1119",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  },
+  {
+    "unitNumber": "1120",
+    "building": "1100",
+    "beds": 1,
+    "baths": 1,
+    "status": "OCCUPIED"
+  }
+]

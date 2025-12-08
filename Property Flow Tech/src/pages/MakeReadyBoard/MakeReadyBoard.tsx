@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
 import "./MakeReadyBoard.css";
 
@@ -7,44 +7,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const API_URL = `${API_BASE}/api/make-ready-board`;
 
 // Demo fallback data for when the API can't be reached
-const DEMO_ITEMS: MakeReadyItem[] = [
-  {
-    id: "demo-1",
-    apartmentNumber: "101",
-    building: "A",
-    turnType: "Full Turn",
-    techName: "Robin M.",
-    priority: "High",
-    status: "IN_PROGRESS",
-    notes: "Paint and flooring scheduled.",
-    dueDate: "2024-08-14T00:00:00.000Z",
-    updatedAt: null,
-  },
-  {
-    id: "demo-2",
-    apartmentNumber: "204",
-    building: "B",
-    turnType: "Scheduled",
-    techName: "Kayla R.",
-    priority: "Medium",
-    status: "NOT_STARTED",
-    notes: "Awaiting countertop delivery.",
-    dueDate: "2024-08-17T00:00:00.000Z",
-    updatedAt: null,
-  },
-  {
-    id: "demo-3",
-    apartmentNumber: "305",
-    building: "C",
-    turnType: "Ready for QC",
-    techName: "Samir P.",
-    priority: "Low",
-    status: "READY",
-    notes: "Need final walk before move-in.",
-    dueDate: "2024-08-11T00:00:00.000Z",
-    updatedAt: null,
-  },
-];
+/* Demo data removed */
 
 const STATUS_LABEL: Record<MakeReadyStatus, string> = {
   NOT_STARTED: "Not Started",
@@ -57,7 +20,7 @@ const MakeReadyBoard: React.FC = () => {
   const [items, setItems] = useState<MakeReadyItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usingDemo, setUsingDemo] = useState(false);
+  
 
   useEffect(() => {
     let cancelled = false;
@@ -66,7 +29,7 @@ const MakeReadyBoard: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        setUsingDemo(false);
+        
 
         const res = await fetch(API_URL);
         if (!res.ok) {
@@ -122,8 +85,8 @@ const MakeReadyBoard: React.FC = () => {
         if (!cancelled) {
           // On error, fall back to demo data so the board still looks alive
           setError(err.message ?? "Failed to load make-ready data");
-          setItems(DEMO_ITEMS);
-          setUsingDemo(true);
+          /* removed demo items */
+          /* removed demo fallback */
         }
       } finally {
         if (!cancelled) {
@@ -157,14 +120,8 @@ const MakeReadyBoard: React.FC = () => {
         </p>
       </div>
 
-      {usingDemo && (
-        <div className="make-ready-error">
-          <AlertTriangle className="make-ready-error-icon" />
-          <span>
-            Couldn't reach <span className="make-ready-error-url">{API_URL}</span>. Showing demo
-            data while we retry.
-          </span>
-        </div>
+      {error && (
+        <div className="make-ready-error"><span>Error: Unable to Connect to The Back End</span></div>
       )}
 
       {loading && !sortedItems.length && (

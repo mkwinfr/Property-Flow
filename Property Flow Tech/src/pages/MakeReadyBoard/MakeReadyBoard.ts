@@ -1,6 +1,7 @@
 export type MakeReadyStatus = "NOT_STARTED" | "IN_PROGRESS" | "READY" | "ON_HOLD";
 
 export interface MakeReadyItem {
+  notes: string;
   id: string;
   apartmentNumber: string;
   building?: string | null;
@@ -9,7 +10,6 @@ export interface MakeReadyItem {
   techName?: string | null;
   priority?: "Low" | "Medium" | "High" | "Urgent";
   status: MakeReadyStatus;
-  notes?: string | null;
   dueDate?: string | null;
   updatedAt?: string | null;
 }

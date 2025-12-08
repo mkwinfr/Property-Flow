@@ -4,9 +4,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = "postgresql://postgres:Faker2029$@localhost:5432/property-flow?schema=public"
 }
 
 
+/// High-level occupancy / unit status
 enum OccupancyStatus {
   OCCUPIED
   NOTICE
@@ -14,53 +16,295 @@ enum OccupancyStatus {
   DOWN
 }
 
+/// Status of a work order
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELED
+}
+
+/// Priority of a work order
+enum WorkOrderPriority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
+/// Type of work order
+enum WorkOrderType {
+  MAINTENANCE
+  MAKE_READY
+  VENDOR
+  INSPECTION
+  OTHER
+}
+
+/// Status of a make-ready turn or task
 enum TurnStatus {
-  NONE
   NOT_STARTED
   IN_PROGRESS
   READY
   ON_HOLD
-  CANCELLED
 }
 
+/// Type of turn
 enum TurnType {
-  FULL_TURN
-  MINI_TURN
-  DOWN_REHAB
+  MAKE_READY
+  OTHER
 }
 
+/// Status of a vendor job
+enum VendorJobStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+/// Basic user account
+model User {
+  id                 Int                @id @default(autoincrement())
+  name               String
+  email              String             @unique
+  role               String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Relations
+  workOrdersCreated  WorkOrder[]        @relation("WorkOrdersCreatedBy")
+  workOrdersAssigned WorkOrder[]        @relation("WorkOrdersAssignedTo")
+  turnTasksAssigned  TurnTask[]         @relation("TurnTasksAssignedTo")
+  notes              MaintenanceNote[]
+  activityLogs       ActivityLog[]
+
+  // 🔥 REQUIRED opposite relation for Turn.createdBy
+  turnsCreated       Turn[]
+}
+
+/// A property / community
+model Property {
+  id         Int        @id @default(autoincrement())
+  name       String
+  code       String?    @unique
+  address1   String?
+  address2   String?
+  city       String?
+  state      String?
+  postalCode String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  apartments Apartment[]
+}
+
+/// A specific apartment / unit
 model Apartment {
-  id              Int              @id @default(autoincrement())
-  propertyId      Int?
-  building        String?
-  unitNumber      String
+  id           Int              @id @default(autoincrement())
+  propertyId   Int
+  unitNumber   String
+  building     String?
+  floor        Int?
+  beds         Int?
+  baths        Int?
+  sqFt         Int?
+  status       OccupancyStatus  @default(OCCUPIED)
+  inlineNote   String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
-  bedrooms        Int?
-  bathrooms       Int?
-  sqft            Int?
+  property     Property         @relation(fields: [propertyId], references: [id])
 
-  occupancyStatus OccupancyStatus  @default(OCCUPIED)
-  turnStatus      TurnStatus       @default(NONE)
-  canShow         Boolean          @default(true)
-  canLease        Boolean          @default(true)
+  workOrders   WorkOrder[]
+  turns        Turn[]
+  vendorJobs   VendorJob[]
+  notes        MaintenanceNote[]
+  attachments  Attachment[]
+  activityLogs ActivityLog[]
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  turns           Turn[]
+  @@index([propertyId, unitNumber])
 }
 
-model Turn {
-  id              Int              @id @default(autoincrement())
-  apartmentId     Int
-  apartment       Apartment        @relation(fields: [apartmentId], references: [id])
+/// Work order
+model WorkOrder {
+  id               Int               @id @default(autoincrement())
+  apartmentId      Int
+  createdByUserId  Int
+  assignedToUserId Int?
+  turnId           Int?
 
-  type            TurnType
-  status          TurnStatus       @default(NOT_STARTED)
+  type             WorkOrderType     @default(MAINTENANCE)
+  status           WorkOrderStatus   @default(OPEN)
+  priority         WorkOrderPriority @default(MEDIUM)
+
+  summary          String
+  description      String?
+  requestedBy      String?
+  requestedAt      DateTime?
+
+  dueDate          DateTime?
+  completedAt      DateTime?
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  apartment        Apartment         @relation(fields: [apartmentId], references: [id])
+  createdBy        User              @relation("WorkOrdersCreatedBy", fields: [createdByUserId], references: [id])
+  assignedTo       User?             @relation("WorkOrdersAssignedTo", fields: [assignedToUserId], references: [id])
+  turn             Turn?             @relation(fields: [turnId], references: [id])
+
+  vendorJobs       VendorJob[]
+  attachments      Attachment[]
+
+  @@index([apartmentId])
+  @@index([status])
+  @@index([type])
+}
+
+/// Make-ready turn
+model Turn {
+  id              Int        @id @default(autoincrement())
+  apartmentId     Int
+  createdByUserId Int
+
+  type            TurnType   @default(MAKE_READY)
+  status          TurnStatus @default(NOT_STARTED)
 
   moveOutDate     DateTime?
   targetReadyDate DateTime?
+  actualReadyDate DateTime?
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  notes           String?
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  apartment       Apartment  @relation(fields: [apartmentId], references: [id])
+  createdBy       User       @relation(fields: [createdByUserId], references: [id])
+
+  tasks           TurnTask[]
+  workOrders      WorkOrder[]
+
+  // 🔥 REQUIRED opposite relation for Attachment.turn
+  attachments     Attachment[]
+
+  @@index([apartmentId])
+  @@index([status])
+}
+
+/// Make-ready task
+model TurnTask {
+  id               Int        @id @default(autoincrement())
+  turnId           Int
+  title            String
+  category         String?
+  description      String?
+
+  status           TurnStatus @default(NOT_STARTED)
+  assignedToUserId Int?
+  sortOrder        Int        @default(0)
+
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  turn             Turn       @relation(fields: [turnId], references: [id])
+  assignedTo       User?      @relation("TurnTasksAssignedTo", fields: [assignedToUserId], references: [id])
+
+  @@index([turnId])
+  @@index([status])
+}
+
+/// Vendors
+model Vendor {
+  id          Int        @id @default(autoincrement())
+  name        String
+  contactName String?
+  phone       String?
+  email       String?
+  notes       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  jobs        VendorJob[]
+}
+
+/// Vendor job
+model VendorJob {
+  id            Int             @id @default(autoincrement())
+  apartmentId   Int
+  vendorId      Int
+  workOrderId   Int?
+
+  status        VendorJobStatus @default(SCHEDULED)
+  scopeOfWork   String
+  scheduledDate DateTime?
+  completedDate DateTime?
+  invoiceAmount Float?
+  invoiceNumber String?
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  apartment     Apartment       @relation(fields: [apartmentId], references: [id])
+  vendor        Vendor          @relation(fields: [vendorId], references: [id])
+  workOrder     WorkOrder?      @relation(fields: [workOrderId], references: [id])
+
+  @@index([apartmentId])
+  @@index([vendorId])
+}
+
+/// Notes on an apartment
+model MaintenanceNote {
+  id            Int      @id @default(autoincrement())
+  apartmentId   Int
+  createdByUserId Int
+
+  body          String
+  pinned        Boolean @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  apartment     Apartment @relation(fields: [apartmentId], references: [id])
+  createdBy     User      @relation(fields: [createdByUserId], references: [id])
+
+  @@index([apartmentId])
+}
+
+/// Attachments (photos, PDFs, etc.)
+model Attachment {
+  id            Int      @id @default(autoincrement())
+  apartmentId   Int
+  workOrderId   Int?
+  turnId        Int?
+
+  fileUrl       String
+  fileName      String?
+  fileType      String?
+
+  createdAt     DateTime @default(now())
+
+  apartment     Apartment @relation(fields: [apartmentId], references: [id])
+  workOrder     WorkOrder? @relation(fields: [workOrderId], references: [id])
+  turn          Turn?      @relation(fields: [turnId], references: [id])
+
+  @@index([apartmentId])
+}
+
+/// Activity timeline entries per apartment
+model ActivityLog {
+  id            Int      @id @default(autoincrement())
+  apartmentId   Int
+  userId        Int?
+  type          String
+  message       String
+  createdAt     DateTime @default(now())
+
+  apartment     Apartment @relation(fields: [apartmentId], references: [id])
+  user          User?     @relation(fields: [userId], references: [id])
+
+  @@index([apartmentId])
+  @@index([createdAt])
 }
