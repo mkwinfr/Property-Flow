@@ -1,150 +1,127 @@
-.bottom-nav-shell {
+/* Full-width bottom bar */
+.dock {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
-  pointer-events: none;
-  z-index: 40;
-}
-
-/* Full-width dark bar with safe area support */
-.bottom-nav {
-  position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  height: calc(95px + env(safe-area-inset-bottom));
-  background: #17191f;
-  padding: 0 1.4rem;
-  padding-bottom: env(safe-area-inset-bottom);
+  height: 95px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.75);
-  pointer-events: auto;
+  padding-inline: 1.5rem;
+  z-index: 50;
+  background: #050814;
+  border-top: 1px solid rgba(15, 23, 42, 0.9);
 }
 
-.bottom-nav-row {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
+/* Center pill container */
+.dock-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.9rem;
-}
-
-/* kill tap highlight everywhere in the nav */
-.bottom-nav * {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* icon-only buttons with larger hit area */
-.icon-button {
-  width: 50px;
-  height: 50px;
+  justify-content: center;
+  gap: 1.1rem;
+  padding: 0.7rem 1.6rem;
   border-radius: 999px;
+  background: #050814;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+}
+
+/* Left and right icon groups */
+.dock-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* Icon-only buttons */
+.dock-item {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: #050814;
+  color: #e5e9f0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: relative;
-  color: #8b929f;
+  outline: none;
+  padding: 0;
   transition:
-    color 0.16s ease-out,
+    transform 0.16s ease-out,
+    box-shadow 0.16s ease-out,
     background-color 0.16s ease-out,
-    transform 0.14s ease-out,
-    box-shadow 0.18s ease-out;
-}
-
-/* No labels, just icons */
-.icon-button__icon {
-  width: 26px;      /* bigger, sharper */
-  height: 26px;
-  stroke-width: 1.9;
-  transform: translateY(1px); /* maintains vertical alignment */
-}
-
-
-/* Hover for desktop only */
-@media (hover: hover) and (pointer: fine) {
-  .icon-button:hover {
-    color: #c7ccd8;
-    transform: translateY(-1px);
-  }
-}
-
-/* Active tab: subtle lift + stronger shadow */
-.icon-button--active {
-  background-color: #f5f7fb;
-  color: #1b1f27;
-  transform: translateY(-1px);
+    border-color 0.16s ease-out,
+    color 0.16s ease-out;
   box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(245, 247, 251, 0.7);
+    0 6px 18px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.02) inset;
+  font-size: 0;
 }
 
-/* SUPER DELUXE: active icon spring pop */
-.icon-button--active .icon-button__icon {
-  animation: iconSpring 0.26s cubic-bezier(0.22, 1.5, 0.36, 1);
+.dock-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Center drawer button variant: gradient + rounded square */
-.icon-button--drawer {
-  width: 64px;
-  height: 44px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #3f8cff, #7b61ff);
-  color: #ffffff;
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(68, 74, 88, 0.9);
+.dock-item__label {
+  display: none; /* icon-only look */
+}
+
+/* Hover lift */
+.dock-item:hover {
   transform: translateY(-2px);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 1),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .icon-button--drawer:hover {
-    filter: brightness(1.1);
-    transform: translateY(-3px);
-  }
+/* Active state: slightly wider pill, gradient fill */
+.dock-item--active {
+  width: 52px;
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  border-color: rgba(191, 219, 254, 0.9);
+  box-shadow:
+    0 14px 34px rgba(15, 23, 42, 0.98),
+    0 1px 0 rgba(255, 255, 255, 0.34) inset;
 }
 
-/* Drawer open: soft glow pulse */
-.icon-button--drawer-open {
-  animation: drawerGlowPulse 1.8s ease-in-out infinite;
+/* Center Apps button */
+.dock-item--apps {
+  margin: 0 0.3rem;
+  border-style: dashed;
 }
 
-/* Icon spring pop */
-@keyframes iconSpring {
-  0% {
-    transform: scale(0.9) translateY(1px);
-  }
-  55% {
-    transform: scale(1.14) translateY(-2px);
-  }
-  100% {
-    transform: scale(1) translateY(0);
-  }
+.dock-item--apps.dock-item--active {
+  border-style: solid;
 }
 
-/* Drawer glow pulse */
-@keyframes drawerGlowPulse {
-  0% {
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.7),
-      0 0 0 1px rgba(68, 74, 88, 0.9),
-      0 0 0px rgba(63, 140, 255, 0.0);
+/* Small screen tweaks */
+@media (max-width: 640px) {
+  .dock {
+    height: 90px;
+    padding-inline: 1rem;
   }
-  50% {
-    box-shadow:
-      0 10px 24px rgba(0, 0, 0, 0.85),
-      0 0 0 1px rgba(68, 74, 88, 1),
-      0 0 16px rgba(63, 140, 255, 0.85);
+
+  .dock-inner {
+    gap: 0.9rem;
+    padding: 0.6rem 1.3rem;
   }
-  100% {
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.7),
-      0 0 0 1px rgba(68, 74, 88, 0.9),
-      0 0 0px rgba(63, 140, 255, 0.0);
+
+  .dock-group {
+    gap: 0.7rem;
+  }
+
+  .dock-item {
+    width: 42px;
+    height: 42px;
+  }
+
+  .dock-item--active {
+    width: 48px;
   }
 }

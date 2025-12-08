@@ -1,329 +1,195 @@
-// frontend/src/pages/ApartmentDetail/ApartmentDetail.tsx
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React from "react";
 
-type WorkOrderStatus = 'OPEN' | 'IN_PROGRESS' | 'ON_HOLD' | 'COMPLETED' | 'CANCELED';
-type OccupancyStatus = 'OCCUPIED' | 'NOTICE' | 'VACANT' | 'DOWN';
-
-interface Property {
-  id: number;
-  name: string;
-  code: string | null;
-  address1: string | null;
-  city: string | null;
-  state: string | null;
-  postalCode: string | null;
-}
-
-interface WorkOrder {
-  id: number;
-  summary: string;
-  status: WorkOrderStatus;
-  type: string;
-  priority: string;
-  createdAt: string;
-}
-
-interface TurnTask {
-  id: number;
-  title: string;
-  status: string;
-}
-
-interface Turn {
-  id: number;
-  status: string;
-  type: string;
-  moveOutDate: string | null;
-  targetReadyDate: string | null;
-  actualReadyDate: string | null;
-  tasks: TurnTask[];
-}
-
-interface Vendor {
-  id: number;
-  name: string;
-}
-
-interface VendorJob {
-  id: number;
-  status: string;
-  scopeOfWork: string;
-  vendor: Vendor | null;
-}
-
-interface Note {
-  id: number;
-  body: string;
-  createdAt: string;
-  createdBy?: {
-    id: number;
-    name: string;
-  } | null;
-}
-
-interface ActivityLog {
-  id: number;
-  type: string;
-  message: string;
-  createdAt: string;
-  user?: {
-    id: number;
-    name: string;
-  } | null;
-}
-
-interface ApartmentDetailData {
-  id: number;
-  unitNumber: string;
-  building: string | null;
-  beds: number | null;
-  baths: number | null;
-  status: OccupancyStatus;
-  inlineNote: string | null;
-  property: Property;
-  workOrders: WorkOrder[];
-  turns: Turn[];
-  vendorJobs: VendorJob[];
-  notes: Note[];
-  activityLogs: ActivityLog[];
-}
-
-const statusColors: Record<OccupancyStatus, string> = {
-  OCCUPIED: '#22c55e',
-  NOTICE: '#eab308',
-  VACANT: '#3b82f6',
-  DOWN: '#ef4444',
-};
-
-const ApartmentDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [data, setData] = useState<ApartmentDetailData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'workOrders' | 'turns' | 'vendor' | 'notes' | 'timeline'>('workOrders');
-
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    setError(null);
-
-    fetch(`/api/apartments/${id}/detail`)
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error((body as any).error || 'Failed to load apartment');
-        }
-        return res.json();
-      })
-      .then((json: ApartmentDetailData) => {
-        setData(json);
-      })
-      .catch((err: any) => {
-        console.error(err);
-        setError(err.message || 'Unknown error');
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) {
-    return <div className="p-6 text-slate-200">Loading apartment…</div>;
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-400">Error: {error}</div>;
-  }
-
-  if (!data) {
-    return <div className="p-6 text-slate-200">Apartment not found.</div>;
-  }
-
-  const statusColor = statusColors[data.status];
-
+const ApartmentDetailPage: React.FC = () => {
   return (
-    <div className="p-6 space-y-4 text-slate-100">
-      {/* Header */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="text-sm uppercase tracking-wide text-slate-400">
-            {data.property?.name}
+    <div className="min-h-[calc(100vh-100px)] pt-6 pb-28 px-4 md:px-8 bg-[#0f1720]">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Header */}
+        <header className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-[#E5E9F0] tracking-tight">
+              Apartment Detail
+            </h1>
+            <p className="text-xs md:text-sm text-[#E5E9F0]/60 mt-1">
+              View and update unit info, status, and punch details.
+            </p>
           </div>
-          <h1 className="text-2xl font-semibold">
-            Unit {data.unitNumber}{' '}
-            {data.building && <span className="text-slate-400">• Bldg {data.building}</span>}
-          </h1>
-          <div className="text-sm text-slate-400">
-            {data.beds ?? '?'} bd • {data.baths ?? '?'} ba • Status:{' '}
-            <span style={{ color: statusColor, fontWeight: 500 }}>{data.status}</span>
+          <div className="hidden md:flex items-center gap-2">
+            <button className="px-3 py-1.5 rounded-2xl text-xs font-medium bg-[#151d27] text-[#E5E9F0]/80 border border-white/5 shadow-inner">
+              History
+            </button>
+            <button className="px-3 py-1.5 rounded-2xl text-xs font-semibold bg-[#E5E9F0] text-[#151d27] shadow-[0_10px_25px_rgba(0,0,0,0.6)]">
+              New Work Order
+            </button>
           </div>
-          {data.inlineNote && (
-            <div className="mt-1 text-xs text-slate-300 italic">
-              {data.inlineNote}
+        </header>
+
+        {/* Top Info Card */}
+        <section className="grid md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)]">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <p className="text-[0.7rem] uppercase tracking-[0.18em] text-[#E5E9F0]/40">
+                  Unit
+                </p>
+                <p className="text-xl font-semibold text-[#E5E9F0]">
+                  A1 · 2 Bed / 2 Bath
+                </p>
+              </div>
+              <span className="inline-flex items-center px-3 py-1 rounded-2xl text-[0.7rem] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/40 shadow-inner">
+                Ready
+              </span>
             </div>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <button className="rounded-full px-4 py-2 bg-sky-600 hover:bg-sky-500 text-sm">
-            New Work Order
-          </button>
-          <button className="rounded-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-sm">
-            Start Turn
-          </button>
-        </div>
-      </div>
-
-      {/* Quick summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-slate-800/60 rounded-xl p-3">
-          <div className="text-xs text-slate-400">Open Work Orders</div>
-          <div className="text-xl font-semibold">
-            {data.workOrders.filter((wo) => wo.status === 'OPEN' || wo.status === 'IN_PROGRESS').length}
-          </div>
-        </div>
-        <div className="bg-slate-800/60 rounded-xl p-3">
-          <div className="text-xs text-slate-400">Turns</div>
-          <div className="text-xl font-semibold">{data.turns.length}</div>
-        </div>
-        <div className="bg-slate-800/60 rounded-xl p-3">
-          <div className="text-xs text-slate-400">Vendor Jobs</div>
-          <div className="text-xl font-semibold">{data.vendorJobs.length}</div>
-        </div>
-        <div className="bg-slate-800/60 rounded-xl p-3">
-          <div className="text-xs text-slate-400">Notes</div>
-          <div className="text-xl font-semibold">{data.notes.length}</div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-slate-700 flex gap-4 text-sm">
-        {(['workOrders', 'turns', 'vendor', 'notes', 'timeline'] as const).map((tabKey) => (
-          <button
-            key={tabKey}
-            onClick={() => setActiveTab(tabKey)}
-            className={`pb-2 -mb-px ${
-              activeTab === tabKey
-                ? 'border-b-2 border-sky-500 text-sky-300'
-                : 'border-b-2 border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            {tabKey === 'workOrders' && 'Work Orders'}
-            {tabKey === 'turns' && 'Turns'}
-            {tabKey === 'vendor' && 'Vendor Jobs'}
-            {tabKey === 'notes' && 'Notes'}
-            {tabKey === 'timeline' && 'Timeline'}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab content */}
-      <div className="mt-2">
-        {activeTab === 'workOrders' && (
-          <div className="space-y-2">
-            {data.workOrders.length === 0 && (
-              <div className="text-sm text-slate-400">No work orders for this unit yet.</div>
-            )}
-            {data.workOrders.map((wo) => (
-              <div
-                key={wo.id}
-                className="bg-slate-800/60 rounded-xl p-3 flex justify-between items-center"
-              >
-                <div>
-                  <div className="font-medium text-sm">{wo.summary}</div>
-                  <div className="text-xs text-slate-400">
-                    {wo.type} • {wo.priority} • {new Date(wo.createdAt).toLocaleString()}
-                  </div>
-                </div>
-                <div className="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
-                  {wo.status}
-                </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-[#E5E9F0]/70">
+              <div>
+                <p className="uppercase tracking-[0.16em] text-[0.65rem] text-[#E5E9F0]/40">
+                  Target Move-In
+                </p>
+                <p className="mt-0.5 text-sm text-[#E5E9F0]">Dec 15, 2025</p>
               </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'turns' && (
-          <div className="space-y-2">
-            {data.turns.length === 0 && (
-              <div className="text-sm text-slate-400">No turns recorded for this unit yet.</div>
-            )}
-            {data.turns.map((turn) => (
-              <div key={turn.id} className="bg-slate-800/60 rounded-xl p-3 space-y-1">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium text-sm">
-                    {turn.type} • {turn.status}
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    Target:{' '}
-                    {turn.targetReadyDate
-                      ? new Date(turn.targetReadyDate).toLocaleDateString()
-                      : 'n/a'}
-                  </div>
-                </div>
-                <div className="text-xs text-slate-400">
-                  Tasks:{' '}
-                  {turn.tasks.length === 0
-                    ? 'No tasks'
-                    : turn.tasks.map((t) => t.title).join(', ')}
-                </div>
+              <div>
+                <p className="uppercase tracking-[0.16em] text-[0.65rem] text-[#E5E9F0]/40">
+                  Turn Status
+                </p>
+                <p className="mt-0.5 text-sm text-[#E5E9F0]">Complete</p>
               </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'vendor' && (
-          <div className="space-y-2">
-            {data.vendorJobs.length === 0 && (
-              <div className="text-sm text-slate-400">No vendor jobs for this unit yet.</div>
-            )}
-            {data.vendorJobs.map((job) => (
-              <div key={job.id} className="bg-slate-800/60 rounded-xl p-3">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium text-sm">
-                    {job.vendor?.name || 'Vendor'} • {job.status}
-                  </div>
-                </div>
-                <div className="text-xs text-slate-400 mt-1">{job.scopeOfWork}</div>
+              <div>
+                <p className="uppercase tracking-[0.16em] text-[0.65rem] text-[#E5E9F0]/40">
+                  Last Walk
+                </p>
+                <p className="mt-0.5 text-sm text-[#E5E9F0]">Dec 5, 2025 · 2:14 PM</p>
               </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'notes' && (
-          <div className="space-y-2">
-            {data.notes.length === 0 && (
-              <div className="text-sm text-slate-400">No notes for this unit yet.</div>
-            )}
-            {data.notes.map((note) => (
-              <div key={note.id} className="bg-slate-800/60 rounded-xl p-3">
-                <div className="text-xs text-slate-400 mb-1">
-                  {note.createdBy ? note.createdBy.name : 'Unknown'} •{' '}
-                  {new Date(note.createdAt).toLocaleString()}
-                </div>
-                <div className="text-sm">{note.body}</div>
+              <div>
+                <p className="uppercase tracking-[0.16em] text-[0.65rem] text-[#E5E9F0]/40">
+                  Supervisor
+                </p>
+                <p className="mt-0.5 text-sm text-[#E5E9F0]">M. Winters</p>
               </div>
-            ))}
+            </div>
           </div>
-        )}
 
-        {activeTab === 'timeline' && (
-          <div className="space-y-2">
-            {data.activityLogs.length === 0 && (
-              <div className="text-sm text-slate-400">No activity logged for this unit yet.</div>
-            )}
-            {data.activityLogs.map((log) => (
-              <div key={log.id} className="bg-slate-800/60 rounded-xl p-3">
-                <div className="text-xs text-slate-400 mb-1">
-                  {new Date(log.createdAt).toLocaleString()} • {log.type}{' '}
-                  {log.user ? `• ${log.user.name}` : ''}
-                </div>
-                <div className="text-sm">{log.message}</div>
-              </div>
-            ))}
+          <div className="p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)] space-y-3 text-xs text-[#E5E9F0]/75">
+            <div className="flex items-center justify-between gap-2">
+              <p className="uppercase tracking-[0.18em] text-[0.65rem] text-[#E5E9F0]/40">
+                Quick Flags
+              </p>
+              <span className="text-[0.65rem] text-[#E5E9F0]/40">tap to toggle</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {["Paint", "Carpet", "Appliances", "Damage", "Vendor", "Hold"].map(
+                (flag) => (
+                  <button
+                    key={flag}
+                    className="px-3 py-1 rounded-2xl bg-[#0b1018] border border-white/5 text-[0.7rem] hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.7)] transition-all"
+                  >
+                    {flag}
+                  </button>
+                )
+              )}
+            </div>
           </div>
-        )}
+        </section>
+
+        {/* Punch & Notes */}
+        <section className="grid md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 space-y-4">
+            <div className="p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)]">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs uppercase tracking-[0.18em] text-[#E5E9F0]/40">
+                  Punch Items
+                </p>
+                <span className="text-[0.7rem] text-[#E5E9F0]/50">
+                  7 of 7 complete
+                </span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  "Replace fridge seal",
+                  "Touch-up paint living room",
+                  "Deep clean bathrooms",
+                  "Replace 2 blinds",
+                  "Test smoke detectors",
+                  "Change HVAC filter",
+                  "Patch small drywall nick",
+                ].map((item) => (
+                  <label
+                    key={item}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-2xl hover:bg-white/5 text-xs cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="accent-emerald-400 w-3 h-3 rounded"
+                    />
+                    <span className="text-[#E5E9F0]/80">{item}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)]">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#E5E9F0]/40 mb-2">
+                Notes
+              </p>
+              <textarea
+                className="w-full min-h-[90px] text-sm rounded-2xl bg-[#0b1018] border border-white/5 text-[#E5E9F0] px-3 py-2 resize-none shadow-inner outline-none focus:ring-2 focus:ring-[#E5E9F0]/15"
+                placeholder="Add quick unit notes, vendor info, or walk findings..."
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)] text-xs text-[#E5E9F0]/75">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#E5E9F0]/40 mb-2">
+                Timeline
+              </p>
+              <ul className="space-y-2">
+                <li>
+                  <p className="text-[0.7rem] text-[#E5E9F0]/50">Dec 1 · 9:42 AM</p>
+                  <p className="text-[0.8rem] text-[#E5E9F0]">Move-out complete</p>
+                </li>
+                <li>
+                  <p className="text-[0.7rem] text-[#E5E9F0]/50">Dec 2 · 11:18 AM</p>
+                  <p className="text-[0.8rem] text-[#E5E9F0]">
+                    Initial walk and punch created
+                  </p>
+                </li>
+                <li>
+                  <p className="text-[0.7rem] text-[#E5E9F0]/50">Dec 4 · 3:06 PM</p>
+                  <p className="text-[0.8rem] text-[#E5E9F0]">
+                    Vendor carpet clean complete
+                  </p>
+                </li>
+                <li>
+                  <p className="text-[0.7rem] text-[#E5E9F0]/50">Dec 5 · 2:14 PM</p>
+                  <p className="text-[0.8rem] text-[#E5E9F0]">
+                    Final walk – unit marked ready
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-3xl bg-[#151d27] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.7)] text-xs text-[#E5E9F0]/75">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#E5E9F0]/40 mb-2">
+                Quick Actions
+              </p>
+              <div className="flex flex-col gap-2">
+                <button className="w-full px-3 py-2 rounded-2xl text-[0.8rem] font-medium bg-[#E5E9F0] text-[#151d27] shadow-[0_12px_32px_rgba(0,0,0,0.7)]">
+                  Mark Turn Complete
+                </button>
+                <button className="w-full px-3 py-2 rounded-2xl text-[0.8rem] font-medium bg-[#0b1018] text-[#E5E9F0]/85 border border-white/5">
+                  Put Unit On Hold
+                </button>
+                <button className="w-full px-3 py-2 rounded-2xl text-[0.8rem] font-medium bg-[#151d27] text-[#E5E9F0]/75 border border-dashed border-white/12">
+                  Attach Photos
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
 };
 
-export default ApartmentDetail;
+export default ApartmentDetailPage;

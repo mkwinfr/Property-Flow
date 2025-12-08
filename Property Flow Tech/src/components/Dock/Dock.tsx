@@ -1,97 +1,124 @@
 import React from "react";
-import "./Dock.css";
 import {
   Home,
   ClipboardList,
-  Hammer,
+  Wrench,
   MessageCircle,
-  Grid3X3,
+  Building2,
+  Grid,
 } from "lucide-react";
+import "./Dock.css";
 
-export type DockTabId = "home" | "makeReady" | "startPunch" | "chat";
+export type DockTabId =
+  | "home"
+  | "apartmentDetail"
+  | "makeReady"
+  | "startPunch"
+  | "chat";
 
 interface DockProps {
   activeTab: DockTabId;
   onTabChange: (tab: DockTabId) => void;
-  onOpenAppDrawer: () => void;
+  onOpenAppDrawer?: () => void;
   isDrawerOpen?: boolean;
 }
+
+const dockTabsLeft: {
+  id: DockTabId;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  { id: "home", label: "Home", icon: <Home size={22} /> },
+  {
+    id: "apartmentDetail",
+    label: "Apt Detail",
+    icon: <Building2 size={22} />,
+  },
+];
+
+const dockTabsRight: {
+  id: DockTabId;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    id: "makeReady",
+    label: "Make Ready",
+    icon: <ClipboardList size={22} />,
+  },
+  {
+    id: "startPunch",
+    label: "Start Punch",
+    icon: <Wrench size={22} />,
+  },
+  {
+    id: "chat",
+    label: "Chat",
+    icon: <MessageCircle size={22} />,
+  },
+];
 
 const Dock: React.FC<DockProps> = ({
   activeTab,
   onTabChange,
   onOpenAppDrawer,
-  isDrawerOpen = false,
+  isDrawerOpen,
 }) => {
+  const handleClick = (tab: DockTabId) => {
+    onTabChange(tab);
+  };
+
+  const renderDockButton = (id: DockTabId, icon: React.ReactNode, label: string) => {
+    const isActive = id === activeTab;
+    return (
+      <button
+        key={id}
+        type="button"
+        className={"dock-item" + (isActive ? " dock-item--active" : "")}
+        onClick={() => handleClick(id)}
+        aria-label={label}
+      >
+        <span className="dock-item__icon">{icon}</span>
+        <span className="dock-item__label">{label}</span>
+      </button>
+    );
+  };
+
+  const appsIsActive = Boolean(isDrawerOpen);
+
   return (
-    <div className="bottom-nav-shell">
-      <nav className="bottom-nav" aria-label="Primary navigation">
-        <div className="bottom-nav-row">
-          {/* Left icons */}
-          <div
-            role="button"
-            aria-label="Home"
-            className={
-              "icon-button" +
-              (activeTab === "home" ? " icon-button--active" : "")
-            }
-            onClick={() => onTabChange("home")}
-          >
-            <Home className="icon-button__icon" />
-          </div>
+    <nav className="dock">
+      <div className="dock-inner">
+        <div className="dock-group dock-group--left">
+          {dockTabsLeft.map((tab) =>
+            renderDockButton(tab.id, tab.icon, tab.label)
+          )}
+        </div>
 
-          <div
-            role="button"
-            aria-label="Make ready"
+        {onOpenAppDrawer && (
+          <button
+            type="button"
             className={
-              "icon-button" +
-              (activeTab === "makeReady" ? " icon-button--active" : "")
-            }
-            onClick={() => onTabChange("makeReady")}
-          >
-            <ClipboardList className="icon-button__icon" />
-          </div>
-
-          {/* Center drawer */}
-          <div
-            role="button"
-            aria-label="Open app drawer"
-            className={
-              "icon-button icon-button--drawer" +
-              (isDrawerOpen ? " icon-button--drawer-open" : "")
+              "dock-item dock-item--apps" +
+              (appsIsActive ? " dock-item--active" : "")
             }
             onClick={onOpenAppDrawer}
+            aria-label="Apps"
           >
-            <Grid3X3 className="icon-button__icon" />
-          </div>
+            <span className="dock-item__icon">
+              <Grid size={22} />
+            </span>
+            <span className="dock-item__label">Apps</span>
+          </button>
+        )}
 
-          {/* Right icons */}
-          <div
-            role="button"
-            aria-label="Start punch"
-            className={
-              "icon-button" +
-              (activeTab === "startPunch" ? " icon-button--active" : "")
-            }
-            onClick={() => onTabChange("startPunch")}
-          >
-            <Hammer className="icon-button__icon" />
-          </div>
-
-          <div
-            role="button"
-            aria-label="Chat"
-            className={
-              "icon-button" +
-              (activeTab === "chat" ? " icon-button--active" : "")
-            }
-            onClick={() => onTabChange("chat")}
-          >
-            <MessageCircle className="icon-button__icon" />
-          </div>
+        <div className="dock-group dock-group--right">
+          {dockTabsRight.map((tab) =>
+            renderDockButton(tab.id, tab.icon, tab.label)
+          )}
         </div>
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 };
 
