@@ -32,10 +32,11 @@ router.post('/open', async (req, res) => {
     type,              // e.g. "FULL_TURN"
     moveOutDate,
     targetReadyDate,
+    createdByUserId,
   } = req.body;
 
-  if (!apartmentId || !type) {
-    return res.status(400).json({ error: 'apartmentId and type are required' });
+  if (!apartmentId || !type || !createdByUserId) {
+    return res.status(400).json({ error: 'apartmentId, createdByUserId and type are required' });
   }
 
   try {
@@ -47,31 +48,15 @@ router.post('/open', async (req, res) => {
       return res.status(404).json({ error: 'Apartment not found' });
     }
 
-    if (apartment.turnStatus !== 'NONE' && apartment.turnStatus !== 'READY') {
-      return res.status(400).json({ error: 'Apartment already in a turn state' });
-    }
-
-    const turn = await prisma.$transaction(async (tx) => {
-      const newTurn = await tx.turn.create({
-        data: {
-          apartmentId,
-          type,
-          status: 'NOT_STARTED',
-          moveOutDate: moveOutDate ? new Date(moveOutDate) : undefined,
-          targetReadyDate: targetReadyDate ? new Date(targetReadyDate) : undefined,
-        },
-      });
-
-      await tx.apartment.update({
-        where: { id: apartmentId },
-        data: {
-          turnStatus: 'IN_PROGRESS',
-          canShow: false,
-          canLease: false,
-        },
-      });
-
-      return newTurn;
+    const turn = await prisma.turn.create({
+      data: {
+        apartmentId,
+        createdByUserId,
+        type,
+        status: 'NOT_STARTED',
+        moveOutDate: moveOutDate ? new Date(moveOutDate) : undefined,
+        targetReadyDate: targetReadyDate ? new Date(targetReadyDate) : undefined,
+      },
     });
 
     res.status(201).json(turn);
