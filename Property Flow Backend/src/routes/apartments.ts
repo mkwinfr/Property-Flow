@@ -53,20 +53,6 @@ const getApartmentById = async (id: number) =>
     ...buildApartmentQuery(),
   });
 
-// GET /api/apartments
-router.get('/', async (_req, res) => {
-  try {
-    const apartments = await prisma.apartment.findMany({
-      orderBy: [{ building: 'asc' }, { unitNumber: 'asc' }],
-    });
-
-    return res.json(apartments);
-  } catch (error) {
-    console.error('Error fetching apartments list', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // GET /api/apartments/:id
 router.get('/:id', async (req, res) => {
   try {
