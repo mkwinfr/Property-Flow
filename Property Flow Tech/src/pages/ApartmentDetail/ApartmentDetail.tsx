@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { MemoryRouter, useInRouterContext, useLocation, useParams } from "react-router-dom";
 import "./ApartmentDetail.css";
 
 type Apartment = {
@@ -24,9 +24,19 @@ const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
   return [];
 };
 
-export default function ApartmentDetailPage() {
-  const navigate = useNavigate();
-  const [apartments, setApartments] = useState<Apartment[]>([]);
+function ApartmentDetailPageContent() {
+  const { id: routeId } = useParams<{ id: string }>();
+  const location = useLocation();
+  const state =
+    (location.state as { apartmentId?: string; id?: string } | undefined) ??
+    undefined;
+  const searchParams = new URLSearchParams(location.search || window.location.search);
+  const searchId = searchParams.get("id");
+  const apartmentId = routeId ?? state?.apartmentId ?? state?.id ?? searchId ?? null;
+
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+  const [punchItems, setPunchItems] = useState<PunchItem[]>([]);
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildingFilter, setBuildingFilter] = useState<string>("all");
@@ -45,10 +55,10 @@ export default function ApartmentDetailPage() {
           throw new Error(`Request failed with status ${response.status}`);
         }
 
-        const data = (await response.json()) as ApartmentsResponse;
+        const data = (await response.json()) as Apartment[];
         if (cancelled) return;
 
-        setApartments(normalizeApartments(data));
+        setApartments(Array.isArray(data) ? data : []);
       } catch (err: unknown) {
         if (cancelled) return;
         const message = err instanceof Error ? err.message : "Failed to load apartments.";
@@ -213,4 +223,18 @@ export default function ApartmentDetailPage() {
       </div>
     </div>
   );
+}
+
+export default function ApartmentDetailPage() {
+  const inRouter = useInRouterContext();
+
+  if (!inRouter) {
+    return (
+      <MemoryRouter>
+        <ApartmentDetailPageContent />
+      </MemoryRouter>
+    );
+  }
+
+  return <ApartmentDetailPageContent />;
 }
