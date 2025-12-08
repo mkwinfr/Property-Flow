@@ -9,6 +9,7 @@ import morgan from "morgan";
 //import turnRoutes from "./routes/turns";
 //import vendorRoutes from "./routes/vendors";
 import apartmentRoutes from "./routes/apartments";   // ⭐ ADD THIS LINE
+import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(morgan("dev"));
 
 // ⭐ NEW APARTMENT DETAIL ROUTE
 app.use("/api/apartments", apartmentRoutes);
+app.use("/api/make-ready-board", makeReadyBoardRoutes);
 
 // Health check
 app.get("/", (req, res) => {
