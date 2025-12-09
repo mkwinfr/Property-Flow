@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
-import "./MakeReadyBoard.css";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const API_URL = `${API_BASE}/api/make-ready-board`;
@@ -176,15 +175,15 @@ const MakeReadyCard: React.FC<CardProps> = ({ item }) => {
         </div>
       </div>
 
-      <div className="make-ready-meta-grid">
-        <div className="make-ready-meta">
-          <span className="make-ready-meta-label">Tech</span>
-          <span className="make-ready-meta-value">{item.techName || "Unassigned"}</span>
+        <div className="make-ready-meta-grid">
+          <div className="make-ready-meta">
+          <span className="make-ready-meta-label pf-meta-label">Tech</span>
+          <span className="make-ready-meta-value pf-meta-value">{item.techName || "Unassigned"}</span>
         </div>
 
         <div className="make-ready-meta">
-          <span className="make-ready-meta-label">Due</span>
-          <span className="make-ready-meta-value">
+          <span className="make-ready-meta-label pf-meta-label">Due</span>
+          <span className="make-ready-meta-value pf-meta-value">
             {item.dueDate
               ? new Date(item.dueDate).toLocaleDateString()
               : "No due date"}
@@ -192,8 +191,8 @@ const MakeReadyCard: React.FC<CardProps> = ({ item }) => {
         </div>
 
         <div className="make-ready-meta make-ready-meta-notes">
-          <span className="make-ready-meta-label">Notes</span>
-          <span className="make-ready-meta-value">
+          <span className="make-ready-meta-label pf-meta-label">Notes</span>
+          <span className="make-ready-meta-value pf-meta-value">
             {item.notes || item.turnType || "No notes"}
           </span>
         </div>

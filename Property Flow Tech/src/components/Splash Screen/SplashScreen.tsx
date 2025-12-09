@@ -1,5 +1,4 @@
 import React from "react";
-import "./SplashScreen.css";
 
 const SplashScreen: React.FC = () => {
   return (

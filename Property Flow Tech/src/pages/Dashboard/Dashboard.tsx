@@ -6,7 +6,6 @@ import MakeReadyBoard from "../MakeReadyBoard/MakeReadyBoard.tsx";
 import ApartmentDetailPage from "../../pages/ApartmentDetail/ApartmentDetail";
 
 import StartPunch from "../StartPunch/StartPunch";
-import "./Dashboard.css";
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DockTabId>("home");
@@ -37,8 +36,8 @@ const Dashboard: React.FC = () => {
     case "chat":
       return (
         <div className="dashboard-section">
-          <h1 className="dashboard-title">Chat</h1>
-          <p className="dashboard-subtitle">
+          <h1 className="dashboard-title pf-page-title">Chat</h1>
+          <p className="dashboard-subtitle pf-page-subtitle">
             Messaging and collaboration workspace coming soon.
           </p>
           <div className="dashboard-placeholder">
@@ -55,8 +54,8 @@ const Dashboard: React.FC = () => {
     default:
       return (
         <div className="dashboard-section">
-          <h1 className="dashboard-title">Dashboard</h1>
-          <p className="dashboard-subtitle">
+          <h1 className="dashboard-title pf-page-title">Dashboard</h1>
+          <p className="dashboard-subtitle pf-page-subtitle">
             At-a-glance view of your property operations.
           </p>
           <div className="dashboard-placeholder">
@@ -70,7 +69,7 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    <div className="dashboard-root">
+    <div className="dashboard-root pf-page">
       <div key={activeTab} className="dashboard-content tab-transition">
         {renderTab()}
       </div>

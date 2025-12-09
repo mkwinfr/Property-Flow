@@ -7,7 +7,6 @@ import {
   Building2,
   Grid,
 } from "lucide-react";
-import "./Dock.css";
 
 export type DockTabId =
   | "home"
