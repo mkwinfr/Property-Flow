@@ -170,19 +170,19 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 12px;
-  color: #9ca8b8;
+  color: var(--pf-muted);
   margin: 0;
 }
 
 .card-title {
   margin: 6px 0 2px;
   font-size: 22px;
-  color: #f7fbff;
+  color: var(--pf-ivory);
 }
 
 .card-subtitle {
   margin: 0;
-  color: #b6c2d3;
+  color: var(--pf-muted-strong);
   font-size: 14px;
 }
 
@@ -278,7 +278,7 @@
   padding: 24px;
   height: 100%;
   box-sizing: border-box;
-  color: #e5e9f0;
+  color: var(--pf-cream);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -292,13 +292,13 @@
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #f9fafb;
+  color: var(--pf-ivory);
   margin: 0;
 }
 
 .make-ready-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--pf-muted);
   margin: 0;
 }
 
@@ -308,9 +308,9 @@
   gap: 8px;
   padding: 8px 12px;
   border-radius: 12px;
-  background: rgba(127, 29, 29, 0.45);
-  border: 1px solid rgba(248, 113, 113, 0.6);
-  color: #fee2e2;
+  background: rgba(229, 108, 116, 0.2);
+  border: 1px solid rgba(229, 108, 116, 0.6);
+  color: #ffe5e8;
   font-size: 12px;
 }
 
@@ -322,7 +322,7 @@
 
 .make-ready-error-url {
   font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  color: #fecaca;
+  color: #ffe5ea;
 }
 
 .make-ready-loading {
@@ -330,7 +330,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #9ca3af;
+  color: var(--pf-muted);
   font-size: 13px;
   padding: 24px 0;
 }
@@ -342,11 +342,12 @@
 
 .make-ready-empty {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--pf-muted);
   padding: 16px;
   border-radius: 12px;
-  border: 1px dashed #475569;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
   text-align: center;
+  background: rgba(35, 46, 92, 0.6);
 }
 
 .make-ready-list {
@@ -368,7 +369,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: #94a3b8;
+  color: var(--pf-muted);
 }
 
 .make-ready-unit-label {
@@ -384,8 +385,8 @@
 .make-ready-unit-number {
   padding: 4px 10px;
   border-radius: 999px;
-  background: #f9fafb;
-  color: #020617;
+  background: #f6f7fb;
+  color: #121734;
   font-size: 12px;
   font-weight: 600;
 }
@@ -393,9 +394,9 @@
 .make-ready-unit-building {
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid #475569;
-  background: #020617;
-  color: #e5e9f0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #121734;
+  color: var(--pf-cream);
   font-size: 11px;
 }
 
@@ -410,7 +411,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   font-size: 11px;
-  color: #e5e9f0;
+  color: var(--pf-cream);
 }
 
 @media (min-width: 768px) {
