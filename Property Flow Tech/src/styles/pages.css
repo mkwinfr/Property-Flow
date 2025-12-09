@@ -2,7 +2,7 @@
 .page-root {
   min-height: 100vh;
   padding: 1.25rem 1.25rem 6rem;
-  color: #e5e7eb;
+  color: var(--pf-cream);
 }
 
 .page-header {
@@ -17,7 +17,7 @@
 
 .page-subtitle {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--pf-muted);
 }
 
 .page-body {
@@ -30,17 +30,17 @@
   margin-top: 0.5rem;
   padding: 1rem;
   border-radius: 1rem;
-  border: 1px dashed rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.85);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(35, 46, 92, 0.75);
   font-size: 0.85rem;
-  color: #cbd5f5;
+  color: var(--pf-ivory);
 }
 
 /* === Apartment Detail Page === */
 .apartments-page {
   min-height: 100vh;
-  background: #050814;
-  color: #e5e9f0;
+  background: var(--pf-navy-900);
+  color: var(--pf-cream);
   padding: 32px 16px 64px;
 }
 
@@ -53,11 +53,13 @@
 }
 
 .apartments-header {
-  background: linear-gradient(135deg, #0d101b, #0b0f1a);
-  border: 1px solid #1f2833;
+  background: linear-gradient(135deg, var(--pf-navy-800), var(--pf-navy-900));
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 18px;
   padding: 20px 22px;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -67,7 +69,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 12px;
-  color: #9ca8b8;
+  color: var(--pf-muted);
   margin: 0;
 }
 
@@ -75,12 +77,12 @@
   margin: 6px 0 4px;
   font-size: 28px;
   font-weight: 700;
-  color: #f7fbff;
+  color: var(--pf-ivory);
 }
 
 .apartments-subtitle {
   margin: 0;
-  color: #b6c2d3;
+  color: var(--pf-muted-strong);
   font-size: 14px;
 }
 
@@ -95,11 +97,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
-  background: #0d101b;
-  border: 1px solid #1f2833;
+  background: var(--pf-navy-800);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 12px 14px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .control-group {
@@ -107,47 +111,47 @@
   flex-direction: column;
   gap: 8px;
   font-size: 14px;
-  color: #c7d3e3;
+  color: var(--pf-ivory);
 }
 
 .control-group span {
-  color: #9ca8b8;
+  color: var(--pf-muted);
   letter-spacing: 0.01em;
 }
 
 .control-group select,
 .control-group input {
-  background: #0b1018;
-  border: 1px solid #1a2230;
+  background: var(--pf-navy-700);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 10px 12px;
-  color: #f7fbff;
+  color: var(--pf-ivory);
   font-size: 14px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .control-group input::placeholder {
-  color: #7f8ba0;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .apartments-state {
   padding: 14px 16px;
-  background: #0d101b;
-  border: 1px solid #1f2833;
+  background: var(--pf-navy-800);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
-  color: #c7d3e3;
+  color: var(--pf-ivory);
 }
 
 .apartments-state.error {
-  color: #f8d7da;
-  background: #2a1216;
-  border-color: #5f1a1f;
+  color: #ffe5e8;
+  background: rgba(229, 108, 116, 0.18);
+  border-color: rgba(229, 108, 116, 0.5);
 }
 
 .apartments-state.muted {
   text-align: center;
-  color: #9ca8b8;
+  color: var(--pf-muted);
 }
 
 .apartments-list {
@@ -210,7 +214,7 @@
 }
 
 .dashboard-section {
-  color: #e5e7eb;
+  color: var(--pf-cream);
 }
 
 .dashboard-title {
@@ -221,7 +225,7 @@
 
 .dashboard-subtitle {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--pf-muted);
   margin-bottom: 1rem;
 }
 
@@ -234,19 +238,21 @@
 .dashboard-card {
   border-radius: 1rem;
   padding: 0.9rem;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+  background: rgba(35, 46, 92, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .dashboard-placeholder {
   margin-top: 1rem;
   padding: 1rem;
   border-radius: 1rem;
-  border: 1px dashed rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.85);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: rgba(35, 46, 92, 0.82);
   font-size: 0.85rem;
-  color: #cbd5f5;
+  color: var(--pf-ivory);
 }
 
 .tab-transition {

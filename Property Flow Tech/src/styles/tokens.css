@@ -1,4 +1,18 @@
 :root {
-  --bg: #0b0f18;
-  --text: #e6eaf2;
+  --pf-navy-950: #121734;
+  --pf-navy-900: #1b2347;
+  --pf-navy-800: #232e5c;
+  --pf-navy-700: #2e3760;
+  --pf-navy-600: #3a436f;
+  --pf-ink: #0a0f24;
+  --pf-cream: #f6f7fb;
+  --pf-ivory: #eceff8;
+  --pf-muted: #9fa8c6;
+  --pf-muted-strong: #c9d1ea;
+  --pf-coral: #e56c74;
+  --pf-coral-bright: #ff9aa6;
+  --pf-sky: #9ab5ff;
+
+  --bg: var(--pf-navy-900);
+  --text: var(--pf-cream);
 }
