@@ -1,0 +1,26 @@
+[
+  {
+    "file": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\typography.css",
+    "output": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\clean\\typography.css",
+    "removedSelectorsCount": 0,
+    "removedSelectors": []
+  },
+  {
+    "file": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\theme.css",
+    "output": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\clean\\theme.css",
+    "removedSelectorsCount": 0,
+    "removedSelectors": []
+  },
+  {
+    "file": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\layout.css",
+    "output": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\clean\\layout.css",
+    "removedSelectorsCount": 0,
+    "removedSelectors": []
+  },
+  {
+    "file": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\animations.css",
+    "output": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech\\src\\styles\\clean\\animations.css",
+    "removedSelectorsCount": 0,
+    "removedSelectors": []
+  }
+]

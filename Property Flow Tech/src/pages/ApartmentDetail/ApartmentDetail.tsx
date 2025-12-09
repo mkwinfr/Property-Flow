@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MemoryRouter, useInRouterContext, useLocation, useParams } from "react-router-dom";
+import { MemoryRouter, useInRouterContext, useNavigate } from "react-router-dom";
 
 type Apartment = {
   id: number | string;
@@ -24,18 +24,9 @@ const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
 };
 
 function ApartmentDetailPageContent() {
-  const { id: routeId } = useParams<{ id: string }>();
-  const location = useLocation();
-  const state =
-    (location.state as { apartmentId?: string; id?: string } | undefined) ??
-    undefined;
-  const searchParams = new URLSearchParams(location.search || window.location.search);
-  const searchId = searchParams.get("id");
-  const apartmentId = routeId ?? state?.apartmentId ?? state?.id ?? searchId ?? null;
+  const navigate = useNavigate();
 
-  const [apartment, setApartment] = useState<Apartment | null>(null);
-  const [punchItems, setPunchItems] = useState<PunchItem[]>([]);
-  const [notes, setNotes] = useState("");
+  const [apartments, setApartments] = useState<Apartment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildingFilter, setBuildingFilter] = useState<string>("all");
@@ -54,10 +45,10 @@ function ApartmentDetailPageContent() {
           throw new Error(`Request failed with status ${response.status}`);
         }
 
-        const data = (await response.json()) as Apartment[];
+        const payload = (await response.json()) as ApartmentsResponse;
         if (cancelled) return;
 
-        setApartments(Array.isArray(data) ? data : []);
+        setApartments(normalizeApartments(payload));
       } catch (err: unknown) {
         if (cancelled) return;
         const message = err instanceof Error ? err.message : "Failed to load apartments.";
