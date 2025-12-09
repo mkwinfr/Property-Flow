@@ -1,6 +1,5 @@
 
 import React from "react";
-import "./AppDrawer.css";
 import { Boxes, Users, Camera, Settings } from "lucide-react";
 
 interface AppDrawerProps {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import "./App.css";
 import SplashScreen from "./components/Splash Screen/SplashScreen";
 import Dashboard from "./pages/Dashboard/Dashboard";
 

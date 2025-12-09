@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { MemoryRouter, useInRouterContext, useLocation, useParams } from "react-router-dom";
-import "./ApartmentDetail.css";
 
 type Apartment = {
   id: number | string;
@@ -108,24 +107,24 @@ function ApartmentDetailPageContent() {
   };
 
   return (
-    <div className="apartments-page">
+    <div className="apartments-page pf-page">
       <div className="apartments-container">
         <header className="apartments-header">
           <div>
             <p className="apartments-kicker">Apartments</p>
-            <h1 className="apartments-title">Unit Directory</h1>
-            <p className="apartments-subtitle">
+            <h1 className="apartments-title pf-page-title">Unit Directory</h1>
+            <p className="apartments-subtitle pf-page-subtitle">
               Browse every unit, filter by building, or search by number.
             </p>
           </div>
           <div className="apartments-meta">
             <div>
-              <p className="meta-label">Total units</p>
-              <strong className="meta-value">{apartments.length}</strong>
+              <p className="meta-label pf-meta-label">Total units</p>
+              <strong className="meta-value pf-meta-value">{apartments.length}</strong>
             </div>
             <div>
-              <p className="meta-label">Showing</p>
-              <strong className="meta-value">{filteredApartments.length}</strong>
+              <p className="meta-label pf-meta-label">Showing</p>
+              <strong className="meta-value pf-meta-value">{filteredApartments.length}</strong>
             </div>
           </div>
         </header>
@@ -170,7 +169,7 @@ function ApartmentDetailPageContent() {
               filteredApartments.map((apartment) => (
                 <article
                   key={apartment.id}
-                  className="apartment-card"
+                  className="apartment-card pf-card"
                   onClick={() => handleOpenDetail(apartment.id)}
                   role="button"
                   tabIndex={0}
@@ -181,29 +180,31 @@ function ApartmentDetailPageContent() {
                     }
                   }}
                 >
-                  <div className="card-top">
-                    <div>
-                      <p className="card-kicker">Unit</p>
-                      <h2 className="card-title">{apartment.unitNumber ?? "—"}</h2>
-                      {apartment.building && <p className="card-subtitle">{apartment.building}</p>}
+                    <div className="card-top">
+                      <div>
+                        <p className="card-kicker">Unit</p>
+                        <h2 className="card-title">{apartment.unitNumber ?? "—"}</h2>
+                        {apartment.building && <p className="card-subtitle">{apartment.building}</p>}
+                      </div>
+                    {apartment.status && (
+                      <span className="status-pill pf-pill pf-pill-success">{apartment.status}</span>
+                    )}
                     </div>
-                    {apartment.status && <span className="status-pill">{apartment.status}</span>}
-                  </div>
 
-                  <div className="card-grid">
-                    <div>
-                      <p className="meta-label">Beds</p>
-                      <p className="meta-value">{apartment.beds ?? "—"}</p>
+                    <div className="card-grid">
+                      <div>
+                        <p className="meta-label pf-meta-label">Beds</p>
+                        <p className="meta-value pf-meta-value">{apartment.beds ?? "—"}</p>
+                      </div>
+                      <div>
+                        <p className="meta-label pf-meta-label">Baths</p>
+                        <p className="meta-value pf-meta-value">{apartment.baths ?? "—"}</p>
+                      </div>
+                      <div>
+                        <p className="meta-label pf-meta-label">Building</p>
+                        <p className="meta-value pf-meta-value">{apartment.building ?? "—"}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="meta-label">Baths</p>
-                      <p className="meta-value">{apartment.baths ?? "—"}</p>
-                    </div>
-                    <div>
-                      <p className="meta-label">Building</p>
-                      <p className="meta-value">{apartment.building ?? "—"}</p>
-                    </div>
-                  </div>
 
                   <button
                     className="card-action"
