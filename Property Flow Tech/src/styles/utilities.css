@@ -80,7 +80,7 @@
 /* === Meta text utilities === */
 .pf-meta-label {
   margin: 0;
-  font-size: 10px;
+  font-size: clamp(9px, 2vw, 11px);
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--pf-muted);
@@ -90,5 +90,5 @@
   margin-top: 4px;
   color: var(--pf-text-primary, var(--pf-cream));
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: clamp(12px, 2.6vw, 14px);
 }

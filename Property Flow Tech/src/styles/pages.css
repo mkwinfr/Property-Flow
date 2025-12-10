@@ -49,20 +49,20 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(14px, 2vw, 22px);
 }
 
 .apartments-header {
   background: linear-gradient(135deg, var(--pf-navy-800), var(--pf-navy-900));
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 18px;
-  padding: 20px 22px;
+  border-radius: 16px;
+  padding: clamp(14px, 2vw, 20px) clamp(16px, 2.2vw, 22px);
   box-shadow:
     0 14px 35px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: clamp(10px, 1.6vw, 16px);
   text-align: center;
   align-items: center;
 }
@@ -78,7 +78,7 @@
 
 .apartments-title {
   margin: 6px 0 4px;
-  font-size: 28px;
+  font-size: clamp(20px, 3.4vw, 28px);
   font-weight: 700;
   color: var(--pf-ivory);
 }
@@ -86,13 +86,14 @@
 .apartments-subtitle {
   margin: 0;
   color: var(--pf-muted-strong);
-  font-size: 14px;
+  font-size: clamp(11px, 2.4vw, 14px);
+  line-height: 1.3;
 }
 
 .apartments-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(140px, 1fr));
-  gap: 12px;
+  gap: clamp(8px, 1.4vw, 14px);
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -104,12 +105,12 @@
 
 .apartments-controls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(10px, 1.6vw, 14px);
   background: var(--pf-navy-800);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: clamp(10px, 1.8vw, 14px) clamp(12px, 2vw, 16px);
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
@@ -152,7 +153,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 14px;
+  font-size: clamp(12px, 2.4vw, 14px);
   color: var(--pf-ivory);
 }
 
@@ -166,9 +167,9 @@
   background: var(--pf-navy-700);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: clamp(9px, 1.8vw, 12px) clamp(10px, 2vw, 14px);
   color: var(--pf-ivory);
-  font-size: 14px;
+  font-size: clamp(12px, 2.6vw, 14px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -197,42 +198,44 @@
 }
 
 .apartments-list {
+  --apartment-card-size: clamp(120px, 22vw, 240px);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 18px);
   align-items: stretch;
-}
-
-@media (min-width: 1100px) {
-  .apartments-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+  justify-items: center;
 }
 
 .card-top {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .card-kicker {
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 12px;
+  font-size: clamp(9px, 1.6vw, 11px);
   color: var(--pf-muted);
   margin: 0;
 }
 
 .card-title {
   margin: 6px 0 2px;
-  font-size: 22px;
+  font-size: clamp(13px, 3vw, 18px);
   color: var(--pf-ivory);
+  line-height: 1.08;
+  word-break: break-word;
 }
 
 .card-subtitle {
   margin: 0;
   color: var(--pf-muted-strong);
-  font-size: 14px;
+  font-size: clamp(10px, 2.4vw, 13px);
+  line-height: 1.25;
+  word-break: break-word;
 }
 
 @media (max-width: 780px) {
