@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Home,
-  ClipboardList,
-  Wrench,
-  MessageCircle,
-  Building2,
-  Grid,
-} from "lucide-react";
+import { Home, ClipboardList, Wrench, MessageCircle, Building2, Scan } from "lucide-react";
 
 export type DockTabId =
   | "home"
@@ -27,16 +20,16 @@ const leftTabs: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { id: "home", label: "Home", icon: <Home size={24} /> },
+  { id: "home", label: "Home", icon: <Home size={26} /> },
   {
     id: "apartmentDetail",
     label: "Apartment Detail",
-    icon: <Building2 size={24} />,
+    icon: <Building2 size={26} />,
   },
   {
     id: "makeReady",
     label: "Make Ready",
-    icon: <ClipboardList size={24} />,
+    icon: <ClipboardList size={26} />,
   },
 ];
 
@@ -49,12 +42,12 @@ const rightTabs: {
   {
     id: "chat",
     label: "Chat",
-    icon: <MessageCircle size={24} />,
+    icon: <MessageCircle size={26} />,
   },
   {
     id: "startPunch",
     label: "Work Orders",
-    icon: <Wrench size={24} />,
+    icon: <Wrench size={26} />,
   },
 ];
 
@@ -105,7 +98,7 @@ const Dock: React.FC<DockProps> = ({
             aria-label="App drawer"
           >
             <span className="dock-item__icon dock-item__icon--apps">
-              <Grid size={25} />
+              <Scan size={26} />
             </span>
             <span className="dock-item__label">Apps</span>
           </button>

@@ -1,9 +1,9 @@
 :root {
-  --pf-navy-950: #121734;
-  --pf-navy-900: #1b2347;
-  --pf-navy-800: #232e5c;
-  --pf-navy-700: #2e3760;
-  --pf-navy-600: #3a436f;
+  --pf-navy-950: #1e1f25;
+  --pf-navy-900: #1e1f25;
+  --pf-navy-800: #272830;
+  --pf-navy-700: #2f3037;
+  --pf-navy-600: #3a3b44;
   --pf-ink: #0a0f24;
   --pf-cream: #f6f7fb;
   --pf-ivory: #eceff8;
@@ -13,6 +13,6 @@
   --pf-coral-bright: #ff9aa6;
   --pf-sky: #9ab5ff;
 
-  --bg: var(--pf-navy-900);
+  --bg: #121416;
   --text: var(--pf-cream);
 }

@@ -31,7 +31,7 @@
   padding: 1rem;
   border-radius: 1rem;
   border: 1px dashed rgba(255, 255, 255, 0.12);
-  background: rgba(35, 46, 92, 0.75);
+  background: #1e1f25;
   font-size: 0.85rem;
   color: var(--pf-ivory);
 }
@@ -39,7 +39,7 @@
 /* === Apartment Detail Page === */
 .apartments-page {
   min-height: 100vh;
-  background: var(--pf-navy-900);
+  background: var(--bg);
   color: var(--pf-cream);
   padding: 32px 16px 64px;
 }
@@ -53,13 +53,13 @@
 }
 
 .apartments-header {
-  background: linear-gradient(135deg, var(--pf-navy-800), var(--pf-navy-900));
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: clamp(14px, 2vw, 20px) clamp(16px, 2.2vw, 22px);
   box-shadow:
-    0 14px 35px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.02);
+    0 14px 35px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
   display: flex;
   flex-direction: column;
   gap: clamp(10px, 1.6vw, 16px);
@@ -81,6 +81,8 @@
   font-size: clamp(20px, 3.4vw, 28px);
   font-weight: 700;
   color: var(--pf-ivory);
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .apartments-subtitle {
@@ -88,6 +90,7 @@
   color: var(--pf-muted-strong);
   font-size: clamp(11px, 2.4vw, 14px);
   line-height: 1.3;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .apartments-meta {
@@ -107,12 +110,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: clamp(10px, 1.6vw, 14px);
-  background: var(--pf-navy-800);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #272830;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: clamp(10px, 1.8vw, 14px) clamp(12px, 2vw, 16px);
   box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.45),
+    0 10px 24px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
@@ -134,14 +137,17 @@
   justify-content: space-between;
   padding: 10px 14px;
   border-radius: 12px;
-  background: rgba(35, 46, 92, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--pf-ivory);
 }
 
 .apartment-group-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .apartment-group-header span {
@@ -164,8 +170,8 @@
 
 .control-group select,
 .control-group input {
-  background: var(--pf-navy-700);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #2c2d35;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: clamp(9px, 1.8vw, 12px) clamp(10px, 2vw, 14px);
   color: var(--pf-ivory);
@@ -179,10 +185,10 @@
 
 .apartments-state {
   padding: 14px 16px;
-  background: var(--pf-navy-800);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   color: var(--pf-ivory);
 }
 
@@ -224,10 +230,12 @@
 
 .card-title {
   margin: 6px 0 2px;
-  font-size: clamp(13px, 3vw, 18px);
+  font-size: clamp(16px, 3vw, 18px);
   color: var(--pf-ivory);
-  line-height: 1.08;
+  line-height: 1.12;
   word-break: break-word;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
 }
 
 .card-subtitle {
@@ -236,6 +244,8 @@
   font-size: clamp(10px, 2.4vw, 13px);
   line-height: 1.25;
   word-break: break-word;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 500;
 }
 
 @media (max-width: 780px) {
@@ -271,14 +281,17 @@
 
 .dashboard-title {
   font-size: 1.4rem;
-  font-weight: 600;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin-bottom: 0.25rem;
 }
 
 .dashboard-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--pf-muted);
   margin-bottom: 1rem;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .dashboard-card-grid {
@@ -290,11 +303,11 @@
 .dashboard-card {
   border-radius: 1rem;
   padding: 0.9rem;
-  background: rgba(35, 46, 92, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.02);
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .dashboard-placeholder {
@@ -302,7 +315,7 @@
   padding: 1rem;
   border-radius: 1rem;
   border: 1px dashed rgba(255, 255, 255, 0.14);
-  background: rgba(35, 46, 92, 0.82);
+  background: #1e1f25;
   font-size: 0.85rem;
   color: var(--pf-ivory);
 }
@@ -331,7 +344,7 @@
   height: 100%;
   box-sizing: border-box;
   color: var(--pf-cream);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .make-ready-header {
@@ -342,6 +355,7 @@
 
 .make-ready-title {
   font-size: 20px;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--pf-ivory);
@@ -352,6 +366,7 @@
   font-size: 12px;
   color: var(--pf-muted);
   margin: 0;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .make-ready-error {
@@ -399,7 +414,7 @@
   border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.16);
   text-align: center;
-  background: rgba(35, 46, 92, 0.6);
+  background: #1e1f25;
 }
 
 .make-ready-list {
@@ -447,7 +462,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: #121734;
+  background: #1e1f25;
   color: var(--pf-cream);
   font-size: 11px;
 }
