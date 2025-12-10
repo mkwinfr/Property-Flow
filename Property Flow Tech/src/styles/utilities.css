@@ -2,8 +2,8 @@
 .pf-page {
   min-height: 100vh;
   padding: 1.25rem 1.25rem 6rem;
-  color: var(--pf-text-primary, var(--text, #e5e7eb));
-  background: #050814;
+  color: var(--pf-text-primary, var(--pf-cream));
+  background: var(--pf-navy-900);
 }
 
 .pf-page-header {
@@ -18,7 +18,7 @@
 
 .pf-page-subtitle {
   font-size: 0.85rem;
-  color: var(--pf-text-muted, #9ca3af);
+  color: var(--pf-text-muted, var(--pf-muted));
 }
 
 .pf-page-body {
@@ -31,9 +31,9 @@
 .pf-card {
   border-radius: var(--pf-radius-card, 1rem);
   padding: 0.9rem;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid var(--pf-border-strong, rgba(148, 163, 184, 0.35));
-  box-shadow: var(--pf-shadow-soft, 0 16px 40px rgba(0, 0, 0, 0.65));
+  background: rgba(35, 46, 92, 0.9);
+  border: 1px solid var(--pf-border-strong, rgba(255, 255, 255, 0.08));
+  box-shadow: var(--pf-shadow-soft, 0 16px 40px rgba(0, 0, 0, 0.6));
 }
 
 .pf-card-grid-2 {
@@ -60,9 +60,9 @@
 }
 
 .pf-pill-success {
-  background: rgba(16, 185, 129, 0.3);
-  border: 1px solid rgba(52, 211, 153, 0.85);
-  color: #d1fae5;
+  background: rgba(229, 108, 116, 0.2);
+  border: 1px solid rgba(229, 108, 116, 0.6);
+  color: #ffe5ea;
 }
 
 .pf-pill-warning {
@@ -83,12 +83,12 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: #64748b;
+  color: var(--pf-muted);
 }
 
 .pf-meta-value {
   margin-top: 4px;
-  color: var(--pf-text-primary, #e5e7eb);
+  color: var(--pf-text-primary, var(--pf-cream));
   font-weight: 600;
   font-size: 0.875rem;
 }

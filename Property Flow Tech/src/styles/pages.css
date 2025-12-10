@@ -61,16 +61,19 @@
     0 14px 35px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.02);
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  align-items: center;
 }
 
-.apartments-kicker {
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 12px;
-  color: var(--pf-muted);
-  margin: 0;
+.apartments-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .apartments-title {
@@ -88,9 +91,15 @@
 
 .apartments-meta {
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 12px;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.apartments-toolbar {
+  margin-top: 8px;
 }
 
 .apartments-controls {
@@ -104,6 +113,39 @@
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.apartments-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.apartment-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.apartment-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(35, 46, 92, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--pf-ivory);
+}
+
+.apartment-group-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.apartment-group-header span {
+  font-size: 13px;
+  color: var(--pf-muted);
 }
 
 .control-group {
@@ -156,8 +198,15 @@
 
 .apartments-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (min-width: 1100px) {
+  .apartments-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .card-top {

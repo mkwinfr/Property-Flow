@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MemoryRouter, useInRouterContext } from "react-router-dom";
-
+import { MemoryRouter, useInRouterContext, useNavigate } from "react-router-dom";
 
 type Apartment = {
   id: number | string;
@@ -13,27 +12,25 @@ type Apartment = {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
-// Support either a plain array of apartments or an object wrapper
-type ApartmentsResponse = Apartment[] | { apartments: Apartment[] };
+type ApartmentsResponse =
+  | Apartment[]
+  | { apartments?: Apartment[] | null; units?: Apartment[] | null };
 
-function normalizeApartments(data: ApartmentsResponse): Apartment[] {
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (data && Array.isArray((data as any).apartments)) {
-    return (data as any).apartments as Apartment[];
-  }
-
+const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.apartments)) return payload.apartments;
+  if (Array.isArray(payload.units)) return payload.units;
   return [];
-}
+};
 
 function ApartmentDetailPageContent() {
+  const navigate = useNavigate();
+
   const [apartments, setApartments] = useState<Apartment[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildingFilter, setBuildingFilter] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -42,23 +39,21 @@ function ApartmentDetailPageContent() {
       try {
         setLoading(true);
         setError(null);
-
         const response = await fetch(`${API_BASE}/api/apartments`);
 
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
 
-        const raw = (await response.json()) as ApartmentsResponse;
+        const payload = (await response.json()) as ApartmentsResponse;
         if (cancelled) return;
 
-        const normalized = normalizeApartments(raw);
-        setApartments(normalized);
-      } catch (err) {
-        console.error("Failed to load apartments", err);
-        if (!cancelled) {
-          setError("Unable to load apartments.");
-        }
+        setApartments(normalizeApartments(payload));
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const message = err instanceof Error ? err.message : "Failed to load apartments.";
+        setError(message);
+        setApartments([]);
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -75,116 +70,197 @@ function ApartmentDetailPageContent() {
 
   const buildings = useMemo(() => {
     const unique = new Set<string>();
-
-    apartments.forEach((apt) => {
-      if (apt.building && apt.building.trim() !== "") {
-        unique.add(apt.building);
+    apartments.forEach((apartment) => {
+      if (apartment.building && apartment.building.trim() !== "") {
+        unique.add(apartment.building);
       }
     });
-
-    return ["all", ...Array.from(unique)];
+    return Array.from(unique).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   }, [apartments]);
 
-  const filteredApartments = useMemo(
-    () =>
-      apartments.filter((apartment) => {
-        const matchesBuilding =
-          buildingFilter === "all" ||
-          (apartment.building ?? "") === buildingFilter;
+  const filteredApartments = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
 
-        const q = searchTerm.trim().toLowerCase();
-        const matchesSearch =
-          q === "" ||
-          apartment.unitNumber?.toLowerCase().includes(q) ||
-          apartment.building?.toLowerCase().includes(q) ||
-          String(apartment.id).toLowerCase().includes(q);
+    return apartments.filter((apartment) => {
+      const matchesBuilding =
+        buildingFilter === "all" || (apartment.building ?? "").toLowerCase() === buildingFilter;
 
-        return matchesBuilding && matchesSearch;
-      }),
-    [apartments, buildingFilter, searchTerm]
-  );
+      const label = `${apartment.unitNumber ?? ""} ${apartment.building ?? ""}`.toLowerCase();
+      const matchesSearch =
+        search === "" ||
+        label.includes(search) ||
+        String(apartment.id ?? "").toLowerCase().includes(search);
+
+      return matchesBuilding && matchesSearch;
+    });
+  }, [apartments, buildingFilter, searchTerm]);
+
+  const groupedApartments = useMemo(() => {
+    const isFiltered = buildingFilter !== "all";
+    const groups = new Map<string, Apartment[]>();
+
+    filteredApartments.forEach((unit) => {
+      const groupKey =
+        isFiltered && buildingFilter !== "all"
+          ? buildings.find((b) => b.toLowerCase() === buildingFilter) ?? buildingFilter
+          : unit.building ?? "Other";
+
+      if (!groups.has(groupKey)) groups.set(groupKey, []);
+      groups.get(groupKey)!.push(unit);
+    });
+
+    return Array.from(groups.entries())
+      .sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true, sensitivity: "base" }))
+      .map(([label, units]) => ({
+        label,
+        units: [...units].sort((a, b) =>
+          String(a.unitNumber ?? "").localeCompare(String(b.unitNumber ?? ""), undefined, {
+            numeric: true,
+            sensitivity: "base",
+          }),
+        ),
+      }));
+  }, [filteredApartments, buildingFilter, buildings]);
+
+  const handleOpenDetail = (id: number | string) => {
+    navigate(`/apartments/${id}`);
+  };
 
   return (
-    <div className="apartment-detail-page">
-      <div className="apartment-detail-header">
-        <div className="apartment-detail-eyebrow">APARTMENT DETAIL</div>
-        <h1 className="apartment-detail-title">Apartments</h1>
-        <p className="apartment-detail-subtitle">
-          Browse and search all units. Use filters to narrow by building or unit.
-        </p>
-      </div>
+    <div className="apartments-page pf-page">
+      <div className="apartments-container">
+        <header className="apartments-header">
+          <div className="apartments-hero">
+            <h1 className="apartments-title pf-page-title">Apartment Index</h1>
+            <p className="apartments-subtitle pf-page-subtitle">
+              Browse every unit, filter by building, or search by number.
+            </p>
+          </div>
+          <div className="apartments-meta">
+            <div>
+              <p className="meta-label pf-meta-label">Total units</p>
+              <strong className="meta-value pf-meta-value">{apartments.length}</strong>
+            </div>
+            <div>
+              <p className="meta-label pf-meta-label">Showing</p>
+              <strong className="meta-value pf-meta-value">{filteredApartments.length}</strong>
+            </div>
+          </div>
+        </header>
 
-      <div className="apartment-detail-filters">
-        <select
-          className="apartment-detail-building-select"
-          value={buildingFilter}
-          onChange={(e) => setBuildingFilter(e.target.value)}
-        >
-          {buildings.map((b) => (
-            <option key={b} value={b}>
-              {b === "all" ? "All Buildings" : b}
-            </option>
-          ))}
-        </select>
+        <section className="apartments-toolbar">
+          <div className="apartments-controls">
+            <label className="control-group">
+              <span>Building</span>
+              <select
+                value={buildingFilter}
+                onChange={(event) => setBuildingFilter(event.target.value)}
+                aria-label="Filter apartments by building"
+              >
+                <option value="all">All buildings</option>
+                {buildings.map((building) => (
+                  <option key={building} value={building.toLowerCase()}>
+                    {building}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <input
-          className="apartment-detail-search-input"
-          type="text"
-          placeholder="Search by unit, building, or ID"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+            <label className="control-group search">
+              <span>Search</span>
+              <input
+                type="search"
+                placeholder="Search by unit or building"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                aria-label="Search apartments"
+              />
+            </label>
+          </div>
+        </section>
 
-      <div className="apartment-detail-body">
-        {loading && (
-          <div className="apartment-detail-status">Loading apartments…</div>
-        )}
-
-        {error && !loading && (
-          <div className="apartment-detail-error">{error}</div>
-        )}
+        {loading && <div className="apartments-state">Loading apartments...</div>}
+        {error && !loading && <div className="apartments-state error">{error}</div>}
 
         {!loading && !error && (
-          <div className="apartment-list">
-            {filteredApartments.length === 0 ? (
-              <div className="apartment-detail-empty">
-                No apartments match your filters.
-              </div>
+          <section className="apartments-groups">
+            {groupedApartments.length === 0 ? (
+              <div className="apartments-state muted">No apartments match your filters.</div>
             ) : (
-              filteredApartments.map((apartment) => (
-                <div key={apartment.id} className="apartment-card">
-                  <div className="apartment-card-main">
-                    <div className="apartment-card-unit">
-                      {apartment.unitNumber || `Unit ${apartment.id}`}
-                    </div>
-                    {apartment.building && (
-                      <div className="apartment-card-building">
-                        {apartment.building}
-                      </div>
-                    )}
+              groupedApartments.map((group) => (
+                <div key={group.label} className="apartment-group">
+                  <div className="apartment-group-header">
+                    <h3>{group.label}</h3>
+                    <span>{group.units.length} units</span>
                   </div>
+                  <div className="apartments-list">
+                    {group.units.map((apartment) => (
+                      <article
+                        key={apartment.id}
+                        className="apartment-card pf-card"
+                        onClick={() => handleOpenDetail(apartment.id)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            handleOpenDetail(apartment.id);
+                          }
+                        }}
+                      >
+                        <div className="card-top">
+                          <div>
+                            <p className="card-kicker">Apartment</p>
+                            <h2 className="card-title">
+                              {apartment.unitNumber ? `Apartment ${apartment.unitNumber}` : "Unit"}
+                            </h2>
+                            <p className="card-subtitle">
+                              Building: {apartment.building ?? "N/A"}
+                            </p>
+                          </div>
+                          {apartment.status && (
+                            <span className="status-pill pf-pill pf-pill-success">
+                              {apartment.status}
+                            </span>
+                          )}
+                        </div>
 
-                  <div className="apartment-card-meta">
-                    {(apartment.beds != null || apartment.baths != null) && (
-                      <span className="apartment-card-beds-baths">
-                        {apartment.beds != null ? `${apartment.beds} bd` : ""}
-                        {apartment.beds != null && apartment.baths != null
-                          ? " • "
-                          : ""}
-                        {apartment.baths != null ? `${apartment.baths} ba` : ""}
-                      </span>
-                    )}
-                    {apartment.status && (
-                      <span className="apartment-card-status">
-                        {apartment.status}
-                      </span>
-                    )}
+                        <div className="card-grid">
+                          <div>
+                            <p className="meta-label pf-meta-label">Layout</p>
+                            <p className="meta-value pf-meta-value">
+                              {apartment.beds ?? "N/A"} BD {apartment.baths ?? "N/A"} BA
+                            </p>
+                          </div>
+                          <div>
+                            <p className="meta-label pf-meta-label">Building</p>
+                            <p className="meta-value pf-meta-value">{apartment.building ?? "N/A"}</p>
+                          </div>
+                          <div>
+                            <p className="meta-label pf-meta-label">Status</p>
+                            <p className="meta-value pf-meta-value">
+                              {apartment.status ?? "Pending"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          className="card-action"
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleOpenDetail(apartment.id);
+                          }}
+                        >
+                          View details
+                        </button>
+                      </article>
+                    ))}
                   </div>
                 </div>
               ))
             )}
-          </div>
+          </section>
         )}
       </div>
     </div>

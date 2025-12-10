@@ -27,16 +27,16 @@ const leftTabs: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { id: "home", label: "Home", icon: <Home size={22} /> },
+  { id: "home", label: "Home", icon: <Home size={24} /> },
   {
     id: "apartmentDetail",
     label: "Apartment Detail",
-    icon: <Building2 size={22} />,
+    icon: <Building2 size={24} />,
   },
   {
     id: "makeReady",
     label: "Make Ready",
-    icon: <ClipboardList size={22} />,
+    icon: <ClipboardList size={24} />,
   },
 ];
 
@@ -49,12 +49,12 @@ const rightTabs: {
   {
     id: "chat",
     label: "Chat",
-    icon: <MessageCircle size={22} />,
+    icon: <MessageCircle size={24} />,
   },
   {
     id: "startPunch",
     label: "Work Orders",
-    icon: <Wrench size={22} />,
+    icon: <Wrench size={24} />,
   },
 ];
 
@@ -105,7 +105,7 @@ const Dock: React.FC<DockProps> = ({
             aria-label="App drawer"
           >
             <span className="dock-item__icon dock-item__icon--apps">
-              <Grid size={20} />
+              <Grid size={25} />
             </span>
             <span className="dock-item__label">Apps</span>
           </button>
