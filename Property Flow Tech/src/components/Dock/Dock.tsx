@@ -1,12 +1,13 @@
 import React from "react";
-import { Home, ClipboardList, Wrench, MessageCircle, Building2, Scan } from "lucide-react";
+import { Home, ClipboardList, Wrench, MessageCircle, Building2, Scan, Wand2 } from "lucide-react";
 
 export type DockTabId =
   | "home"
   | "apartmentDetail"
   | "makeReady"
-  | "startPunch"
-  | "chat";
+  | "wizard"
+  | "chat"
+  | "startPunch";
 
 interface DockProps {
   activeTab: DockTabId;
@@ -39,6 +40,11 @@ const rightTabs: {
   label: string;
   icon: React.ReactNode;
 }[] = [
+  {
+    id: "wizard",
+    label: "Wizard",
+    icon: <Wand2 size={26} />,
+  },
   {
     id: "chat",
     label: "Chat",

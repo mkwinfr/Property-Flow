@@ -52,8 +52,85 @@ enum TurnStatus {
 
 /// Type of turn
 enum TurnType {
-  MAKE_READY
+  STANDARD_MOVE_OUT
+  TRANSFER
+  RENOVATION
+  SPECIAL
+}
+
+/// Priority level
+enum PriorityLevel {
+  LOW
+  NORMAL
+  HIGH
+  DOWN_UNIT
+}
+
+/// Overall condition assessment
+enum OverallCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  SEVERE
+}
+
+/// Condition tags found during assessment
+enum ConditionTag {
+  HEAVY_TRASH
+  ODORS
+  PET_DAMAGE
+  PESTS
+  MOLD_MOISTURE
+  SAFETY_ISSUES
+  APPLIANCE_ISSUES
+}
+
+/// Work categories
+enum WorkCategory {
+  GENERAL_MAINTENANCE
+  PAINT
+  CLEANING
+  FLOORING
+  APPLIANCES
+  HVAC
+  PLUMBING
+  ELECTRICAL
+  PEST_CONTROL
+  TRASH_OUT
+  VENDOR_SPECIALTY
   OTHER
+}
+
+/// Task priority
+enum TaskPriority {
+  CRITICAL
+  HIGH
+  NORMAL
+  LOW
+}
+
+/// Billable party
+enum BillableParty {
+  OWNER
+  RESIDENT
+  SHARED
+  OTHER
+}
+
+/// Chargeback type
+enum ChargebackType {
+  NONE
+  PARTIAL
+  FULL
+}
+
+/// Task status
+enum TaskStatusEnum {
+  PENDING
+  IN_PROGRESS
+  DONE
+  CANCELLED
 }
 
 /// Status of a vendor job
@@ -166,17 +243,50 @@ model WorkOrder {
 /// Make-ready turn
 model Turn {
   id              Int        @id @default(autoincrement())
+  propertyId      Int?
+  unitId          Int?
   apartmentId     Int
   createdByUserId Int
 
-  type            TurnType   @default(MAKE_READY)
+  type            TurnType   @default(STANDARD_MOVE_OUT)
   status          TurnStatus @default(NOT_STARTED)
+  priority        PriorityLevel @default(NORMAL)
 
   moveOutDate     DateTime?
   targetReadyDate DateTime?
   actualReadyDate DateTime?
 
+  // Condition assessment
+  overallCondition OverallCondition?
+  wallsCondition   String?
+  flooringCondition String?
+  doorsLocksCondition String?
+  plumbingCondition String?
+  electricalCondition String?
+  appliancesCondition String?
+  cleanlinessCondition String?
+  hasLifeSafetyIssues Boolean @default(false)
+  lifeSafetyNotes String?
+  photoNotes      String?
+
+  // Scope & materials
+  estimatedLaborCost Float?
+  estimatedMaterialsCost Float?
+  totalEstimatedCost Float?
+
+  // Assignment & access
+  turnOwnerId     String?
+  accessInstructions String?
+  alarmCodes      String?
+
+  // Chargeback info
+  chargebackType  ChargebackType @default(NONE)
+  chargebackAmount Float?
+  chargebackReason String?
+
+  // General notes
   notes           String?
+  turnNotes       String?
 
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
@@ -185,13 +295,39 @@ model Turn {
   createdBy       User       @relation(fields: [createdByUserId], references: [id])
 
   tasks           TurnTask[]
+  materials       TurnMaterial[]
+  conditionTags   TurnConditionTag[]
+  workCategories  TurnWorkCategory[]
   workOrders      WorkOrder[]
-
-  // 🔥 REQUIRED opposite relation for Attachment.turn
   attachments     Attachment[]
 
   @@index([apartmentId])
   @@index([status])
+  @@index([priority])
+}
+
+/// Turn condition tags (junction table)
+model TurnConditionTag {
+  id      Int    @id @default(autoincrement())
+  turnId  Int
+  tag     ConditionTag
+
+  turn    Turn   @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@unique([turnId, tag])
+  @@index([turnId])
+}
+
+/// Turn work categories (junction table)
+model TurnWorkCategory {
+  id         Int    @id @default(autoincrement())
+  turnId     Int
+  category   WorkCategory
+
+  turn       Turn   @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@unique([turnId, category])
+  @@index([turnId])
 }
 
 /// Make-ready task
@@ -199,21 +335,60 @@ model TurnTask {
   id               Int        @id @default(autoincrement())
   turnId           Int
   title            String
-  category         String?
-  description      String?
+  category         WorkCategory
+  area             String     @default("WHOLE_UNIT")
+  priority         TaskPriority @default(NORMAL)
 
-  status           TurnStatus @default(NOT_STARTED)
+  status           TaskStatusEnum @default(PENDING)
   assignedToUserId Int?
   sortOrder        Int        @default(0)
+
+  // Effort & timing
+  estimatedEffortValue Float?
+  estimatedEffortUnit String?
+  startDate        DateTime?
+  dueDate          DateTime?
+  mustCompleteBy   DateTime?
+  isAllDay         Boolean    @default(false)
+  startTime        String?
+  endTime          String?
+
+  // Notes & assignments
+  internalNotes    String?
+  vendorNotes      String?
+  budgetedCost     Float?
+  billableTo       BillableParty?
+  assigneeType     String?    // IN_HOUSE, VENDOR
+  vendorId         Int?
+  dependsOnTaskId  Int?
 
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  turn             Turn       @relation(fields: [turnId], references: [id])
+  turn             Turn       @relation(fields: [turnId], references: [id], onDelete: Cascade)
   assignedTo       User?      @relation("TurnTasksAssignedTo", fields: [assignedToUserId], references: [id])
 
   @@index([turnId])
   @@index([status])
+}
+
+/// Make-ready materials
+model TurnMaterial {
+  id              Int      @id @default(autoincrement())
+  turnId          Int
+  item            String
+  category        WorkCategory
+  quantity        Float
+  unit            String
+  costPerUnit     Float?
+  storeOrVendor   String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  turn            Turn     @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@index([turnId])
 }
 
 /// Vendors

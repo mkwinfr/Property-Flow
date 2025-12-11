@@ -1,7 +1,10 @@
-// prisma/seed.ts
-import { PrismaClient, OccupancyStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+// DEPRECATED: This file has been moved to /prisma/seed.ts
+// 
+// This folder structure is no longer used.
+// All seed logic is now in: ../seed.ts
+//
+// To seed the database, run:
+// npm run prisma:seed
 
 async function main() {
   // Create or reuse the Waterford Landings property

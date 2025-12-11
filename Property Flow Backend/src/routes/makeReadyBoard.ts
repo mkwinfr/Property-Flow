@@ -24,6 +24,9 @@ router.get('/', async (_req, res) => {
       },
       include: {
         apartment: true,
+        tasks: {
+          orderBy: { sortOrder: 'asc' },
+        },
       },
       orderBy: {
         targetReadyDate: 'asc',
@@ -34,14 +37,16 @@ router.get('/', async (_req, res) => {
       id: turn.id.toString(),
       unitNumber: turn.apartment.unitNumber,
       building: turn.apartment.building || undefined,
-      status: formatLabel(turn.status) || turn.status,
-      priority: undefined,
-      technician: undefined,
+      status: turn.status,
+      priority: turn.priority,
+      technician: turn.turnOwnerId,
       dueDate: turn.targetReadyDate?.toISOString(),
-      notes: formatLabel(turn.type),
+      notes: turn.turnNotes,
+      taskCount: turn.tasks.length,
+      completedCount: turn.tasks.filter((t) => t.status === 'DONE').length,
     }));
 
-    res.json({ units });
+    res.json({ units, turns });
   } catch (err) {
     console.error('Error fetching make-ready board', err);
     res.status(500).json({ error: 'Server error fetching make-ready board' });

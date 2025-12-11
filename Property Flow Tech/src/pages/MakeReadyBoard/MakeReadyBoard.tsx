@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
+import MakeReadyTurnTechView from "./MakeReadyTurnTechView";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const API_URL = `${API_BASE}/api/make-ready-board`;
@@ -19,7 +20,7 @@ const MakeReadyBoard: React.FC = () => {
   const [items, setItems] = useState<MakeReadyItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [selectedTurnId, setSelectedTurnId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -136,10 +137,26 @@ const MakeReadyBoard: React.FC = () => {
         </div>
       )}
 
-      <div className="make-ready-list">
-        {sortedItems.map((item) => (
-          <MakeReadyCard key={item.id} item={item} />
-        ))}
+      <div className="make-ready-layout">
+        <div className="make-ready-list">
+          {sortedItems.map((item) => (
+            <MakeReadyCard 
+              key={item.id} 
+              item={item}
+              isSelected={selectedTurnId === item.id}
+              onSelect={() => setSelectedTurnId(item.id)}
+            />
+          ))}
+        </div>
+
+        {selectedTurnId && (
+          <div className="make-ready-tech-view-container">
+            <MakeReadyTurnTechView
+              turnId={selectedTurnId}
+              onClose={() => setSelectedTurnId(null)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -147,13 +164,20 @@ const MakeReadyBoard: React.FC = () => {
 
 interface CardProps {
   item: MakeReadyItem;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
-const MakeReadyCard: React.FC<CardProps> = ({ item }) => {
+const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect }) => {
   const statusLabel = STATUS_LABEL[item.status];
 
   return (
-    <div className="make-ready-card">
+    <div 
+      className={`make-ready-card ${isSelected ? 'make-ready-card--selected' : ''}`}
+      onClick={onSelect}
+      role="button"
+      tabIndex={0}
+    >
       <div className="make-ready-card-header">
         <div className="make-ready-unit-block">
           <span className="make-ready-unit-label">Unit</span>

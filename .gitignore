@@ -19,5 +19,6 @@ build/
 .DS_Store
 Thumbs.db
 
-# Batch files
+# Exclude all batch files except Start.bat
 *.bat
+!Start.bat
