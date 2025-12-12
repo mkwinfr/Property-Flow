@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
 import MakeReadyTurnTechView from "./MakeReadyTurnTechView";
@@ -16,91 +16,110 @@ const STATUS_LABEL: Record<MakeReadyStatus, string> = {
   ON_HOLD: "On Hold",
 };
 
-const MakeReadyBoard: React.FC = () => {
+type MakeReadyBoardProps = {
+  selectedTurnId?: string | null;
+  onSelectTurn?: (id: string | null) => void;
+};
+
+const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
+  selectedTurnId,
+  onSelectTurn,
+}) => {
   const [items, setItems] = useState<MakeReadyItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTurnId, setSelectedTurnId] = useState<string | null>(null);
+  const [localSelectedTurnId, setLocalSelectedTurnId] = useState<string | null>(null);
+
+  const isControlled = typeof onSelectTurn === "function";
+  const activeSelection = isControlled ? selectedTurnId ?? null : localSelectedTurnId;
+
+  const handleSelect = useCallback(
+    (id: string | null) => {
+      if (onSelectTurn) {
+        onSelectTurn(id);
+      } else {
+        setLocalSelectedTurnId(id);
+      }
+    },
+    [onSelectTurn]
+  );
 
   useEffect(() => {
-    let cancelled = false;
+    if (isControlled) {
+      setLocalSelectedTurnId(selectedTurnId ?? null);
+    }
+  }, [isControlled, selectedTurnId]);
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const res = await fetch(API_URL);
-        if (!res.ok) {
-          throw new Error(`Request failed: ${res.status}`);
-        }
-
-        const data = await res.json();
-        if (cancelled) return;
-
-        console.log("Make Ready API response:", data);
-
-        const rows = Array.isArray(data)
-          ? data
-          : Array.isArray((data as any).units)
-          ? (data as any).units
-          : [];
-
-        const mapped: MakeReadyItem[] = rows.map((row: any) => {
-          const rawStatus = (row.status as string | undefined) ?? "";
-          const normalizedStatus = rawStatus
-            ? (rawStatus.toUpperCase().replace(/\s+/g, "_") as MakeReadyStatus)
-            : ("NOT_STARTED" as MakeReadyStatus);
-
-          const safeStatus: MakeReadyStatus =
-            normalizedStatus === "IN_PROGRESS" ||
-            normalizedStatus === "READY" ||
-            normalizedStatus === "ON_HOLD" ||
-            normalizedStatus === "NOT_STARTED"
-              ? normalizedStatus
-              : "NOT_STARTED";
-
-          const priority =
-            (row.priority as MakeReadyItem["priority"]) ??
-            ("Medium" as MakeReadyItem["priority"]);
-
-          return {
-            id: String(row.id),
-            apartmentNumber: row.unitNumber ?? row.apartmentNumber ?? "N/A",
-            building: row.building ?? null,
-            turnType: row.type ?? row.turnType ?? "Turn",
-            techName: row.techName ?? row.technician ?? null,
-            priority,
-            status: safeStatus,
-            notes: row.notes ?? null,
-            dueDate: row.dueDate ?? row.targetReadyDate ?? null,
-            updatedAt: row.updatedAt ?? null,
-          };
-        });
-
-        setItems(mapped);
-      } catch (err: any) {
-        console.error(err);
-        if (!cancelled) {
-          // On error, fall back to demo data so the board still looks alive
-          setError(err.message ?? "Failed to load make-ready data");
-          /* removed demo items */
-          /* removed demo fallback */
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+      const res = await fetch(API_URL);
+      if (!res.ok) {
+        throw new Error(`Request failed: ${res.status}`);
       }
-    };
 
+      const data = await res.json();
+
+      const rows = Array.isArray(data)
+        ? data
+        : Array.isArray((data as any).units)
+        ? (data as any).units
+        : [];
+
+      const mapped: MakeReadyItem[] = rows.map((row: any) => {
+        const rawStatus = (row.status as string | undefined) ?? "";
+        const normalizedStatus = rawStatus
+          ? (rawStatus.toUpperCase().replace(/\s+/g, "_") as MakeReadyStatus)
+          : ("NOT_STARTED" as MakeReadyStatus);
+
+        const safeStatus: MakeReadyStatus =
+          normalizedStatus === "IN_PROGRESS" ||
+          normalizedStatus === "READY" ||
+          normalizedStatus === "ON_HOLD" ||
+          normalizedStatus === "NOT_STARTED"
+            ? normalizedStatus
+            : "NOT_STARTED";
+
+        const priority =
+          (row.priority as MakeReadyItem["priority"]) ??
+          ("Medium" as MakeReadyItem["priority"]);
+
+        return {
+          id: String(row.id),
+          apartmentNumber: row.unitNumber ?? row.apartmentNumber ?? "N/A",
+          building: row.building ?? null,
+          turnType: row.type ?? row.turnType ?? "Turn",
+          techName: row.techName ?? row.technician ?? null,
+          priority,
+          status: safeStatus,
+          notes: row.notes ?? null,
+          dueDate: row.dueDate ?? row.targetReadyDate ?? null,
+          updatedAt: row.updatedAt ?? null,
+        };
+      });
+
+      setItems(mapped);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message ?? "Failed to load make-ready data");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
     fetchData();
 
+    const handleRefresh = () => fetchData();
+    window.addEventListener("refresh-make-ready-board", handleRefresh);
+    window.addEventListener("turn-created", handleRefresh);
     return () => {
-      cancelled = true;
+      window.removeEventListener("refresh-make-ready-board", handleRefresh);
+      window.removeEventListener("turn-created", handleRefresh);
     };
-  }, []);
+  }, [fetchData]);
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
@@ -143,17 +162,17 @@ const MakeReadyBoard: React.FC = () => {
             <MakeReadyCard 
               key={item.id} 
               item={item}
-              isSelected={selectedTurnId === item.id}
-              onSelect={() => setSelectedTurnId(item.id)}
+              isSelected={activeSelection === item.id}
+              onSelect={() => handleSelect(item.id)}
             />
           ))}
         </div>
 
-        {selectedTurnId && (
+        {activeSelection && (
           <div className="make-ready-tech-view-container">
             <MakeReadyTurnTechView
-              turnId={selectedTurnId}
-              onClose={() => setSelectedTurnId(null)}
+              turnId={activeSelection}
+              onClose={() => handleSelect(null)}
             />
           </div>
         )}

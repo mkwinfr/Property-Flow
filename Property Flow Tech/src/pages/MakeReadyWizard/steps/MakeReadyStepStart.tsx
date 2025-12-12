@@ -25,9 +25,6 @@ export default function MakeReadyStepStart({ onNext }: Props) {
         <li>Review and confirmation</li>
       </ul>
       <p>Let's get started!</p>
-      <button className="wizard-btn wizard-btn-primary" onClick={onNext}>
-        Begin
-      </button>
     </div>
   );
 }

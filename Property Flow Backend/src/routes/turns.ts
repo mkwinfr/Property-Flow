@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
+import { OccupancyStatus } from '@prisma/client';
 
 const router = Router();
 
@@ -53,6 +54,20 @@ router.post('/make-ready-turns', async (req, res) => {
       return res.status(404).json({ error: 'Apartment not found for unit' });
     }
 
+    const parsedMoveOut = moveOutDate ? new Date(moveOutDate) : null;
+    const parsedTargetReady = targetReadyDate ? new Date(targetReadyDate) : null;
+
+    // Decide new occupancy status based on move-out date
+    const now = new Date();
+    const newStatus: OccupancyStatus =
+      parsedMoveOut && parsedMoveOut <= now ? OccupancyStatus.VACANT : OccupancyStatus.NOTICE;
+
+    // Update apartment occupancy status to reflect the turn creation
+    await prisma.apartment.update({
+      where: { id: apartment.id },
+      data: { status: newStatus },
+    });
+
     // Create turn with all data
     const turn = await prisma.turn.create({
       data: {
@@ -61,8 +76,8 @@ router.post('/make-ready-turns', async (req, res) => {
         type: (turnType || 'STANDARD_MOVE_OUT') as any,
         status: 'NOT_STARTED',
         priority: (priority || 'NORMAL') as any,
-        moveOutDate: moveOutDate ? new Date(moveOutDate) : null,
-        targetReadyDate: targetReadyDate ? new Date(targetReadyDate) : null,
+        moveOutDate: parsedMoveOut,
+        targetReadyDate: parsedTargetReady,
         overallCondition: (overallCondition || null) as any,
         photoNotes,
         wallsCondition,

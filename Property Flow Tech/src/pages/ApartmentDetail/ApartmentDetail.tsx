@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MemoryRouter, useInRouterContext, useNavigate } from "react-router-dom";
+import { MemoryRouter, useInRouterContext } from "react-router-dom";
 
 type Apartment = {
   id: number | string;
@@ -24,13 +24,18 @@ const normalizeApartments = (payload: ApartmentsResponse): Apartment[] => {
 };
 
 function ApartmentDetailPageContent() {
-  const navigate = useNavigate();
-
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildingFilter, setBuildingFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedApartmentId, setSelectedApartmentId] = useState<number | string | null>(null);
+  const [apartmentDetail, setApartmentDetail] = useState<any | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [turnQuery, setTurnQuery] = useState("");
+  const [workOrderQuery, setWorkOrderQuery] = useState("");
+  const [vendorQuery, setVendorQuery] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -123,8 +128,66 @@ function ApartmentDetailPageContent() {
   }, [filteredApartments, buildingFilter, buildings]);
 
   const handleOpenDetail = (id: number | string) => {
-    navigate(`/apartments/${id}`);
+    setSelectedApartmentId(id);
   };
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      if (!selectedApartmentId) return;
+      try {
+        setDetailLoading(true);
+        setDetailError(null);
+        const res = await fetch(`${API_BASE}/api/apartments/${selectedApartmentId}/detail`);
+        if (!res.ok) throw new Error(`Failed to load apartment ${selectedApartmentId}`);
+        const data = await res.json();
+        setApartmentDetail(data);
+      } catch (err) {
+        setDetailError(err instanceof Error ? err.message : "Failed to load apartment detail.");
+        setApartmentDetail(null);
+      } finally {
+        setDetailLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [selectedApartmentId]);
+
+  const filteredTurns = useMemo(() => {
+    const q = turnQuery.toLowerCase();
+    const turns = apartmentDetail?.turns ?? [];
+    if (!q) return turns;
+    return turns.filter(
+      (turn: any) =>
+        String(turn.id).toLowerCase().includes(q) ||
+        (turn.turnNotes ?? "").toLowerCase().includes(q) ||
+        (turn.status ?? "").toLowerCase().includes(q),
+    );
+  }, [apartmentDetail, turnQuery]);
+
+  const filteredWorkOrders = useMemo(() => {
+    const q = workOrderQuery.toLowerCase();
+    const orders = apartmentDetail?.workOrders ?? [];
+    if (!q) return orders;
+    return orders.filter(
+      (wo: any) =>
+        (wo.summary ?? "").toLowerCase().includes(q) ||
+        (wo.status ?? "").toLowerCase().includes(q) ||
+        String(wo.id).toLowerCase().includes(q),
+    );
+  }, [apartmentDetail, workOrderQuery]);
+
+  const filteredVendors = useMemo(() => {
+    const q = vendorQuery.toLowerCase();
+    // Placeholder vendor card uses work orders as stand-in vendor jobs for now
+    const vendorJobs = apartmentDetail?.workOrders ?? [];
+    if (!q) return vendorJobs;
+    return vendorJobs.filter(
+      (job: any) =>
+        (job.summary ?? "").toLowerCase().includes(q) ||
+        (job.status ?? "").toLowerCase().includes(q) ||
+        String(job.id).toLowerCase().includes(q),
+    );
+  }, [apartmentDetail, vendorQuery]);
 
   return (
     <div className="apartments-page pf-page">
@@ -259,6 +322,163 @@ function ApartmentDetailPageContent() {
                   </div>
                 </div>
               ))
+            )}
+          </section>
+        )}
+
+        {selectedApartmentId && (
+          <section className="apartment-profile">
+            <div className="apartment-group-header">
+              <h3>Apartment Profile</h3>
+              <span>Unit {apartmentDetail?.unitNumber ?? selectedApartmentId}</span>
+            </div>
+
+            {detailLoading && <div className="apartments-state">Loading apartment profile…</div>}
+            {detailError && !detailLoading && (
+              <div className="apartments-state error">{detailError}</div>
+            )}
+
+            {apartmentDetail && !detailLoading && !detailError && (
+              <div className="profile-grid">
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Overview</h4>
+                  <div className="card-grid">
+                    <div>
+                      <p className="meta-label pf-meta-label">Unit</p>
+                      <p className="meta-value pf-meta-value">
+                        {apartmentDetail.unitNumber ?? "N/A"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="meta-label pf-meta-label">Building</p>
+                      <p className="meta-value pf-meta-value">
+                        {apartmentDetail.building ?? "N/A"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="meta-label pf-meta-label">Status</p>
+                      <p className="meta-value pf-meta-value">
+                        {apartmentDetail.status ?? "Pending"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="meta-label pf-meta-label">Layout</p>
+                      <p className="meta-value pf-meta-value">
+                        {apartmentDetail.beds ?? "N/A"} BD {apartmentDetail.baths ?? "N/A"} BA
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Turns / Make Ready</h4>
+                  <div className="control-group">
+                    <label className="pf-meta-label">Filter</label>
+                    <input
+                      type="search"
+                      placeholder="Search turn status or notes"
+                      value={turnQuery}
+                      onChange={(e) => setTurnQuery(e.target.value)}
+                    />
+                  </div>
+                  {filteredTurns.length === 0 ? (
+                    <p className="pf-meta-label">No turns yet.</p>
+                  ) : (
+                    <div className="profile-list">
+                      {filteredTurns.map((turn: any) => (
+                        <div key={turn.id} className="profile-list-row">
+                          <div>
+                            <p className="meta-label pf-meta-label">Turn #{turn.id}</p>
+                            <p className="meta-value pf-meta-value">{turn.status}</p>
+                            {turn.turnNotes && <p className="pf-muted">{turn.turnNotes}</p>}
+                          </div>
+                          <button
+                            className="card-action"
+                            type="button"
+                            onClick={() =>
+                              window.dispatchEvent(
+                                new CustomEvent("navigate-to-board", {
+                                  detail: { turnId: turn.id },
+                                }),
+                              )
+                            }
+                          >
+                            Open in Make Ready Board
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </article>
+
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Work Orders</h4>
+                  <div className="control-group">
+                    <label className="pf-meta-label">Filter</label>
+                    <input
+                      type="search"
+                      placeholder="Search summary or status"
+                      value={workOrderQuery}
+                      onChange={(e) => setWorkOrderQuery(e.target.value)}
+                    />
+                  </div>
+                  {filteredWorkOrders.length === 0 ? (
+                    <p className="pf-meta-label">No work orders.</p>
+                  ) : (
+                    <div className="profile-list">
+                      {filteredWorkOrders.map((wo: any) => (
+                        <div key={wo.id} className="profile-list-row">
+                          <div>
+                            <p className="meta-label pf-meta-label">WO #{wo.id}</p>
+                            <p className="meta-value pf-meta-value">{wo.summary}</p>
+                            <p className="pf-muted">Status: {wo.status}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </article>
+
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Vendor Work</h4>
+                  <div className="control-group">
+                    <label className="pf-meta-label">Filter</label>
+                    <input
+                      type="search"
+                      placeholder="Search vendor jobs"
+                      value={vendorQuery}
+                      onChange={(e) => setVendorQuery(e.target.value)}
+                    />
+                  </div>
+                  {filteredVendors.length === 0 ? (
+                    <p className="pf-meta-label">No vendor work yet.</p>
+                  ) : (
+                    <div className="profile-list">
+                      {filteredVendors.map((job: any) => (
+                        <div key={job.id} className="profile-list-row">
+                          <div>
+                            <p className="meta-label pf-meta-label">Job #{job.id}</p>
+                            <p className="meta-value pf-meta-value">{job.summary}</p>
+                            <p className="pf-muted">Status: {job.status}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </article>
+
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Materials</h4>
+                  <p className="pf-meta-label">
+                    Materials tracking placeholder — will sync with inventory soon.
+                  </p>
+                </article>
+
+                <article className="pf-card">
+                  <h4 className="pf-card-title">Resident Information</h4>
+                  <p className="pf-meta-label">Resident profile placeholder.</p>
+                </article>
+              </div>
             )}
           </section>
         )}

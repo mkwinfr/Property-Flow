@@ -10,6 +10,7 @@ import morgan from "morgan";
 //import vendorRoutes from "./routes/vendors";
 import apartmentRoutes from "./routes/apartments";   // ⭐ ADD THIS LINE
 import makeReadyBoardRoutes from "./routes/makeReadyBoard";
+import turnRoutes from "./routes/turns";
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.use(morgan("dev"));
 //app.use("/api/workorders", workOrderRoutes);
 
 // Turns
-//app.use("/api/turns", turnRoutes);
+app.use("/api", turnRoutes);
 
 // Vendors
 //app.use("/api/vendors", vendorRoutes);
@@ -47,6 +48,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });

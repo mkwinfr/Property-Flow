@@ -11,11 +11,8 @@ import MakeReadyStepScope from './steps/MakeReadyStepScope.tsx';
 import MakeReadyStepTasks from './steps/MakeReadyStepTasks.tsx';
 import MakeReadyStepAssignments from './steps/MakeReadyStepAssignments.tsx';
 import MakeReadyStepSchedule from './steps/MakeReadyStepSchedule.tsx';
-import MakeReadyStepMaterials from './steps/MakeReadyStepMaterials.tsx';
 import MakeReadyStepReview from './steps/MakeReadyStepReview.tsx';
 import MakeReadyStepCreated from './steps/MakeReadyStepCreated.tsx';
-
-const TOTAL_STEPS = 10;
 
 const steps = [
   { number: 1, title: 'Start', component: MakeReadyStepStart },
@@ -25,10 +22,11 @@ const steps = [
   { number: 5, title: 'Tasks', component: MakeReadyStepTasks },
   { number: 6, title: 'Assignments', component: MakeReadyStepAssignments },
   { number: 7, title: 'Schedule', component: MakeReadyStepSchedule },
-  { number: 8, title: 'Materials', component: MakeReadyStepMaterials },
-  { number: 9, title: 'Review', component: MakeReadyStepReview },
-  { number: 10, title: 'Created', component: MakeReadyStepCreated },
+  { number: 8, title: 'Review', component: MakeReadyStepReview },
+  { number: 9, title: 'Created', component: MakeReadyStepCreated },
 ];
+
+const TOTAL_STEPS = steps.length;
 
 export interface MakeReadyWizardState {
   turnDraft: MakeReadyTurnDraft;
@@ -49,6 +47,7 @@ export default function MakeReadyWizard() {
       turnOwnerId: '',
       turnNotes: '',
       overallCondition: 'GOOD',
+      accessMethod: 'ON_VENDOR',
       conditionTags: [],
       selectedCategories: [],
       useTemplateTasks: false,
@@ -95,10 +94,21 @@ export default function MakeReadyWizard() {
     setWizardState((prev) => ({ ...prev, isSubmitting: true, error: null }));
 
     try {
+      const { accessMethod, ...restDraft } = wizardState.turnDraft;
+      const payload = {
+        ...restDraft,
+        accessInstructions:
+          accessMethod === 'RESIDENT_KEYS'
+            ? 'Resident Keys'
+            : accessMethod === 'ON_VENDOR'
+            ? 'On Vendor'
+            : undefined,
+      };
+
       const response = await fetch('/api/make-ready-turns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(wizardState.turnDraft),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -111,13 +121,13 @@ export default function MakeReadyWizard() {
       // Move to success step
       setCurrentStep(TOTAL_STEPS);
 
-      // Auto-navigate to board after 2 seconds
-      setTimeout(() => {
-        // Trigger navigation - this would be handled by parent Dashboard component
-        window.dispatchEvent(
-          new CustomEvent('navigate-to-board', { detail: { turnId: newTurn.id } })
-        );
-      }, 2000);
+      // Auto-navigate to board and open the new turn
+      window.dispatchEvent(
+        new CustomEvent('turn-created', { detail: { turnId: newTurn.id } })
+      );
+      window.dispatchEvent(
+        new CustomEvent('navigate-to-board', { detail: { turnId: newTurn.id } })
+      );
     } catch (err) {
       setWizardState((prev) => ({
         ...prev,

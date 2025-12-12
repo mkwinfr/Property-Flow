@@ -119,8 +119,7 @@ export interface MakeReadyTurnDraft {
   chargebackReason?: string;
 
   // Step 6 – access
-  accessInstructions?: string;
-  alarmCodes?: string;
+  accessMethod?: 'ON_VENDOR' | 'RESIDENT_KEYS';
 
   // Step 8 options
   markActiveOnBoard?: boolean;
