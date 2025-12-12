@@ -28,7 +28,6 @@ const PRIORITIES: TaskPriority[] = ['CRITICAL', 'HIGH', 'NORMAL', 'LOW'];
 export default function MakeReadyStepTasks({
   turnDraft,
   onUpdate,
-  onNext,
 }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -66,106 +65,125 @@ export default function MakeReadyStepTasks({
 
   return (
     <div className="wizard-step-content">
-      <div className="tasks-list">
-        {turnDraft.tasks && turnDraft.tasks.length > 0 ? (
-          <div className="tasks-items">
-            {turnDraft.tasks.map((task) => (
-              <div key={task.id} className="task-item">
-                <div className="task-header">
-                  <h4>{task.title}</h4>
-                  <span className="task-priority" data-priority={task.priority}>
-                    {task.priority}
-                  </span>
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Tasks List</h3>
+        <div className="tasks-list">
+          {turnDraft.tasks && turnDraft.tasks.length > 0 ? (
+            <div className="tasks-items">
+              {turnDraft.tasks.map((task) => (
+                <div key={task.id} className="wizard-task-card">
+                  <div className="wizard-task-info">
+                    <div className="wizard-task-name">{task.title}</div>
+                    <div className="wizard-task-desc">
+                      {task.category?.replace(/_/g, ' ')} • {task.area?.replace(/_/g, ' ')} • {task.priority}
+                    </div>
+                    {task.internalNotes && (
+                      <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
+                        {task.internalNotes}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      className="wizard-task-action"
+                      style={{ background: '#5b9dd9' }}
+                      onClick={() => {
+                        setFormData(task);
+                        setEditingId(task.id);
+                        setShowForm(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="wizard-task-action"
+                      style={{ background: '#ef4444' }}
+                      onClick={() => handleDeleteTask(task.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <p className="task-meta">
-                  {task.category} • {task.area}
-                </p>
-                {task.internalNotes && <p className="task-notes">{task.internalNotes}</p>}
-                <div className="task-actions">
-                  <button
-                    className="task-btn task-btn-edit"
-                    onClick={() => {
-                      setFormData(task);
-                      setEditingId(task.id);
-                      setShowForm(true);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="task-btn task-btn-delete"
-                    onClick={() => handleDeleteTask(task.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="empty-state">No tasks added yet</p>
-        )}
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: '#9ca3af', textAlign: 'center', padding: '2rem' }}>
+              No tasks added yet
+            </p>
+          )}
+        </div>
       </div>
 
       {showForm && (
-        <div className="task-form">
-          <h3>{editingId ? 'Edit Task' : 'Add Task'}</h3>
-          <div className="form-group">
-            <label htmlFor="taskTitle">Title *</label>
+        <div className="wizard-section" style={{ background: '#232f40', padding: '1.5rem', borderRadius: '8px' }}>
+          <h3 className="wizard-section-title">
+            {editingId ? 'Edit Task' : 'Add Task'}
+          </h3>
+
+          <div className="wizard-field">
+            <label htmlFor="taskTitle" className="wizard-label">
+              Title
+              <span className="wizard-label-required">*</span>
+            </label>
             <input
               id="taskTitle"
               type="text"
               value={formData.title || ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="form-input"
               placeholder="Task title"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="taskCategory">Category *</label>
-            <select
-              id="taskCategory"
-              value={formData.category || ''}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value as WorkCategory })
-              }
-              className="form-select"
-            >
-              <option value="">Select category</option>
-              {Array.from(new Set(turnDraft.selectedCategories)).map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.replace(/_/g, ' ')}
-                </option>
-              ))}
-            </select>
+          <div className="wizard-inline-grid">
+            <div className="wizard-field">
+              <label htmlFor="taskCategory" className="wizard-label">
+                Category
+                <span className="wizard-label-required">*</span>
+              </label>
+              <select
+                id="taskCategory"
+                value={formData.category || ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value as WorkCategory })
+                }
+              >
+                <option value="">Select category</option>
+                {Array.from(new Set(turnDraft.selectedCategories)).map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat.replace(/_/g, ' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="wizard-field">
+              <label htmlFor="taskArea" className="wizard-label">
+                Area
+              </label>
+              <select
+                id="taskArea"
+                value={formData.area || 'WHOLE_UNIT'}
+                onChange={(e) => setFormData({ ...formData, area: e.target.value as any })}
+              >
+                {AREAS.map((area) => (
+                  <option key={area} value={area}>
+                    {area.replace(/_/g, ' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="taskArea">Area</label>
-            <select
-              id="taskArea"
-              value={formData.area || 'WHOLE_UNIT'}
-              onChange={(e) => setFormData({ ...formData, area: e.target.value as any })}
-              className="form-select"
-            >
-              {AREAS.map((area) => (
-                <option key={area} value={area}>
-                  {area.replace(/_/g, ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="taskPriority">Priority</label>
+          <div className="wizard-field">
+            <label htmlFor="taskPriority" className="wizard-label">
+              Priority
+            </label>
             <select
               id="taskPriority"
               value={formData.priority || 'NORMAL'}
               onChange={(e) =>
                 setFormData({ ...formData, priority: e.target.value as TaskPriority })
               }
-              className="form-select"
             >
               {PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -175,18 +193,19 @@ export default function MakeReadyStepTasks({
             </select>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="taskNotes">Notes</label>
+          <div className="wizard-field">
+            <label htmlFor="taskNotes" className="wizard-label">
+              Notes
+            </label>
             <textarea
               id="taskNotes"
               value={formData.internalNotes || ''}
               onChange={(e) => setFormData({ ...formData, internalNotes: e.target.value })}
-              className="form-textarea"
               placeholder="Internal notes for this task"
             />
           </div>
 
-          <div className="form-actions">
+          <div style={{ display: 'flex', gap: '1rem' }}>
             <button className="wizard-btn wizard-btn-primary" onClick={handleAddTask}>
               {editingId ? 'Update Task' : 'Add Task'}
             </button>
@@ -205,21 +224,16 @@ export default function MakeReadyStepTasks({
       )}
 
       {!showForm && (
-        <button
-          className="wizard-btn wizard-btn-secondary wizard-btn-block"
-          onClick={() => setShowForm(true)}
-        >
-          + Add Task
-        </button>
+        <div className="wizard-section">
+          <button
+            className="wizard-btn wizard-btn-secondary"
+            style={{ width: '100%' }}
+            onClick={() => setShowForm(true)}
+          >
+            + Add Task
+          </button>
+        </div>
       )}
-
-      <button
-        className="wizard-btn wizard-btn-primary"
-        onClick={onNext}
-        disabled={!turnDraft.tasks || turnDraft.tasks.length === 0}
-      >
-        Continue
-      </button>
     </div>
   );
 }

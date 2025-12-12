@@ -14,7 +14,6 @@ interface Props {
 export default function MakeReadyStepMaterials({
   turnDraft,
   onUpdate,
-  onNext,
 }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -56,29 +55,31 @@ export default function MakeReadyStepMaterials({
 
   return (
     <div className="wizard-step-content">
-      <div className="materials-list">
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Materials List</h3>
+        
         {turnDraft.materials && turnDraft.materials.length > 0 ? (
           <>
-            <div className="materials-items">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
               {turnDraft.materials.map((material) => (
-                <div key={material.id} className="material-item">
-                  <div className="material-info">
-                    <h4>{material.item}</h4>
-                    <p className="material-meta">
+                <div key={material.id} className="wizard-material-card">
+                  <div className="wizard-material-info">
+                    <div className="wizard-material-name">{material.item}</div>
+                    <div className="wizard-material-quantity">
                       {material.quantity} {material.unit}
                       {material.costPerUnit && ` @ $${material.costPerUnit}/unit`}
                       {material.storeOrVendor && ` (${material.storeOrVendor})`}
-                    </p>
+                    </div>
                     {material.costPerUnit && (
-                      <p className="material-cost">
-                        Subtotal: $
-                        {(material.costPerUnit * material.quantity).toFixed(2)}
-                      </p>
+                      <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
+                        Subtotal: ${(material.costPerUnit * material.quantity).toFixed(2)}
+                      </div>
                     )}
                   </div>
-                  <div className="material-actions">
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <button
-                      className="material-btn material-btn-edit"
+                      className="wizard-task-action"
+                      style={{ background: '#5b9dd9' }}
                       onClick={() => {
                         setFormData(material);
                         setEditingId(material.id);
@@ -88,7 +89,8 @@ export default function MakeReadyStepMaterials({
                       Edit
                     </button>
                     <button
-                      className="material-btn material-btn-delete"
+                      className="wizard-task-action"
+                      style={{ background: '#ef4444' }}
                       onClick={() => handleDeleteMaterial(material.id)}
                     >
                       Delete
@@ -97,34 +99,58 @@ export default function MakeReadyStepMaterials({
                 </div>
               ))}
             </div>
-            <div className="materials-total">
-              <strong>Total Materials Cost:</strong>
-              <span>${totalMaterialsCost.toFixed(2)}</span>
-            </div>
+            
+            {totalMaterialsCost > 0 && (
+              <div style={{
+                padding: '1rem',
+                background: 'rgba(91, 157, 217, 0.05)',
+                borderRadius: '8px',
+                border: '1px solid rgba(91, 157, 217, 0.2)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#9ca3af', fontSize: '13px', fontWeight: '600' }}>
+                    Total Materials Cost
+                  </span>
+                  <span style={{ color: '#5b9dd9', fontSize: '18px', fontWeight: '700' }}>
+                    ${totalMaterialsCost.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
           </>
         ) : (
-          <p className="empty-state">No materials added yet</p>
+          <p style={{ color: '#9ca3af', textAlign: 'center', padding: '2rem' }}>
+            No materials added yet
+          </p>
         )}
       </div>
 
       {showForm && (
-        <div className="material-form">
-          <h3>{editingId ? 'Edit Material' : 'Add Material'}</h3>
-          <div className="form-group">
-            <label htmlFor="materialItem">Item Name *</label>
+        <div className="wizard-section" style={{ background: '#232f40', padding: '1.5rem', borderRadius: '8px' }}>
+          <h3 className="wizard-section-title">
+            {editingId ? 'Edit Material' : 'Add Material'}
+          </h3>
+
+          <div className="wizard-field">
+            <label htmlFor="materialItem" className="wizard-label">
+              Item Name
+              <span className="wizard-label-required">*</span>
+            </label>
             <input
               id="materialItem"
               type="text"
               value={formData.item || ''}
               onChange={(e) => setFormData({ ...formData, item: e.target.value })}
-              className="form-input"
               placeholder="e.g., Paint (Eggshell, Cream)"
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="materialQuantity">Quantity *</label>
+          <div className="wizard-inline-grid">
+            <div className="wizard-field">
+              <label htmlFor="materialQuantity" className="wizard-label">
+                Quantity
+                <span className="wizard-label-required">*</span>
+              </label>
               <input
                 id="materialQuantity"
                 type="number"
@@ -134,50 +160,56 @@ export default function MakeReadyStepMaterials({
                 onChange={(e) =>
                   setFormData({ ...formData, quantity: parseFloat(e.target.value) })
                 }
-                className="form-input"
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="materialUnit">Unit *</label>
+
+            <div className="wizard-field">
+              <label htmlFor="materialUnit" className="wizard-label">
+                Unit
+                <span className="wizard-label-required">*</span>
+              </label>
               <input
                 id="materialUnit"
                 type="text"
                 value={formData.unit || ''}
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                className="form-input"
                 placeholder="gallons, boxes, etc."
               />
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="materialCost">Cost Per Unit ($)</label>
-            <input
-              id="materialCost"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.costPerUnit || ''}
-              onChange={(e) =>
-                setFormData({ ...formData, costPerUnit: parseFloat(e.target.value) })
-              }
-              className="form-input"
-            />
+          <div className="wizard-inline-grid">
+            <div className="wizard-field">
+              <label htmlFor="materialCost" className="wizard-label">
+                Cost Per Unit ($)
+              </label>
+              <input
+                id="materialCost"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.costPerUnit || ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, costPerUnit: parseFloat(e.target.value) })
+                }
+              />
+            </div>
+
+            <div className="wizard-field">
+              <label htmlFor="materialVendor" className="wizard-label">
+                Store/Vendor
+              </label>
+              <input
+                id="materialVendor"
+                type="text"
+                value={formData.storeOrVendor || ''}
+                onChange={(e) => setFormData({ ...formData, storeOrVendor: e.target.value })}
+                placeholder="Where to purchase this item"
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="materialVendor">Store/Vendor</label>
-            <input
-              id="materialVendor"
-              type="text"
-              value={formData.storeOrVendor || ''}
-              onChange={(e) => setFormData({ ...formData, storeOrVendor: e.target.value })}
-              className="form-input"
-              placeholder="Where to purchase this item"
-            />
-          </div>
-
-          <div className="form-actions">
+          <div style={{ display: 'flex', gap: '1rem' }}>
             <button className="wizard-btn wizard-btn-primary" onClick={handleAddMaterial}>
               {editingId ? 'Update Material' : 'Add Material'}
             </button>
@@ -196,17 +228,16 @@ export default function MakeReadyStepMaterials({
       )}
 
       {!showForm && (
-        <button
-          className="wizard-btn wizard-btn-secondary wizard-btn-block"
-          onClick={() => setShowForm(true)}
-        >
-          + Add Material
-        </button>
+        <div className="wizard-section">
+          <button
+            className="wizard-btn wizard-btn-secondary"
+            style={{ width: '100%' }}
+            onClick={() => setShowForm(true)}
+          >
+            + Add Material
+          </button>
+        </div>
       )}
-
-      <button className="wizard-btn wizard-btn-primary" onClick={onNext}>
-        Continue
-      </button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 {
-  "name": "property-flow-backend",
+  "name": "property-suite-backend",
   "version": "0.1.0",
-  "description": "REST API server for Property Flow Pro - comprehensive property management platform",
+  "description": "REST API server for Property Suite Pro - comprehensive property management platform",
   "main": "dist/index.js",
   "type": "commonjs",
   "author": "Property Flow Development Team",

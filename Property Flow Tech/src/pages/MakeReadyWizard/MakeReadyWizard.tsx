@@ -131,96 +131,122 @@ export default function MakeReadyWizard() {
   }, [wizardState.turnDraft, addTurn]);
 
   return (
-    <div className="make-ready-wizard">
-      {/* Progress indicator */}
-      <div className="wizard-progress">
-        <div className="progress-bar">
-          <div
-            className="progress-fill"
-            style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
-          />
-        </div>
-        <div className="progress-text">
-          Step {currentStep} of {TOTAL_STEPS}
-        </div>
-      </div>
-
-      {/* Step indicators */}
-      <div className="wizard-steps-nav">
-        {steps.map((step) => (
-          <button
-            key={step.number}
-            className={`step-indicator ${
-              currentStep === step.number ? 'active' : ''
-            } ${currentStep > step.number ? 'completed' : ''}`}
-            onClick={() => handleStepChange(step.number)}
-            disabled={currentStep > TOTAL_STEPS - 1 && step.number !== TOTAL_STEPS}
-            title={step.title}
-          >
-            {step.number}
-          </button>
-        ))}
-      </div>
-
-      {/* Step content */}
-      <div className="wizard-content">
-        <h2 className="wizard-step-title">{steps[currentStep - 1].title}</h2>
-
-        {wizardState.error && (
-          <div className="wizard-error">
-            <strong>Error:</strong> {wizardState.error}
+    <div className="wizard-shell">
+      <div className="make-ready-wizard">
+        {/* Header section */}
+        <div className="wizard-header">
+          <div className="wizard-header-top">
+            <span className="wizard-step-counter">Step {currentStep} of {TOTAL_STEPS}</span>
+            <div className="wizard-header-spacer" />
           </div>
-        )}
+          <h1 className="wizard-page-title">{steps[currentStep - 1].title}</h1>
+          {currentStep === 1 && (
+            <p className="wizard-page-subtitle">Set up your make-ready turn with guided steps</p>
+          )}
+        </div>
 
-        <CurrentStepComponent
-          turnDraft={wizardState.turnDraft}
-          onUpdate={handleDraftUpdate}
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          isLastStep={currentStep === TOTAL_STEPS - 1}
-          isSubmitting={wizardState.isSubmitting}
-        />
-      </div>
+        {/* Progress bar */}
+        <div className="wizard-progress">
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
+            />
+          </div>
+        </div>
 
-      {/* Navigation buttons */}
-      <div className="wizard-navigation">
-        <button
-          className="wizard-btn wizard-btn-secondary"
-          onClick={handlePrevious}
-          disabled={currentStep === 1}
-        >
-          Back
-        </button>
+        {/* Step stepper */}
+        <div className="wizard-stepper">
+          {steps.map((step) => (
+            <button
+              key={step.number}
+              className={`stepper-step ${
+                currentStep === step.number ? 'stepper-step--active' : ''
+              } ${currentStep > step.number ? 'stepper-step--completed' : ''}`}
+              onClick={() => handleStepChange(step.number)}
+              disabled={currentStep > TOTAL_STEPS - 1 && step.number !== TOTAL_STEPS}
+              title={step.title}
+            >
+              <span className="stepper-step-number">{step.number}</span>
+              <span className="stepper-step-label">{step.title}</span>
+            </button>
+          ))}
+        </div>
 
-        {currentStep < TOTAL_STEPS - 1 && (
-          <button className="wizard-btn wizard-btn-primary" onClick={handleNext}>
-            Next
-          </button>
-        )}
+        {/* Main content area */}
+        <div className="wizard-content">
+          {wizardState.error && (
+            <div className="wizard-error">
+              <strong>Error:</strong> {wizardState.error}
+            </div>
+          )}
 
-        {currentStep === TOTAL_STEPS - 1 && (
-          <button
-            className="wizard-btn wizard-btn-primary"
-            onClick={handleSubmit}
-            disabled={wizardState.isSubmitting}
-          >
-            {wizardState.isSubmitting ? 'Creating...' : 'Create Turn'}
-          </button>
-        )}
+          <div className="wizard-step-content">
+            <CurrentStepComponent
+              turnDraft={wizardState.turnDraft}
+              onUpdate={handleDraftUpdate}
+              onNext={handleNext}
+              onPrevious={handlePrevious}
+              isLastStep={currentStep === TOTAL_STEPS - 1}
+              isSubmitting={wizardState.isSubmitting}
+            />
+          </div>
+        </div>
 
-        {currentStep === TOTAL_STEPS && (
-          <button
-            className="wizard-btn wizard-btn-primary"
-            onClick={() => {
-              window.dispatchEvent(
-                new CustomEvent('navigate-to-board', { detail: { turnId: null } })
-              );
-            }}
-          >
-            Go to Board
-          </button>
+        {/* Navigation footer */}
+        {currentStep === 1 ? (
+          <div className="wizard-footer wizard-footer--centered">
+            <button
+              className="wizard-btn wizard-btn-primary"
+              onClick={handleNext}
+            >
+              Begin
+            </button>
+          </div>
+        ) : (
+          <div className="wizard-footer">
+            <button
+              className="wizard-btn wizard-btn-secondary"
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+            >
+              ← Back
+            </button>
+
+            <div className="wizard-footer-spacer" />
+
+            {currentStep < TOTAL_STEPS - 1 && (
+              <button className="wizard-btn wizard-btn-primary" onClick={handleNext}>
+                Next →
+              </button>
+            )}
+
+            {currentStep === TOTAL_STEPS - 1 && (
+              <button
+                className="wizard-btn wizard-btn-primary"
+                onClick={handleSubmit}
+                disabled={wizardState.isSubmitting}
+              >
+                {wizardState.isSubmitting ? 'Creating...' : 'Create Turn'}
+              </button>
+            )}
+
+            {currentStep === TOTAL_STEPS && (
+              <button
+                className="wizard-btn wizard-btn-primary"
+                onClick={() => {
+                  window.dispatchEvent(
+                    new CustomEvent('navigate-to-board', { detail: { turnId: null } })
+                  );
+                }}
+              >
+                Go to Board
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
+
 }

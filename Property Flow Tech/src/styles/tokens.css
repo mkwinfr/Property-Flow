@@ -12,6 +12,14 @@
   --pf-coral: #e56c74;
   --pf-coral-bright: #ff9aa6;
   --pf-sky: #9ab5ff;
+  --pf-purple: #9c86ff;
+  --pf-purple-light: #b5a6ff;
+  --pf-purple-dark: #7d69e0;
+  --pf-green: #74bb43;
+  --pf-green-light: #a4d966;
+  --pf-red: #ff4c4c;
+  --pf-red-light: #ff9999;
+  --pf-gray-light: #717278;
 
   --bg: #121416;
   --text: var(--pf-cream);

@@ -1,5 +1,5 @@
 @echo off
-REM Property Flow Development Environment Launcher
+REM Property Suite Development Environment Launcher
 REM Prerequisites: Node.js, npm, Windows Terminal
 REM Usage: Run this script from the workspace root
 
@@ -7,7 +7,7 @@ setlocal enabledelayedexpansion
 
 echo.
 echo ===================================
-echo  Property Flow Dev Environment
+echo  Property Suite Dev Environment
 echo ===================================
 echo.
 
@@ -28,12 +28,12 @@ if not exist "!FRONTEND_DIR!" (
     exit /b 1
 )
 
-echo Starting Property Flow...
+echo Starting Property Suite...
 echo - Backend: !BACKEND_DIR!
 echo - Frontend: !FRONTEND_DIR!
 echo.
 
-wt -w 0 new-tab cmd /k "cd /d !BACKEND_DIR! && title Backend - Property Flow && npm run dev" ; split-pane -V cmd /k "cd /d !FRONTEND_DIR! && title Frontend - Property Flow && npm run dev -- --host"
+wt -w 0 new-tab cmd /k "cd /d !BACKEND_DIR! && title Backend - Property Suite && npm run dev" ; split-pane -V cmd /k "cd /d !FRONTEND_DIR! && title Frontend - Property Suite && npm run dev -- --host"
 
 echo Development environment launched in Windows Terminal.
 pause

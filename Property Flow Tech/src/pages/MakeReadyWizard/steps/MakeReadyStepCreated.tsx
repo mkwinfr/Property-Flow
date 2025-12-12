@@ -12,11 +12,13 @@ interface Props {
 
 export default function MakeReadyStepCreated({}: Props) {
   return (
-    <div className="wizard-step-content success-content">
-      <div className="success-icon">✓</div>
-      <h2>Turn Created Successfully!</h2>
-      <p>Your make-ready turn has been created and is now ready for the team.</p>
-      <p className="success-note">
+    <div className="wizard-success-container">
+      <div className="wizard-success-icon">✓</div>
+      <h2 className="wizard-success-title">Turn Created Successfully!</h2>
+      <p className="wizard-success-message">
+        Your make-ready turn has been created and is now ready for the team.
+      </p>
+      <p style={{ color: '#9ca3af', fontSize: '13px' }}>
         Redirecting to Make Ready Board in a moment, or click "Go to Board" to view it now.
       </p>
     </div>

@@ -12,7 +12,6 @@ interface Props {
 
 export default function MakeReadyStepReview({
   turnDraft,
-  onPrevious,
 }: Props) {
   const totalMaterialsCost = (turnDraft.materials || []).reduce((sum, m) => {
     return sum + ((m.costPerUnit || 0) * m.quantity);
@@ -22,102 +21,114 @@ export default function MakeReadyStepReview({
     (turnDraft.estimatedLaborCost || 0) + totalMaterialsCost;
 
   return (
-    <div className="wizard-step-content review-content">
-      <h3>Review Your Turn Details</h3>
-
-      <div className="review-section">
-        <h4>Turn Information</h4>
-        <div className="review-grid">
-          <div className="review-item">
-            <label>Property</label>
-            <span>{turnDraft.propertyId || 'N/A'}</span>
+    <div className="wizard-step-content">
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Turn Information</h3>
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Property</span>
+            <span className="wizard-review-value">{turnDraft.propertyId || '—'}</span>
           </div>
-          <div className="review-item">
-            <label>Unit</label>
-            <span>{turnDraft.unitId || 'N/A'}</span>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Unit</span>
+            <span className="wizard-review-value">{turnDraft.unitId || '—'}</span>
           </div>
-          <div className="review-item">
-            <label>Turn Type</label>
-            <span>{turnDraft.turnType?.replace(/_/g, ' ') || 'N/A'}</span>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Turn Type</span>
+            <span className="wizard-review-value">{turnDraft.turnType?.replace(/_/g, ' ') || '—'}</span>
           </div>
-          <div className="review-item">
-            <label>Priority</label>
-            <span>{turnDraft.priority || 'N/A'}</span>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Priority</span>
+            <span className="wizard-review-value">{turnDraft.priority || '—'}</span>
           </div>
-          <div className="review-item">
-            <label>Move Out Date</label>
-            <span>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Move Out Date</span>
+            <span className="wizard-review-value">
               {turnDraft.moveOutDate
                 ? new Date(turnDraft.moveOutDate).toLocaleDateString()
-                : 'N/A'}
+                : '—'}
             </span>
           </div>
-          <div className="review-item">
-            <label>Target Ready Date</label>
-            <span>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Target Ready Date</span>
+            <span className="wizard-review-value">
               {turnDraft.targetReadyDate
                 ? new Date(turnDraft.targetReadyDate).toLocaleDateString()
-                : 'N/A'}
+                : '—'}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="review-section">
-        <h4>Work Scope</h4>
-        <div className="review-item">
-          <label>Categories</label>
-          <span>
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Work Scope</h3>
+        <div className="wizard-review-item">
+          <span className="wizard-review-label">Categories</span>
+          <span className="wizard-review-value">
             {turnDraft.selectedCategories && turnDraft.selectedCategories.length > 0
-              ? turnDraft.selectedCategories.join(', ')
-              : 'None selected'}
+              ? turnDraft.selectedCategories.map(c => c.replace(/_/g, ' ')).join(', ')
+              : '—'}
           </span>
         </div>
       </div>
 
-      <div className="review-section">
-        <h4>Assignments</h4>
-        <div className="review-item">
-          <label>Project Manager</label>
-          <span>{turnDraft.turnOwnerId || 'N/A'}</span>
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Assignments</h3>
+        <div className="wizard-review-item">
+          <span className="wizard-review-label">Project Manager</span>
+          <span className="wizard-review-value">{turnDraft.turnOwnerId || '—'}</span>
         </div>
       </div>
 
-      <div className="review-section">
-        <h4>Tasks & Materials</h4>
-        <div className="review-item">
-          <label>Tasks</label>
-          <span>{turnDraft.tasks?.length || 0} tasks</span>
-        </div>
-        <div className="review-item">
-          <label>Materials</label>
-          <span>{turnDraft.materials?.length || 0} items</span>
-        </div>
-      </div>
-
-      <div className="review-section">
-        <h4>Cost Summary</h4>
-        <div className="review-item">
-          <label>Estimated Labor</label>
-          <span>${(turnDraft.estimatedLaborCost || 0).toFixed(2)}</span>
-        </div>
-        <div className="review-item">
-          <label>Materials</label>
-          <span>${totalMaterialsCost.toFixed(2)}</span>
-        </div>
-        <div className="review-item cost-total">
-          <label>Total Estimated Cost</label>
-          <span>${totalCost.toFixed(2)}</span>
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Tasks & Materials</h3>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Tasks</span>
+            <span className="wizard-review-value">{turnDraft.tasks?.length || 0} tasks</span>
+          </div>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Materials</span>
+            <span className="wizard-review-value">{turnDraft.materials?.length || 0} items</span>
+          </div>
         </div>
       </div>
 
-      <div className="review-actions">
-        <button className="wizard-btn wizard-btn-secondary" onClick={onPrevious}>
-          Back to Edit
-        </button>
-        <p className="review-info">
-          Click "Create Turn" to submit this turn and open it in the Make Ready Board
-        </p>
+      <div className="wizard-section">
+        <h3 className="wizard-section-title">Cost Summary</h3>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Estimated Labor</span>
+            <span className="wizard-review-value">${(turnDraft.estimatedLaborCost || 0).toFixed(2)}</span>
+          </div>
+          <div className="wizard-review-item">
+            <span className="wizard-review-label">Materials</span>
+            <span className="wizard-review-value">${totalMaterialsCost.toFixed(2)}</span>
+          </div>
+          <div className="wizard-review-item" style={{
+            padding: '0.75rem',
+            background: 'rgba(91, 157, 217, 0.1)',
+            borderRadius: '6px',
+            marginTop: '0.5rem'
+          }}>
+            <span className="wizard-review-label">Total Estimated Cost</span>
+            <span style={{ color: '#5b9dd9', fontWeight: '700', fontSize: '16px' }}>
+              ${totalCost.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ 
+        padding: '1rem',
+        background: '#232f40',
+        borderRadius: '8px',
+        border: '1px solid rgba(91, 157, 217, 0.1)',
+        color: '#9ca3af',
+        fontSize: '13px',
+        lineHeight: '1.5'
+      }}>
+        Review the information above. Click "Create Turn" to submit this turn and open it in the Make Ready Board.
       </div>
     </div>
   );

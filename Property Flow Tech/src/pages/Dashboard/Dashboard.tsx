@@ -14,8 +14,7 @@ const Dashboard: React.FC = () => {
   const [isClosingDrawer, setIsClosingDrawer] = useState(false);
 
   useEffect(() => {
-    const handleNavigateToBoard = (e: Event) => {
-      const customEvent = e as CustomEvent<{ turnId: string | null }>;
+    const handleNavigateToBoard = () => {
       setActiveTab("makeReady");
     };
 

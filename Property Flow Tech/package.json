@@ -1,8 +1,8 @@
 {
-  "name": "property-flow-tech",
+  "name": "property-suite-tech",
   "private": true,
   "version": "0.1.0",
-  "description": "Field technician mobile application for Property Flow Pro - a comprehensive property management platform",
+  "description": "Field technician mobile application for Property Suite Pro - a comprehensive property management platform",
   "type": "module",
   "author": "Property Flow Development Team",
   "license": "ISC",
