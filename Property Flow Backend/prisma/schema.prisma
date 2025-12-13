@@ -141,24 +141,116 @@ enum VendorJobStatus {
   CANCELED
 }
 
+/// User roles for access control
+enum UserRole {
+  SUPER_ADMIN
+  PROPERTY_MANAGER
+  MAINTENANCE_TEAM
+  VENDOR
+  VIEWER
+}
+
+/// User account status
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+/// Vendor status
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BLACKLISTED
+}
+
+/// Department - organizational grouping of roles
+model Department {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique  // SCREAMING_SNAKE_CASE: EXECUTIVE_OWNERSHIP, PROPERTY_OPERATIONS, etc.
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roles     Role[]
+}
+
+/// Role - job title / access level role
+model Role {
+  id            Int      @id @default(autoincrement())
+  key           String   @unique  // SCREAMING_SNAKE_CASE: OWNER_PRINCIPAL, PROPERTY_MANAGER, etc.
+  name          String
+  description   String?
+  departmentId  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  department    Department      @relation(fields: [departmentId], references: [id])
+  users         User[]
+  permissions   RolePermission[]
+
+  @@index([departmentId])
+}
+
+/// Permission - granular action permission
+model Permission {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique  // SCREAMING_SNAKE_CASE: ADMIN_USERS_VIEW, MAINTENANCE_WORKORDERS_UPDATE, etc.
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles       RolePermission[]
+}
+
+/// Junction table: Role -> Permissions
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([roleId])
+}
+
 /// Basic user account
 model User {
-  id                 Int                @id @default(autoincrement())
-  name               String
-  email              String             @unique
-  role               String?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  email                String             @unique
+  password             String?            // Hashed password
+  roleId               Int?               // FK to Role
+  status               UserStatus         @default(ACTIVE)
+  propertyId           Int?               // Primary property (nullable for corporate)
+  phone                String?
+  userNotes            String?            // Scalar field: notes about user
+  lastLoginAt          DateTime?
+  passwordChangedAt    DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  
+  // Legacy field - keep for backwards compatibility during migration
+  userRole             UserRole           @default(VIEWER)
 
   // Relations
-  workOrdersCreated  WorkOrder[]        @relation("WorkOrdersCreatedBy")
-  workOrdersAssigned WorkOrder[]        @relation("WorkOrdersAssignedTo")
-  turnTasksAssigned  TurnTask[]         @relation("TurnTasksAssignedTo")
-  notes              MaintenanceNote[]
-  activityLogs       ActivityLog[]
+  role                 Role?              @relation(fields: [roleId], references: [id])
+  workOrdersCreated    WorkOrder[]        @relation("WorkOrdersCreatedBy")
+  workOrdersAssigned   WorkOrder[]        @relation("WorkOrdersAssignedTo")
+  turnTasksAssigned    TurnTask[]         @relation("TurnTasksAssignedTo")
+  maintenanceNotes     MaintenanceNote[]  @relation("MaintenanceNoteCreatedBy")
+  activityLogs         ActivityLog[]
+  auditLogs            AuditLog[]         @relation("AuditLogsCreatedBy")
+  turnsCreated         Turn[]
+  properties           UserProperty[]
+  managedVendors       Vendor[]           @relation("VendorManagedBy")
 
-  // 🔥 REQUIRED opposite relation for Turn.createdBy
-  turnsCreated       Turn[]
+  @@index([roleId])
+  @@index([status])
 }
 
 /// A property / community
@@ -176,6 +268,7 @@ model Property {
 
   buildings  Building[]
   apartments Apartment[]
+  userAccess UserProperty[]
 }
 
 /// A building / structure within a property
@@ -414,16 +507,21 @@ model TurnMaterial {
 
 /// Vendors
 model Vendor {
-  id          Int        @id @default(autoincrement())
-  name        String
-  contactName String?
-  phone       String?
-  email       String?
-  notes       String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id              Int           @id @default(autoincrement())
+  name            String
+  contactName     String?
+  phone           String?
+  email           String?
+  notes           String?
+  status          VendorStatus  @default(ACTIVE)
+  specialties     String[]      // ["PAINTING", "PLUMBING", etc.]
+  ratingScore     Float?
+  managedByUserId Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  jobs        VendorJob[]
+  jobs            VendorJob[]
+  managedBy       User?         @relation("VendorManagedBy", fields: [managedByUserId], references: [id])
 }
 
 /// Vendor job
@@ -464,7 +562,7 @@ model MaintenanceNote {
   updatedAt     DateTime @updatedAt
 
   apartment     Apartment @relation(fields: [apartmentId], references: [id])
-  createdBy     User      @relation(fields: [createdByUserId], references: [id])
+  createdBy     User      @relation("MaintenanceNoteCreatedBy", fields: [createdByUserId], references: [id])
 
   @@index([apartmentId])
 }
@@ -502,5 +600,35 @@ model ActivityLog {
   user          User?     @relation(fields: [userId], references: [id])
 
   @@index([apartmentId])
+  @@index([createdAt])
+}
+
+/// User-Property access assignment
+model UserProperty {
+  userId     Int
+  propertyId Int
+  assignedAt DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@id([userId, propertyId])
+}
+
+/// Audit logs for system actions
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  action     String   // "CREATE_USER", "EDIT_TURN", "DELETE_VENDOR", etc.
+  tableName  String   // "User", "Turn", "Vendor"
+  recordId   Int      // Which record was modified
+  changes    Json?    // What changed: {field: {old: value, new: value}}
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation("AuditLogsCreatedBy", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
   @@index([createdAt])
 }

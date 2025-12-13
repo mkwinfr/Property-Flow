@@ -3,14 +3,18 @@ import "dotenv/config";
 import cors from "cors";
 import morgan from "morgan";
 
-//import authRoutes from "./routes/auth";
-//import userRoutes from "./routes/user";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/admin/users";
+import departmentRoutes from "./routes/admin/departments";
+import roleRoutes from "./routes/admin/roles";
+import permissionRoutes from "./routes/admin/permissions";
 //import workOrderRoutes from "./routes/workorders";
 //import vendorRoutes from "./routes/vendors";
 import apartmentRoutes from "./routes/apartments";
 import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 import turnRoutes from "./routes/turns";
 import buildingRoutes from "./routes/buildings";
+import propertyRoutes from "./routes/properties";
 
 const app = express();
 
@@ -23,10 +27,13 @@ app.use(morgan("dev"));
 // ----------------------
 
 // Auth
-//app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
-// Users
-//app.use("/api/users", userRoutes);
+// Admin Routes
+app.use("/api/admin/users", userRoutes);
+app.use("/api/admin/departments", departmentRoutes);
+app.use("/api/admin/roles", roleRoutes);
+app.use("/api/admin/permissions", permissionRoutes);
 
 // Work Orders
 //app.use("/api/workorders", workOrderRoutes);
@@ -34,6 +41,7 @@ app.use(morgan("dev"));
 // ƒ-? NEW APARTMENT DETAIL ROUTE
 app.use("/api/apartments", apartmentRoutes);
 app.use("/api/buildings", buildingRoutes);
+app.use("/api/properties", propertyRoutes);
 app.use("/api/make-ready-board", makeReadyBoardRoutes);
 
 // Turns (make-ready, tasks, etc.)
