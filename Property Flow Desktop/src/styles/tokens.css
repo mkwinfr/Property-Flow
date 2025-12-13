@@ -1,0 +1,26 @@
+:root {
+  --pf-navy-950: #1e1f25;
+  --pf-navy-900: #1e1f25;
+  --pf-navy-800: #272830;
+  --pf-navy-700: #2f3037;
+  --pf-navy-600: #3a3b44;
+  --pf-ink: #0a0f24;
+  --pf-cream: #f6f7fb;
+  --pf-ivory: #eceff8;
+  --pf-muted: #9fa8c6;
+  --pf-muted-strong: #c9d1ea;
+  --pf-coral: #e56c74;
+  --pf-coral-bright: #ff9aa6;
+  --pf-sky: #9ab5ff;
+  --pf-purple: #9c86ff;
+  --pf-purple-light: #b5a6ff;
+  --pf-purple-dark: #7d69e0;
+  --pf-green: #74bb43;
+  --pf-green-light: #a4d966;
+  --pf-red: #ff4c4c;
+  --pf-red-light: #ff9999;
+  --pf-gray-light: #717278;
+
+  --bg: #121416;
+  --text: var(--pf-cream);
+}

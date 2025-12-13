@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f1419;
+  color: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* === Integrated styles from Tech app for compatibility === */
+/* These styles are required by the Inventory and MakeReadyBoard components */
+
+.pf-page {
+  min-height: 100vh;
+  padding: 2rem;
+  color: #f5f5f5;
+  background: #0f1419;
+}
+
+.pf-page-header {
+  margin-bottom: 2rem;
+}
+
+.pf-page-title {
+  font-family: 'Montserrat', 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: clamp(24px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+  color: #f5f5f5;
+}
+
+.pf-page-subtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+  font-family: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.pf-page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-root {
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f5f5f5;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-placeholder {
+  padding: 3rem 2rem;
+  background: #1a2332;
+  border: 1px solid #24324b;
+  border-radius: 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 1rem;
+  line-height: 1.6;
+}

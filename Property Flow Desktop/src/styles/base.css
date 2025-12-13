@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap");
+
+/* === Global Reset & Shell === */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg);
+  color: var(--pf-cream);
+  font-family: "Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+/* === App Shell === */
+.app-root {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg);
+  display: flex;
+}
+
+.app-fade-in {
+  flex: 1;
+  animation: appFadeIn 0.22s ease-out;
+}
+
+@keyframes appFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

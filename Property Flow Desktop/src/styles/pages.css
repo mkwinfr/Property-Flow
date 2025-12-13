@@ -1,0 +1,492 @@
+/* === Shared Page Layout === */
+.page-root {
+  min-height: 100vh;
+  padding: 1.25rem 1.25rem 6rem;
+  color: var(--pf-cream);
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.16rem;
+}
+
+.page-subtitle {
+  font-size: 0.85rem;
+  color: var(--pf-muted);
+}
+
+.page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.page-placeholder {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: #1e1f25;
+  font-size: 0.85rem;
+  color: var(--pf-ivory);
+}
+
+/* === Apartment Detail Page === */
+.apartments-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--pf-cream);
+  padding: 32px 16px 64px;
+}
+
+.apartments-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.apartments-header {
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: clamp(14px, 2vw, 20px) clamp(16px, 2.2vw, 22px);
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vw, 16px);
+  text-align: center;
+  align-items: center;
+}
+
+.apartments-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.apartments-title {
+  margin: 6px 0 4px;
+  font-size: clamp(20px, 3.4vw, 28px);
+  font-weight: 700;
+  color: var(--pf-ivory);
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.apartments-subtitle {
+  margin: 0;
+  color: var(--pf-muted-strong);
+  font-size: clamp(11px, 2.4vw, 14px);
+  line-height: 1.3;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.apartments-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: clamp(8px, 1.4vw, 14px);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.apartments-toolbar {
+  margin-top: 8px;
+}
+
+.apartments-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(10px, 1.6vw, 14px);
+  background: #272830;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: clamp(10px, 1.8vw, 14px) clamp(12px, 2vw, 16px);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.apartments-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.apartment-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.apartment-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--pf-ivory);
+}
+
+.apartment-group-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.apartment-group-header span {
+  font-size: 13px;
+  color: var(--pf-muted);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: clamp(12px, 2.4vw, 14px);
+  color: var(--pf-ivory);
+}
+
+.control-group span {
+  color: var(--pf-muted);
+  letter-spacing: 0.01em;
+}
+
+.control-group select,
+.control-group input {
+  background: #2c2d35;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: clamp(9px, 1.8vw, 12px) clamp(10px, 2vw, 14px);
+  color: var(--pf-ivory);
+  font-size: clamp(12px, 2.6vw, 14px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.control-group input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.apartments-state {
+  padding: 14px 16px;
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  color: var(--pf-ivory);
+}
+
+.apartments-state.error {
+  color: #ffe5e8;
+  background: rgba(229, 108, 116, 0.18);
+  border-color: rgba(229, 108, 116, 0.5);
+}
+
+.apartments-state.muted {
+  text-align: center;
+  color: var(--pf-muted);
+}
+
+.apartments-list {
+  --apartment-card-size: clamp(120px, 22vw, 240px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 18px);
+  align-items: stretch;
+  justify-items: center;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.card-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: clamp(9px, 1.6vw, 11px);
+  color: var(--pf-muted);
+  margin: 0;
+}
+
+.card-title {
+  margin: 6px 0 2px;
+  font-size: clamp(16px, 3vw, 18px);
+  color: var(--pf-ivory);
+  line-height: 1.12;
+  word-break: break-word;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+}
+
+.card-subtitle {
+  margin: 0;
+  color: var(--pf-muted-strong);
+  font-size: clamp(10px, 2.4vw, 13px);
+  line-height: 1.25;
+  word-break: break-word;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 500;
+}
+
+@media (max-width: 780px) {
+  .apartments-header {
+    flex-direction: column;
+  }
+
+  .apartments-meta {
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .apartments-page {
+    padding: 24px 12px 48px;
+  }
+}
+
+/* === Dashboard Page === */
+.dashboard-root {
+  min-height: 100vh;
+  padding-bottom: 110px;
+}
+
+.dashboard-content {
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.dashboard-section {
+  color: var(--pf-cream);
+}
+
+.dashboard-title {
+  font-size: 1.4rem;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-subtitle {
+  font-size: 0.95rem;
+  color: var(--pf-muted);
+  margin-bottom: 1rem;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.dashboard-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.dashboard-card {
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: #1e1f25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.dashboard-placeholder {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: #1e1f25;
+  font-size: 0.85rem;
+  color: var(--pf-ivory);
+}
+
+.tab-transition {
+  animation: tabFade 0.2s ease-out;
+}
+
+@keyframes tabFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Make Ready Board Page === */
+.make-ready-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  height: 100%;
+  box-sizing: border-box;
+  color: var(--pf-cream);
+  font-family: "Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.make-ready-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.make-ready-title {
+  font-size: 20px;
+  font-family: "Montserrat", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--pf-ivory);
+  margin: 0;
+}
+
+.make-ready-subtitle {
+  font-size: 12px;
+  color: var(--pf-muted);
+  margin: 0;
+  font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.make-ready-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(229, 108, 116, 0.2);
+  border: 1px solid rgba(229, 108, 116, 0.6);
+  color: #ffe5e8;
+  font-size: 12px;
+}
+
+.make-ready-error-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.make-ready-error-url {
+  font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: #ffe5ea;
+}
+
+.make-ready-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--pf-muted);
+  font-size: 13px;
+  padding: 24px 0;
+}
+
+.make-ready-loading-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.make-ready-empty {
+  font-size: 12px;
+  color: var(--pf-muted);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  text-align: center;
+  background: #1e1f25;
+}
+
+.make-ready-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.make-ready-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.make-ready-unit-block {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pf-muted);
+}
+
+.make-ready-unit-label {
+  font-size: 10px;
+}
+
+.make-ready-unit-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.make-ready-unit-number {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f6f7fb;
+  color: #121734;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.make-ready-unit-building {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #1e1f25;
+  color: var(--pf-cream);
+  font-size: 11px;
+}
+
+.make-ready-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.make-ready-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  font-size: 11px;
+  color: var(--pf-cream);
+}
+
+@media (min-width: 768px) {
+  .make-ready-meta-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .make-ready-meta-notes {
+    grid-column: span 2;
+  }
+}

@@ -1,0 +1,65 @@
+.placeholder-page {
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.placeholder-header {
+  margin-bottom: 2rem;
+}
+
+.placeholder-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f5f5f5;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.placeholder-subtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.placeholder-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.placeholder-card {
+  max-width: 500px;
+  text-align: center;
+  background: #1a2332;
+  border: 1px solid #24324b;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.placeholder-coming-soon {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #5b9dd9;
+  margin: 0 0 1rem 0;
+}
+
+.placeholder-description {
+  font-size: 1rem;
+  color: #d0d0d0;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.placeholder-hint {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
