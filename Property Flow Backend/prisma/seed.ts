@@ -28,15 +28,59 @@ async function main() {
     },
   });
 
-  await prisma.apartment.deleteMany({
-    where: { propertyId: property.id },
-  });
+  // Clear existing data in order - only if tables exist
+  try {
+    await prisma.turnTask.deleteMany({
+      where: { turn: { apartment: { propertyId: property.id } } },
+    });
+  } catch (e) {
+    // Table may not exist yet
+  }
 
+  try {
+    await prisma.turn.deleteMany({
+      where: { apartment: { propertyId: property.id } },
+    });
+  } catch (e) {
+    // Table may not exist yet
+  }
+
+  try {
+    await prisma.apartment.deleteMany({
+      where: { propertyId: property.id },
+    });
+  } catch (e) {
+    // Table may not exist yet
+  }
+
+  try {
+    await prisma.building.deleteMany({
+      where: { propertyId: property.id },
+    });
+  } catch (e) {
+    // Table may not exist yet
+  }
+
+  // Create buildings (100-1700)
   const buildings24 = [100, 200, 300, 400, 500, 1200, 1300, 1400, 1500, 1600, 1700];
   const buildings20 = [600, 700, 800, 900, 1000, 1100];
 
+  const buildingMap: Record<number, { id: number }> = {};
+
+  for (const buildingNumber of [...buildings24, ...buildings20]) {
+    const building = await prisma.building.create({
+      data: {
+        propertyId: property.id,
+        buildingNumber: buildingNumber.toString(),
+        name: `Building ${buildingNumber}`,
+      },
+    });
+    buildingMap[buildingNumber] = building;
+  }
+
   type ApartmentSeed = {
     propertyId: number;
+    buildingId: number;
     unitNumber: string;
     building: string;
     floor: number | null;
@@ -57,6 +101,7 @@ async function main() {
 
       apartmentsToCreate.push({
         propertyId: property.id,
+        buildingId: buildingMap[buildingNumber].id,
         unitNumber: unitNum.toString(),
         building: buildingNumber.toString(),
         floor: null,
@@ -80,13 +125,6 @@ async function main() {
   await prisma.apartment.createMany({
     data: apartmentsToCreate,
   });
-
-  // Clear existing turn-related data to avoid FK issues before reseeding
-  await prisma.turnMaterial.deleteMany();
-  await prisma.turnConditionTag.deleteMany();
-  await prisma.turnWorkCategory.deleteMany();
-  await prisma.turnTask.deleteMany();
-  await prisma.turn.deleteMany();
 
   // Helper to seed a turn and mark apartment occupancy based on move-out date
   async function seedTurnForUnit(params: {
@@ -173,7 +211,7 @@ async function main() {
     notes: 'Resident transferring; schedule carpet clean.',
   });
 
-  console.log("Seeding complete");
+  console.log('Seeding complete - Created 17 buildings, 384 apartments, and sample turns');
 }
 
 main()

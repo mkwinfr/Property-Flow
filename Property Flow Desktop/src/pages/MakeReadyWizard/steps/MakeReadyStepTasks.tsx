@@ -107,9 +107,7 @@ export default function MakeReadyStepTasks({
               ))}
             </div>
           ) : (
-            <p style={{ color: '#9ca3af', textAlign: 'center', padding: '2rem' }}>
-              No tasks added yet
-            </p>
+            <p className="wizard-empty-copy">No tasks added yet</p>
           )}
         </div>
       </div>

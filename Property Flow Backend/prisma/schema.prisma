@@ -174,15 +174,35 @@ model Property {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
+  buildings  Building[]
   apartments Apartment[]
+}
+
+/// A building / structure within a property
+model Building {
+  id             Int        @id @default(autoincrement())
+  propertyId     Int
+  buildingNumber String     // e.g., "100", "101", "Building A"
+  name           String?    // Optional friendly name
+  floors         Int?
+  unitsPerFloor  Int?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  property       Property   @relation(fields: [propertyId], references: [id])
+  apartments     Apartment[]
+
+  @@unique([propertyId, buildingNumber])
+  @@index([propertyId])
 }
 
 /// A specific apartment / unit
 model Apartment {
   id           Int              @id @default(autoincrement())
   propertyId   Int
+  buildingId   Int
   unitNumber   String
-  building     String?
+  building     String?          // Denormalized for backwards compatibility
   floor        Int?
   beds         Int?
   baths        Int?
@@ -193,6 +213,7 @@ model Apartment {
   updatedAt    DateTime         @updatedAt
 
   property     Property         @relation(fields: [propertyId], references: [id])
+  buildingRel  Building         @relation(fields: [buildingId], references: [id])
 
   workOrders   WorkOrder[]
   turns        Turn[]

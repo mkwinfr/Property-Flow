@@ -14,7 +14,31 @@ CREATE TYPE "WorkOrderType" AS ENUM ('MAINTENANCE', 'MAKE_READY', 'VENDOR', 'INS
 CREATE TYPE "TurnStatus" AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'READY', 'ON_HOLD');
 
 -- CreateEnum
-CREATE TYPE "TurnType" AS ENUM ('MAKE_READY', 'OTHER');
+CREATE TYPE "TurnType" AS ENUM ('STANDARD_MOVE_OUT', 'TRANSFER', 'RENOVATION', 'SPECIAL');
+
+-- CreateEnum
+CREATE TYPE "PriorityLevel" AS ENUM ('LOW', 'NORMAL', 'HIGH', 'DOWN_UNIT');
+
+-- CreateEnum
+CREATE TYPE "OverallCondition" AS ENUM ('EXCELLENT', 'GOOD', 'FAIR', 'POOR', 'SEVERE');
+
+-- CreateEnum
+CREATE TYPE "ConditionTag" AS ENUM ('HEAVY_TRASH', 'ODORS', 'PET_DAMAGE', 'PESTS', 'MOLD_MOISTURE', 'SAFETY_ISSUES', 'APPLIANCE_ISSUES');
+
+-- CreateEnum
+CREATE TYPE "WorkCategory" AS ENUM ('GENERAL_MAINTENANCE', 'PAINT', 'CLEANING', 'FLOORING', 'APPLIANCES', 'HVAC', 'PLUMBING', 'ELECTRICAL', 'PEST_CONTROL', 'TRASH_OUT', 'VENDOR_SPECIALTY', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "TaskPriority" AS ENUM ('CRITICAL', 'HIGH', 'NORMAL', 'LOW');
+
+-- CreateEnum
+CREATE TYPE "BillableParty" AS ENUM ('OWNER', 'RESIDENT', 'SHARED', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ChargebackType" AS ENUM ('NONE', 'PARTIAL', 'FULL');
+
+-- CreateEnum
+CREATE TYPE "TaskStatusEnum" AS ENUM ('PENDING', 'IN_PROGRESS', 'DONE', 'CANCELLED');
 
 -- CreateEnum
 CREATE TYPE "VendorJobStatus" AS ENUM ('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELED');
@@ -48,9 +72,24 @@ CREATE TABLE "Property" (
 );
 
 -- CreateTable
+CREATE TABLE "Building" (
+    "id" SERIAL NOT NULL,
+    "propertyId" INTEGER NOT NULL,
+    "buildingNumber" TEXT NOT NULL,
+    "name" TEXT,
+    "floors" INTEGER,
+    "unitsPerFloor" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Building_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Apartment" (
     "id" SERIAL NOT NULL,
     "propertyId" INTEGER NOT NULL,
+    "buildingId" INTEGER NOT NULL,
     "unitNumber" TEXT NOT NULL,
     "building" TEXT,
     "floor" INTEGER,
@@ -90,14 +129,38 @@ CREATE TABLE "WorkOrder" (
 -- CreateTable
 CREATE TABLE "Turn" (
     "id" SERIAL NOT NULL,
+    "propertyId" INTEGER,
+    "unitId" INTEGER,
     "apartmentId" INTEGER NOT NULL,
     "createdByUserId" INTEGER NOT NULL,
-    "type" "TurnType" NOT NULL DEFAULT 'MAKE_READY',
+    "type" "TurnType" NOT NULL DEFAULT 'STANDARD_MOVE_OUT',
     "status" "TurnStatus" NOT NULL DEFAULT 'NOT_STARTED',
+    "priority" "PriorityLevel" NOT NULL DEFAULT 'NORMAL',
     "moveOutDate" TIMESTAMP(3),
     "targetReadyDate" TIMESTAMP(3),
     "actualReadyDate" TIMESTAMP(3),
+    "overallCondition" "OverallCondition",
+    "wallsCondition" TEXT,
+    "flooringCondition" TEXT,
+    "doorsLocksCondition" TEXT,
+    "plumbingCondition" TEXT,
+    "electricalCondition" TEXT,
+    "appliancesCondition" TEXT,
+    "cleanlinessCondition" TEXT,
+    "hasLifeSafetyIssues" BOOLEAN NOT NULL DEFAULT false,
+    "lifeSafetyNotes" TEXT,
+    "photoNotes" TEXT,
+    "estimatedLaborCost" DOUBLE PRECISION,
+    "estimatedMaterialsCost" DOUBLE PRECISION,
+    "totalEstimatedCost" DOUBLE PRECISION,
+    "turnOwnerId" TEXT,
+    "accessInstructions" TEXT,
+    "alarmCodes" TEXT,
+    "chargebackType" "ChargebackType" NOT NULL DEFAULT 'NONE',
+    "chargebackAmount" DOUBLE PRECISION,
+    "chargebackReason" TEXT,
     "notes" TEXT,
+    "turnNotes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -105,19 +168,69 @@ CREATE TABLE "Turn" (
 );
 
 -- CreateTable
+CREATE TABLE "TurnConditionTag" (
+    "id" SERIAL NOT NULL,
+    "turnId" INTEGER NOT NULL,
+    "tag" "ConditionTag" NOT NULL,
+
+    CONSTRAINT "TurnConditionTag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TurnWorkCategory" (
+    "id" SERIAL NOT NULL,
+    "turnId" INTEGER NOT NULL,
+    "category" "WorkCategory" NOT NULL,
+
+    CONSTRAINT "TurnWorkCategory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "TurnTask" (
     "id" SERIAL NOT NULL,
     "turnId" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
-    "category" TEXT,
-    "description" TEXT,
-    "status" "TurnStatus" NOT NULL DEFAULT 'NOT_STARTED',
+    "category" "WorkCategory" NOT NULL,
+    "area" TEXT NOT NULL DEFAULT 'WHOLE_UNIT',
+    "priority" "TaskPriority" NOT NULL DEFAULT 'NORMAL',
+    "status" "TaskStatusEnum" NOT NULL DEFAULT 'PENDING',
     "assignedToUserId" INTEGER,
     "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "estimatedEffortValue" DOUBLE PRECISION,
+    "estimatedEffortUnit" TEXT,
+    "startDate" TIMESTAMP(3),
+    "dueDate" TIMESTAMP(3),
+    "mustCompleteBy" TIMESTAMP(3),
+    "isAllDay" BOOLEAN NOT NULL DEFAULT false,
+    "startTime" TEXT,
+    "endTime" TEXT,
+    "internalNotes" TEXT,
+    "vendorNotes" TEXT,
+    "budgetedCost" DOUBLE PRECISION,
+    "billableTo" "BillableParty",
+    "assigneeType" TEXT,
+    "vendorId" INTEGER,
+    "dependsOnTaskId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "TurnTask_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TurnMaterial" (
+    "id" SERIAL NOT NULL,
+    "turnId" INTEGER NOT NULL,
+    "item" TEXT NOT NULL,
+    "category" "WorkCategory" NOT NULL,
+    "quantity" DOUBLE PRECISION NOT NULL,
+    "unit" TEXT NOT NULL,
+    "costPerUnit" DOUBLE PRECISION,
+    "storeOrVendor" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "TurnMaterial_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -198,6 +311,12 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Property_code_key" ON "Property"("code");
 
 -- CreateIndex
+CREATE INDEX "Building_propertyId_idx" ON "Building"("propertyId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Building_propertyId_buildingNumber_key" ON "Building"("propertyId", "buildingNumber");
+
+-- CreateIndex
 CREATE INDEX "Apartment_propertyId_unitNumber_idx" ON "Apartment"("propertyId", "unitNumber");
 
 -- CreateIndex
@@ -216,10 +335,28 @@ CREATE INDEX "Turn_apartmentId_idx" ON "Turn"("apartmentId");
 CREATE INDEX "Turn_status_idx" ON "Turn"("status");
 
 -- CreateIndex
+CREATE INDEX "Turn_priority_idx" ON "Turn"("priority");
+
+-- CreateIndex
+CREATE INDEX "TurnConditionTag_turnId_idx" ON "TurnConditionTag"("turnId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TurnConditionTag_turnId_tag_key" ON "TurnConditionTag"("turnId", "tag");
+
+-- CreateIndex
+CREATE INDEX "TurnWorkCategory_turnId_idx" ON "TurnWorkCategory"("turnId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TurnWorkCategory_turnId_category_key" ON "TurnWorkCategory"("turnId", "category");
+
+-- CreateIndex
 CREATE INDEX "TurnTask_turnId_idx" ON "TurnTask"("turnId");
 
 -- CreateIndex
 CREATE INDEX "TurnTask_status_idx" ON "TurnTask"("status");
+
+-- CreateIndex
+CREATE INDEX "TurnMaterial_turnId_idx" ON "TurnMaterial"("turnId");
 
 -- CreateIndex
 CREATE INDEX "VendorJob_apartmentId_idx" ON "VendorJob"("apartmentId");
@@ -240,7 +377,13 @@ CREATE INDEX "ActivityLog_apartmentId_idx" ON "ActivityLog"("apartmentId");
 CREATE INDEX "ActivityLog_createdAt_idx" ON "ActivityLog"("createdAt");
 
 -- AddForeignKey
+ALTER TABLE "Building" ADD CONSTRAINT "Building_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Apartment" ADD CONSTRAINT "Apartment_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Apartment" ADD CONSTRAINT "Apartment_buildingId_fkey" FOREIGN KEY ("buildingId") REFERENCES "Building"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WorkOrder" ADD CONSTRAINT "WorkOrder_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -261,10 +404,19 @@ ALTER TABLE "Turn" ADD CONSTRAINT "Turn_apartmentId_fkey" FOREIGN KEY ("apartmen
 ALTER TABLE "Turn" ADD CONSTRAINT "Turn_createdByUserId_fkey" FOREIGN KEY ("createdByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TurnTask" ADD CONSTRAINT "TurnTask_turnId_fkey" FOREIGN KEY ("turnId") REFERENCES "Turn"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TurnConditionTag" ADD CONSTRAINT "TurnConditionTag_turnId_fkey" FOREIGN KEY ("turnId") REFERENCES "Turn"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TurnWorkCategory" ADD CONSTRAINT "TurnWorkCategory_turnId_fkey" FOREIGN KEY ("turnId") REFERENCES "Turn"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TurnTask" ADD CONSTRAINT "TurnTask_turnId_fkey" FOREIGN KEY ("turnId") REFERENCES "Turn"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TurnTask" ADD CONSTRAINT "TurnTask_assignedToUserId_fkey" FOREIGN KEY ("assignedToUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TurnMaterial" ADD CONSTRAINT "TurnMaterial_turnId_fkey" FOREIGN KEY ("turnId") REFERENCES "Turn"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "VendorJob" ADD CONSTRAINT "VendorJob_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

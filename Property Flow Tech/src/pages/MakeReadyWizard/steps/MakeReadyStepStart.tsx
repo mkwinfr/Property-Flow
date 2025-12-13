@@ -1,5 +1,5 @@
 // src/pages/MakeReadyWizard/steps/MakeReadyStepStart.tsx
-import type { MakeReadyTurnDraft } from '@/types/makeReady';
+import type { MakeReadyTurnDraft } from '../../../types/makeReady';
 
 interface Props {
   turnDraft: MakeReadyTurnDraft;
@@ -10,9 +10,9 @@ interface Props {
   isSubmitting: boolean;
 }
 
-export default function MakeReadyStepStart({ onNext }: Props) {
+export default function MakeReadyStepStart(_props: Props) {
   return (
-    <div className="wizard-step-content">
+    <div className="wizard-step-content wizard-start-copy">
       <p>Welcome to the Make Ready Wizard. This 10-step process will help you create a new make-ready turn for your property.</p>
       <p>You'll provide:</p>
       <ul>

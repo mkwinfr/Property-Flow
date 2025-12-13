@@ -10,6 +10,7 @@ import morgan from "morgan";
 import apartmentRoutes from "./routes/apartments";
 import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 import turnRoutes from "./routes/turns";
+import buildingRoutes from "./routes/buildings";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(morgan("dev"));
 
 // ƒ-? NEW APARTMENT DETAIL ROUTE
 app.use("/api/apartments", apartmentRoutes);
+app.use("/api/buildings", buildingRoutes);
 app.use("/api/make-ready-board", makeReadyBoardRoutes);
 
 // Turns (make-ready, tasks, etc.)

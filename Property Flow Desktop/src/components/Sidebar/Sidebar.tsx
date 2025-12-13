@@ -72,11 +72,7 @@ const navigationSections: NavSection[] = [
 ];
 
 const Sidebar = () => {
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    'Dashboard',
-    'Management',
-    'Maintenance',
-  ]);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const { logout, user } = useAuth();
 
   const toggleSection = (label: string) => {

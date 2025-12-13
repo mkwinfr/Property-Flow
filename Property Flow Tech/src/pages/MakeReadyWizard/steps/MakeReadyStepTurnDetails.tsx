@@ -1,5 +1,5 @@
 // src/pages/MakeReadyWizard/steps/MakeReadyStepTurnDetails.tsx
-import type { MakeReadyTurnDraft, TurnType, PriorityLevel } from '@/types/makeReady';
+import type { MakeReadyTurnDraft, TurnType, PriorityLevel } from '../../../types/makeReady';
 
 interface Props {
   turnDraft: MakeReadyTurnDraft;
@@ -12,6 +12,23 @@ interface Props {
 
 const TURN_TYPES: TurnType[] = ['STANDARD_MOVE_OUT', 'TRANSFER', 'RENOVATION', 'SPECIAL'];
 const PRIORITY_LEVELS: PriorityLevel[] = ['LOW', 'NORMAL', 'HIGH', 'DOWN_UNIT'];
+const BUILDINGS = [
+  {
+    id: 'bldg-a',
+    name: 'Building A',
+    units: ['A-101', 'A-102', 'A-201', 'A-202'],
+  },
+  {
+    id: 'bldg-b',
+    name: 'Building B',
+    units: ['B-101', 'B-102', 'B-201', 'B-202', 'B-301'],
+  },
+  {
+    id: 'bldg-c',
+    name: 'Building C',
+    units: ['C-01', 'C-02', 'C-03'],
+  },
+];
 
 export default function MakeReadyStepTurnDetails({
   turnDraft,
@@ -25,31 +42,43 @@ export default function MakeReadyStepTurnDetails({
         
         <div className="wizard-field">
           <label htmlFor="propertyId" className="wizard-label">
-            Property ID
+            Building
             <span className="wizard-label-required">*</span>
           </label>
-          <input
+          <select
             id="propertyId"
-            type="text"
-            placeholder="Enter property ID"
             value={turnDraft.propertyId || ''}
-            onChange={(e) => onUpdate({ propertyId: e.target.value })}
-          />
+            onChange={(e) => onUpdate({ propertyId: e.target.value, unitId: '' })}
+          >
+            <option value="">Select a building</option>
+            {BUILDINGS.map((building) => (
+              <option key={building.id} value={building.id}>
+                {building.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="wizard-field">
-          <label htmlFor="unitId" className="wizard-label">
-            Unit ID
-            <span className="wizard-label-required">*</span>
-          </label>
-          <input
-            id="unitId"
-            type="text"
-            placeholder="Enter unit ID or select from list"
-            value={turnDraft.unitId || ''}
-            onChange={(e) => onUpdate({ unitId: e.target.value })}
-          />
-        </div>
+        {turnDraft.propertyId && (
+          <div className="wizard-field">
+            <label htmlFor="unitId" className="wizard-label">
+              Apartment
+              <span className="wizard-label-required">*</span>
+            </label>
+            <select
+              id="unitId"
+              value={turnDraft.unitId || ''}
+              onChange={(e) => onUpdate({ unitId: e.target.value })}
+            >
+              <option value="">Select an apartment</option>
+              {BUILDINGS.find((b) => b.id === turnDraft.propertyId)?.units.map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="wizard-inline-grid">
           <div className="wizard-field">
