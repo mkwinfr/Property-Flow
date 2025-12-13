@@ -29,6 +29,9 @@ export default function MakeReadyStepScope({
   turnDraft,
   onUpdate,
 }: Props) {
+  const formatCategory = (cat: WorkCategory) =>
+    cat === 'GENERAL_MAINTENANCE' ? 'Gen Maintenance' : cat.replace(/_/g, ' ');
+
   const toggleCategory = (cat: WorkCategory) => {
     const cats = turnDraft.selectedCategories || [];
     const updated = cats.includes(cat) ? cats.filter((c) => c !== cat) : [...cats, cat];
@@ -43,19 +46,23 @@ export default function MakeReadyStepScope({
           Select the categories of work needed for this turn:
         </p>
 
-        <div className="wizard-checkbox-group">
+        <div className="wizard-pill-grid">
           {WORK_CATEGORIES.map((cat) => (
-            <div key={cat} className="wizard-checkbox-item">
+            <label
+              key={cat}
+              className={`wizard-pill ${
+                turnDraft.selectedCategories?.includes(cat) ? 'wizard-pill--checked' : ''
+              }`}
+            >
               <input
                 type="checkbox"
-                id={`cat-${cat}`}
+                className="wizard-pill__input"
                 checked={turnDraft.selectedCategories?.includes(cat) || false}
                 onChange={() => toggleCategory(cat)}
               />
-              <label htmlFor={`cat-${cat}`}>
-                {cat.replace(/_/g, ' ')}
-              </label>
-            </div>
+              <span className="wizard-pill__check">✓</span>
+              <span className="wizard-pill__text">{formatCategory(cat)}</span>
+            </label>
           ))}
         </div>
       </div>
@@ -73,18 +80,21 @@ export default function MakeReadyStepScope({
           />
         </div>
 
-        <div className="wizard-checkbox-group">
-          <div className="wizard-checkbox-item">
+        <div className="wizard-pill-grid wizard-pill-grid--single">
+          <label
+            className={`wizard-pill ${turnDraft.useTemplateTasks ? 'wizard-pill--checked' : ''}`}
+          >
             <input
               type="checkbox"
-              id="useTemplateTasks"
+              className="wizard-pill__input"
               checked={turnDraft.useTemplateTasks || false}
               onChange={(e) => onUpdate({ useTemplateTasks: e.target.checked })}
             />
-            <label htmlFor="useTemplateTasks">
+            <span className="wizard-pill__check">✓</span>
+            <span className="wizard-pill__text">
               Use template tasks for selected categories
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
       </div>
     </div>

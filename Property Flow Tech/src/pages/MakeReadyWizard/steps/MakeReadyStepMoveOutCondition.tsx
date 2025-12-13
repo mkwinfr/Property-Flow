@@ -57,19 +57,23 @@ export default function MakeReadyStepMoveOutCondition({
 
         <div className="wizard-field">
           <label className="wizard-label">Issues Found</label>
-          <div className="wizard-checkbox-group">
+          <div className="wizard-pill-grid">
             {TAGS.map((tag) => (
-              <div key={tag} className="wizard-checkbox-item">
+              <label
+                key={tag}
+                className={`wizard-pill ${
+                  turnDraft.conditionTags?.includes(tag) ? 'wizard-pill--checked' : ''
+                }`}
+              >
                 <input
                   type="checkbox"
-                  id={`tag-${tag}`}
+                  className="wizard-pill__input"
                   checked={turnDraft.conditionTags?.includes(tag) || false}
                   onChange={() => toggleTag(tag)}
                 />
-                <label htmlFor={`tag-${tag}`}>
-                  {tag.replace(/_/g, ' ')}
-                </label>
-              </div>
+                <span className="wizard-pill__check">✓</span>
+                <span className="wizard-pill__text">{tag.replace(/_/g, ' ')}</span>
+              </label>
             ))}
           </div>
         </div>

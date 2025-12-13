@@ -63,17 +63,20 @@ export default function MakeReadyStepAssignments({
 
       <div className="wizard-section">
         <div className="wizard-checkbox-group">
-          <div className="wizard-checkbox-item">
+          <label
+            className={`wizard-pill ${turnDraft.notifyAssignees ? 'wizard-pill--checked' : ''}`}
+          >
             <input
               type="checkbox"
-              id="notifyAssignees"
+              className="wizard-pill__input"
               checked={turnDraft.notifyAssignees || false}
               onChange={(e) => onUpdate({ notifyAssignees: e.target.checked })}
             />
-            <label htmlFor="notifyAssignees">
+            <span className="wizard-pill__check">✓</span>
+            <span className="wizard-pill__text">
               Notify assigned team members when turn is created
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
       </div>
     </div>

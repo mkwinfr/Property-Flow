@@ -6,9 +6,8 @@ import morgan from "morgan";
 //import authRoutes from "./routes/auth";
 //import userRoutes from "./routes/user";
 //import workOrderRoutes from "./routes/workorders";
-//import turnRoutes from "./routes/turns";
 //import vendorRoutes from "./routes/vendors";
-import apartmentRoutes from "./routes/apartments";   // ⭐ ADD THIS LINE
+import apartmentRoutes from "./routes/apartments";
 import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 import turnRoutes from "./routes/turns";
 
@@ -19,7 +18,7 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // ----------------------
-// ⭐ MOUNT YOUR ROUTERS
+// ƒ-? MOUNT YOUR ROUTERS
 // ----------------------
 
 // Auth
@@ -31,18 +30,18 @@ app.use(morgan("dev"));
 // Work Orders
 //app.use("/api/workorders", workOrderRoutes);
 
-// Turns
+// ƒ-? NEW APARTMENT DETAIL ROUTE
+app.use("/api/apartments", apartmentRoutes);
+app.use("/api/make-ready-board", makeReadyBoardRoutes);
+
+// Turns (make-ready, tasks, etc.)
 app.use("/api", turnRoutes);
 
 // Vendors
 //app.use("/api/vendors", vendorRoutes);
 
-// ⭐ NEW APARTMENT DETAIL ROUTE
-app.use("/api/apartments", apartmentRoutes);
-app.use("/api/make-ready-board", makeReadyBoardRoutes);
-
 // Health check
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Property Flow Backend Running");
 });
 

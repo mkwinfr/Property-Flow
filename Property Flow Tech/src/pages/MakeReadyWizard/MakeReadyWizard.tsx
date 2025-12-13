@@ -16,8 +16,8 @@ import MakeReadyStepCreated from './steps/MakeReadyStepCreated.tsx';
 
 const steps = [
   { number: 1, title: 'Start', component: MakeReadyStepStart },
-  { number: 2, title: 'Turn Details', component: MakeReadyStepTurnDetails },
-  { number: 3, title: 'Move Out Condition', component: MakeReadyStepMoveOutCondition },
+  { number: 2, title: 'Details', component: MakeReadyStepTurnDetails },
+  { number: 3, title: 'Condition', component: MakeReadyStepMoveOutCondition },
   { number: 4, title: 'Scope', component: MakeReadyStepScope },
   { number: 5, title: 'Tasks', component: MakeReadyStepTasks },
   { number: 6, title: 'Assignments', component: MakeReadyStepAssignments },
@@ -178,7 +178,11 @@ export default function MakeReadyWizard() {
               title={step.title}
             >
               <span className="stepper-step-number">{step.number}</span>
-              <span className="stepper-step-label">{step.title}</span>
+              {currentStep === step.number && (
+                <span className="stepper-step-label">
+                  {step.title}
+                </span>
+              )}
             </button>
           ))}
         </div>
