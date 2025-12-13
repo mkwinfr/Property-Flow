@@ -1,4 +1,5 @@
 // src/pages/MakeReadyWizard/steps/MakeReadyStepTurnDetails.tsx
+import { useState, useEffect } from 'react';
 import type { MakeReadyTurnDraft, TurnType, PriorityLevel } from '../../../types/makeReady';
 
 interface Props {
@@ -10,56 +11,120 @@ interface Props {
   isSubmitting: boolean;
 }
 
+interface Building {
+  id: number;
+  propertyId: number;
+  buildingNumber: string;
+  name?: string;
+}
+
+interface Apartment {
+  id: number;
+  propertyId: number;
+  buildingId: number;
+  unitNumber: string;
+  building?: string;
+  beds?: number;
+  baths?: number;
+}
+
 const TURN_TYPES: TurnType[] = ['STANDARD_MOVE_OUT', 'TRANSFER', 'RENOVATION', 'SPECIAL'];
 const PRIORITY_LEVELS: PriorityLevel[] = ['LOW', 'NORMAL', 'HIGH', 'DOWN_UNIT'];
-const BUILDINGS = [
-  {
-    id: 'bldg-a',
-    name: 'Building A',
-    units: ['A-101', 'A-102', 'A-201', 'A-202'],
-  },
-  {
-    id: 'bldg-b',
-    name: 'Building B',
-    units: ['B-101', 'B-102', 'B-201', 'B-202', 'B-301'],
-  },
-  {
-    id: 'bldg-c',
-    name: 'Building C',
-    units: ['C-01', 'C-02', 'C-03'],
-  },
-];
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export default function MakeReadyStepTurnDetails({
   turnDraft,
   onUpdate,
 }: Props) {
+  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+  const [buildingsLoading, setBuildingsLoading] = useState(false);
+  const [buildingsError, setBuildingsError] = useState<string | null>(null);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<number | null>(null);
+
+  // Fetch buildings (assuming propertyId is available - adjust as needed for your app)
+  useEffect(() => {
+    const fetchBuildings = async () => {
+      setBuildingsLoading(true);
+      setBuildingsError(null);
+      try {
+        // Adjust this endpoint based on your API structure
+        // If you have a propertyId in context, use it here
+        const response = await fetch(`${API_BASE}/api/buildings`);
+        if (!response.ok) throw new Error('Failed to load buildings');
+        const data = await response.json();
+        setBuildings(Array.isArray(data) ? data : data.buildings || []);
+      } catch (err) {
+        setBuildingsError(err instanceof Error ? err.message : 'Failed to load buildings');
+      } finally {
+        setBuildingsLoading(false);
+      }
+    };
+
+    fetchBuildings();
+  }, []);
+
+  // Fetch apartments when building is selected
+  useEffect(() => {
+    if (!selectedBuildingId) {
+      setApartments([]);
+      return;
+    }
+
+    const fetchApartments = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE}/api/buildings/${selectedBuildingId}/apartments`
+        );
+        if (!response.ok) throw new Error('Failed to load apartments');
+        const data = await response.json();
+        setApartments(Array.isArray(data) ? data : data.apartments || []);
+      } catch (err) {
+        setApartments([]);
+      }
+    };
+
+    fetchApartments();
+  }, [selectedBuildingId]);
+
+  const handleBuildingChange = (buildingId: string) => {
+    const id = buildingId ? Number(buildingId) : null;
+    setSelectedBuildingId(id);
+    onUpdate({ propertyId: buildingId, unitId: '' });
+  };
+
+  const handleApartmentChange = (apartmentId: string) => {
+    onUpdate({ unitId: apartmentId });
+  };
 
   return (
     <div className="wizard-step-content">
       <div className="wizard-section">
         <h3 className="wizard-section-title">Turn Information</h3>
-        
-        <div className="wizard-field">
-          <label htmlFor="propertyId" className="wizard-label">
-            Building
-            <span className="wizard-label-required">*</span>
-          </label>
-          <select
-            id="propertyId"
-            value={turnDraft.propertyId || ''}
-            onChange={(e) => onUpdate({ propertyId: e.target.value, unitId: '' })}
-          >
-            <option value="">Select a building</option>
-            {BUILDINGS.map((building) => (
-              <option key={building.id} value={building.id}>
-                {building.name}
-              </option>
-            ))}
-          </select>
-        </div>
 
-        {turnDraft.propertyId && (
+        {/* Building & Apartment Row - Equal Width Fields */}
+        <div className="wizard-row-equal">
+          <div className="wizard-field">
+            <label htmlFor="buildingId" className="wizard-label">
+              Building
+              <span className="wizard-label-required">*</span>
+            </label>
+            {buildingsError && <div className="wizard-error">{buildingsError}</div>}
+            <select
+              id="buildingId"
+              value={selectedBuildingId ? String(selectedBuildingId) : ''}
+              onChange={(e) => handleBuildingChange(e.target.value)}
+              disabled={buildingsLoading}
+            >
+              <option value="">Select a building</option>
+              {buildings.map((building) => (
+                <option key={building.id} value={building.id}>
+                  {building.name || building.buildingNumber}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="wizard-field">
             <label htmlFor="unitId" className="wizard-label">
               Apartment
@@ -68,19 +133,28 @@ export default function MakeReadyStepTurnDetails({
             <select
               id="unitId"
               value={turnDraft.unitId || ''}
-              onChange={(e) => onUpdate({ unitId: e.target.value })}
+              onChange={(e) => handleApartmentChange(e.target.value)}
+              disabled={!selectedBuildingId || apartments.length === 0}
             >
-              <option value="">Select an apartment</option>
-              {BUILDINGS.find((b) => b.id === turnDraft.propertyId)?.units.map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
+              <option value="">
+                {!selectedBuildingId
+                  ? 'Select building first'
+                  : apartments.length === 0
+                    ? 'No apartments available'
+                    : 'Select an apartment'}
+              </option>
+              {apartments.map((apt) => (
+                <option key={apt.id} value={apt.id}>
+                  Unit {apt.unitNumber}
+                  {apt.beds && apt.baths ? ` (${apt.beds}BD/${apt.baths}BA)` : ''}
                 </option>
               ))}
             </select>
           </div>
-        )}
+        </div>
 
-        <div className="wizard-inline-grid">
+        {/* Turn Type & Priority Row - Equal Width Fields */}
+        <div className="wizard-row-equal">
           <div className="wizard-field">
             <label htmlFor="turnType" className="wizard-label">
               Turn Type
@@ -117,12 +191,9 @@ export default function MakeReadyStepTurnDetails({
             </select>
           </div>
         </div>
-      </div>
 
-      <div className="wizard-section">
-        <h3 className="wizard-section-title">Key Dates</h3>
-        
-        <div className="wizard-inline-grid">
+        {/* Move-Out & Target Ready Date Row - Equal Width Fields */}
+        <div className="wizard-row-equal">
           <div className="wizard-field">
             <label htmlFor="moveOutDate" className="wizard-label">
               Move-Out Date
@@ -156,10 +227,9 @@ export default function MakeReadyStepTurnDetails({
             />
           </div>
         </div>
-      </div>
 
-      <div className="wizard-section">
-        <div className="wizard-field">
+        {/* Notes - Full Width */}
+        <div className="wizard-field wizard-field-full">
           <label htmlFor="turnNotes" className="wizard-label">
             Notes
           </label>
