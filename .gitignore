@@ -20,5 +20,4 @@ build/
 Thumbs.db
 
 # Exclude all batch files except Start.bat
-*.bat
-!Start.bat
+
