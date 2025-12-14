@@ -18,6 +18,7 @@ public class ServiceStatusViewModel : System.ComponentModel.INotifyPropertyChang
 {
     private ServiceButtonState _buttonState = ServiceButtonState.Launch;
     private Models.ServiceStatusResult _status = new();
+    private bool _hasTrackedProcess;
     private const int MaxLogEntries = 200;
 
     public Models.ServiceConfig Config { get; set; } = new();
@@ -38,7 +39,13 @@ public class ServiceStatusViewModel : System.ComponentModel.INotifyPropertyChang
     public ServiceButtonState ButtonState
     {
         get => _buttonState;
-        set { _buttonState = value; OnPropertyChanged(nameof(ButtonState)); OnPropertyChanged(nameof(LaunchLabel)); }
+        set
+        {
+            _buttonState = value;
+            OnPropertyChanged(nameof(ButtonState));
+            OnPropertyChanged(nameof(LaunchLabel));
+            OnPropertyChanged(nameof(CanStop));
+        }
     }
 
     public string LaunchLabel => ButtonState switch
@@ -51,8 +58,17 @@ public class ServiceStatusViewModel : System.ComponentModel.INotifyPropertyChang
     };
 
     public bool CanLaunch => Status.LocalStatus == Models.LocalStatusState.Red && ButtonState == ServiceButtonState.Launch;
-    public bool HasTrackedProcess { get; set; }
-    public bool CanStop => HasTrackedProcess && ButtonState != ServiceButtonState.Stopping;
+    public bool HasTrackedProcess
+    {
+        get => _hasTrackedProcess;
+        set
+        {
+            _hasTrackedProcess = value;
+            OnPropertyChanged(nameof(HasTrackedProcess));
+            OnPropertyChanged(nameof(CanStop));
+        }
+    }
+    public bool CanStop => (HasTrackedProcess || ButtonState == ServiceButtonState.Running) && ButtonState != ServiceButtonState.Stopping;
 
     public void AppendLog(string message)
     {

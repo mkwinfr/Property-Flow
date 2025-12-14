@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using PropertyFlow.Launcher.Models;
 
@@ -15,6 +16,7 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     private TunnelStatusViewModel _tunnelStatus = new();
     private string _machineNameDisplay = string.Empty;
     private ObservableCollection<PackageProjectViewModel> _packageProjects = new();
+    private const int MaxLauncherLogEntries = 200;
 
     public ObservableCollection<ServiceStatusViewModel> Services
     {
@@ -34,6 +36,8 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         set { _packageProjects = value; OnPropertyChanged(nameof(PackageProjects)); }
     }
 
+    public ObservableCollection<string> LauncherLogs { get; } = new();
+
     public string MachineNameDisplay
     {
         get => _machineNameDisplay;
@@ -46,6 +50,7 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     public ICommand OpenLocalCommand { get; private set; }
     public ICommand OpenPublicCommand { get; private set; }
     public ICommand StopServiceCommand { get; private set; }
+    public ICommand StopAllCommand { get; private set; }
     public ICommand RefreshPackagesCommand { get; private set; }
 
     public MainViewModel()
@@ -56,6 +61,7 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         OpenLocalCommand = new RelayCommand<ServiceStatusViewModel>(OpenLocal);
         OpenPublicCommand = new RelayCommand<ServiceStatusViewModel>(OpenPublic);
         StopServiceCommand = new RelayCommand<ServiceStatusViewModel>(StopService);
+        StopAllCommand = new RelayCommand(StopAll);
         RefreshPackagesCommand = new RelayCommand(RefreshPackages);
         LoadConfig();
         InitializeUI();
@@ -154,7 +160,15 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     private async void LaunchService(ServiceStatusViewModel? vm)
     {
         if (vm == null) return;
-        
+
+        if (_processService.IsPortInUse(vm.Config.Port))
+        {
+            var blockedMessage = $"Launch blocked for {vm.Config.Name}: port {vm.Config.Port} is already in use.";
+            vm.AppendLog(blockedMessage);
+            AppendLauncherLog(blockedMessage);
+            return;
+        }
+
         vm.ButtonState = ServiceButtonState.Starting;
         vm.AppendLog($"Launching {vm.Config.Name}...");
 
@@ -169,6 +183,7 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         {
             vm.ButtonState = ServiceButtonState.Launch;
             vm.AppendLog("Failed to launch service");
+            AppendLauncherLog($"Failed to launch {vm.Config.Name}");
         }
     }
 
@@ -220,6 +235,20 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         vm.HasTrackedProcess = false;
         vm.ButtonState = ServiceButtonState.Launch;
         vm.AppendLog("Stopped");
+        AppendLauncherLog($"Stop requested for {vm.Config.Name}");
+    }
+
+    private void StopAll()
+    {
+        AppendLauncherLog("Stop all services requested.");
+        foreach (var svc in Services)
+        {
+            _processService.StopProcess(svc.Config.WorkingDirectory);
+            svc.HasTrackedProcess = false;
+            svc.ButtonState = ServiceButtonState.Launch;
+            svc.AppendLog("Stopped via Stop All");
+        }
+        _processService.StopAllProcesses();
     }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
@@ -227,6 +256,29 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     protected void OnPropertyChanged(string name)
     {
         PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+    }
+
+    private void AppendLauncherLog(string message)
+    {
+        var line = $"[{DateTime.Now:HH:mm:ss}] {message}";
+
+        void Add()
+        {
+            LauncherLogs.Add(line);
+            if (LauncherLogs.Count > MaxLauncherLogEntries)
+            {
+                LauncherLogs.RemoveAt(0);
+            }
+        }
+
+        if (Application.Current?.Dispatcher != null)
+        {
+            _ = Application.Current.Dispatcher.InvokeAsync(Add);
+        }
+        else
+        {
+            Add();
+        }
     }
 }
 

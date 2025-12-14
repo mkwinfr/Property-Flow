@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace PropertyFlow.Launcher.Services;
 
@@ -42,6 +44,10 @@ public class ProcessService
             if (process.Start())
             {
                 _trackedProcesses[workingDirectory] = process.Id;
+                process.Exited += (_, _) =>
+                {
+                    _trackedProcesses.Remove(workingDirectory);
+                };
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
                 await Task.Delay(300);
@@ -79,6 +85,27 @@ public class ProcessService
                 _trackedProcesses.Remove(workingDirectory);
             }
             catch { }
+        }
+    }
+
+    public void StopAllProcesses()
+    {
+        foreach (var workingDirectory in _trackedProcesses.Keys.ToList())
+        {
+            StopProcess(workingDirectory);
+        }
+    }
+
+    public bool IsPortInUse(int port)
+    {
+        try
+        {
+            var ipProps = IPGlobalProperties.GetIPGlobalProperties();
+            return ipProps.GetActiveTcpListeners().Any(ep => ep.Port == port);
+        }
+        catch
+        {
+            return false;
         }
     }
 

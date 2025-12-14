@@ -112,6 +112,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0 0 12 0">
                     <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" IsChecked="True" Cursor="Hand" x:Name="ServicesTab">Services</RadioButton>
                     <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="PackagesTab">Packages</RadioButton>
+                    <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="LogsTab">Logs</RadioButton>
                 </StackPanel>
 
                 <!-- Machine Info -->
@@ -125,13 +126,18 @@
                 <!-- Spacer -->
                 <Grid Grid.Column="2"/>
 
-                <!-- Launch All -->
-                <Button Grid.Column="3"
-                        Content="Launch All Services"
-                        Command="{Binding LaunchAllCommand}"
-                        Style="{StaticResource PillButtonStyle}"
-                        Background="{StaticResource AccentBrush}"
-                        HorizontalAlignment="Right"/>
+                <!-- Actions -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Stop All Services"
+                            Command="{Binding StopAllCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#dc2626"
+                            Margin="0 0 8 0"/>
+                    <Button Content="Launch All Services"
+                            Command="{Binding LaunchAllCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="{StaticResource AccentBrush}"/>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -246,7 +252,7 @@
                 </ItemsControl>
 
                 <!-- Tunnel Card -->
-                <Border Style="{StaticResource CardStyle}">
+                <Border Style="{StaticResource CardStyle}" HorizontalAlignment="Stretch">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="300"/>
@@ -381,6 +387,31 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Launcher Logs content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsChecked, ElementName=LogsTab, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <Border Style="{StaticResource CardStyle}" HorizontalAlignment="Stretch">
+                    <StackPanel>
+                        <TextBlock Text="Launcher Events" FontSize="16" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                        <ListBox ItemsSource="{Binding LauncherLogs}"
+                                 Background="#0d0d0d"
+                                 Foreground="#10B981"
+                                 FontFamily="Consolas"
+                                 FontSize="11"
+                                 BorderThickness="0"
+                                 MaxHeight="400">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
     </Grid>
