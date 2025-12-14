@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using PropertyFlow.Launcher.Models;
@@ -41,11 +42,13 @@ public class PackageProjectViewModel : System.ComponentModel.INotifyPropertyChan
             using var doc = JsonDocument.Parse(json);
             var root = doc.RootElement;
 
+            var depsList = new List<PackageDependency>();
+
             if (root.TryGetProperty("dependencies", out var deps) && deps.ValueKind == JsonValueKind.Object)
             {
                 foreach (var prop in deps.EnumerateObject())
                 {
-                    Declared.Add(new PackageDependency { Name = prop.Name, Version = prop.Value.GetString() ?? string.Empty });
+                    depsList.Add(new PackageDependency { Name = prop.Name, Version = prop.Value.GetString() ?? string.Empty });
                 }
             }
 
@@ -53,8 +56,15 @@ public class PackageProjectViewModel : System.ComponentModel.INotifyPropertyChan
             {
                 foreach (var prop in devDeps.EnumerateObject())
                 {
-                    Declared.Add(new PackageDependency { Name = prop.Name, Version = prop.Value.GetString() ?? string.Empty, IsDev = true });
+                    depsList.Add(new PackageDependency { Name = prop.Name, Version = prop.Value.GetString() ?? string.Empty, IsDev = true });
                 }
+            }
+
+            foreach (var dep in depsList
+                .OrderBy(d => d.IsDev)
+                .ThenBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                Declared.Add(dep);
             }
 
             Status = "Loaded from package.json";

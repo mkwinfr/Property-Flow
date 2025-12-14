@@ -4,8 +4,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:Faker2029$@localhost:5432/property-flow?schema=public"
+  url      = env("DATABASE_URL")
 }
+
 
 
 /// High-level occupancy / unit status

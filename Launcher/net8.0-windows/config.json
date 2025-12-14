@@ -13,7 +13,7 @@
       "command": "npm run dev -- --host",
       "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Desktop",
       "port": 5175,
-      "publicUrl": "https://desktop.propertysuit.net",
+      "publicUrl": "https://desktop.propertysuite.net",
       "healthPath": "/"
     },
     {

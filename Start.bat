@@ -47,16 +47,16 @@ echo.
 echo [1] BACKEND   - Port 4000 (REST API)
 echo [2] DESKTOP   - Development server
 echo [3] TECH      - Development server
+echo [4] CLOUDFLARE - Tunnel (property-suite-laptop)
 echo.
-echo All servers will appear in vertical split panes with equal sizes.
+echo All servers will launch in separate tabs.
 echo.
 
-REM Launch Windows Terminal with three vertical split panes (equal size)
-REM Using 0.5 for each split to get approximately equal thirds
-wt --size 120x40 new-tab -d "!BACKEND_DIR!" cmd /k "npm run dev"; split-pane -V -s 0.5 -d "!DESKTOP_DIR!" cmd /k "npm run dev"; split-pane -V -s 0.5 -d "!TECH_DIR!" cmd /k "npm run dev -- --host"
+REM Launch Windows Terminal with four tabs for better readability
+wt --size 120x40 new-tab --title "Backend (Port 4000)" -d "!BACKEND_DIR!" cmd /k "npm run dev"; new-tab --title "Desktop" -d "!DESKTOP_DIR!" cmd /k "npm run dev -- --host"; new-tab --title "Tech" -d "!TECH_DIR!" cmd /k "npm run dev -- --host"; new-tab --title "Cloudflare Tunnel" cmd /k "cloudflared tunnel run property-suite-laptop"
 
 echo.
-echo Windows Terminal opened with three equal-sized vertical split panes.
+echo Windows Terminal opened with four separate tabs.
 echo Please wait for all servers to start...
 echo.
 timeout /t 3 /nobreak

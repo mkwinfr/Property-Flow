@@ -184,7 +184,19 @@
                                             Padding="12">
                                         <StackPanel>
                                             <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
-                                            <TextBlock Text="(Coming soon)" Foreground="{StaticResource MutedBrush}" FontSize="11"/>
+                                            <ListBox ItemsSource="{Binding Logs}"
+                                                     Background="#0d0d0d"
+                                                     Foreground="#10B981"
+                                                     FontFamily="Consolas"
+                                                     FontSize="11"
+                                                     BorderThickness="0"
+                                                     MaxHeight="140">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
                                         </StackPanel>
                                     </Border>
 
@@ -290,30 +302,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Launch Log Panel -->
-                <Border Style="{StaticResource CardStyle}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Launch Log" FontSize="14" FontWeight="SemiBold" Margin="0 0 0 12"/>
-                        <ListBox Grid.Row="1"
-                                 ItemsSource="{Binding LaunchLog}"
-                                 Background="#1a1a1a"
-                                 Foreground="#10B981"
-                                 FontFamily="Consolas"
-                                 FontSize="11"
-                                 BorderThickness="0"
-                                 MaxHeight="200">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                </Border>
             </StackPanel>
         </ScrollViewer>
 
@@ -342,13 +330,32 @@
                                     <ItemsControl ItemsSource="{Binding Declared}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}"/>
-                                                    <TextBlock Text=" "/>
-                                                    <TextBlock Text="{Binding Version}" Foreground="{StaticResource MutedBrush}"/>
-                                                    <TextBlock Text=" (dev)" Foreground="{StaticResource MutedBrush}"
-                                                               Visibility="{Binding IsDev, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                                </StackPanel>
+                                                <Grid Margin="0 2 0 2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="110"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   ToolTip="{Binding Name}"
+                                                                   MaxWidth="220"/>
+                                                        <TextBlock Text=" (dev)"
+                                                                   Foreground="{StaticResource MutedBrush}"
+                                                                   Visibility="{Binding IsDev, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    </StackPanel>
+                                                    <Border Grid.Column="1"
+                                                            Width="1"
+                                                            Height="14"
+                                                            Background="#40FFFFFF"
+                                                            Margin="8 0"/>
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding Version}"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               FontFamily="Consolas"
+                                                               HorizontalAlignment="Right"/>
+                                                </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

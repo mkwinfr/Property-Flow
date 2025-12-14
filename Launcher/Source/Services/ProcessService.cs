@@ -6,7 +6,7 @@ public class ProcessService
 {
     private Dictionary<string, int> _trackedProcesses = new();
 
-    public async Task<int?> LaunchServiceAsync(string command, string workingDirectory)
+    public async Task<int?> LaunchServiceAsync(string command, string workingDirectory, Action<string>? log = null)
     {
         try
         {
@@ -16,19 +16,41 @@ public class ProcessService
                 Arguments = $"/c {command}",
                 WorkingDirectory = workingDirectory,
                 UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 CreateNoWindow = true
             };
 
-            var process = Process.Start(psi);
-            if (process != null)
+            var process = new Process { StartInfo = psi, EnableRaisingEvents = true };
+
+            process.OutputDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                {
+                    log?.Invoke(e.Data);
+                }
+            };
+
+            process.ErrorDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                {
+                    log?.Invoke($"ERR: {e.Data}");
+                }
+            };
+
+            if (process.Start())
             {
                 _trackedProcesses[workingDirectory] = process.Id;
-                await Task.Delay(500);
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                await Task.Delay(300);
                 return process.Id;
             }
         }
         catch (Exception ex)
         {
+            log?.Invoke($"Launch error: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"Launch error: {ex.Message}");
         }
         return null;
@@ -73,9 +95,9 @@ public class ProcessService
         }
     }
 
-    public async Task<int?> LaunchTunnelAsync(string command, string workingDirectory)
+    public async Task<int?> LaunchTunnelAsync(string command, string workingDirectory, Action<string>? log = null)
     {
-        return await LaunchServiceAsync(command, workingDirectory);
+        return await LaunchServiceAsync(command, workingDirectory, log);
     }
 
     public void OpenUrl(string url)

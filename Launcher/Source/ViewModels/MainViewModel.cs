@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using PropertyFlow.Launcher.Models;
 
@@ -12,7 +13,6 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     private Models.LauncherConfig _config = new();
     private ObservableCollection<ServiceStatusViewModel> _services = new();
     private TunnelStatusViewModel _tunnelStatus = new();
-    private ObservableCollection<string> _launchLog = new();
     private string _machineNameDisplay = string.Empty;
     private ObservableCollection<PackageProjectViewModel> _packageProjects = new();
 
@@ -26,12 +26,6 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
     {
         get => _tunnelStatus;
         set { _tunnelStatus = value; OnPropertyChanged(nameof(TunnelStatus)); }
-    }
-
-    public ObservableCollection<string> LaunchLog
-    {
-        get => _launchLog;
-        set { _launchLog = value; OnPropertyChanged(nameof(LaunchLog)); }
     }
 
     public ObservableCollection<PackageProjectViewModel> PackageProjects
@@ -82,7 +76,7 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            LogAction($"Config load error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Config load error: {ex.Message}");
         }
     }
 
@@ -134,11 +128,21 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
 
                 // Tunnel status
                 bool cloudflaredRunning = _processService.DetectExternalCloudflared();
+                bool publicOk = false;
+
+                // Re-use the first configured public URL as a reachability probe for the tunnel
+                var probeUrl = _config.Services.FirstOrDefault()?.PublicUrl;
+                if (cloudflaredRunning && !string.IsNullOrWhiteSpace(probeUrl))
+                {
+                    publicOk = await _statusService.CheckPublicAsync(probeUrl);
+                }
+
                 TunnelStatus.Status = new Models.ServiceStatusResult
                 {
                     IsRunning = cloudflaredRunning,
                     ProcessDetails = cloudflaredRunning ? "cloudflared running" : "cloudflared not detected",
-                    HasPublicReachability = false
+                    HasPublicReachability = publicOk,
+                    PublicSummary = publicOk ? "Public: Active" : "Public: Offline"
                 };
             }
             catch { }
@@ -152,25 +156,24 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         if (vm == null) return;
         
         vm.ButtonState = ServiceButtonState.Starting;
-        LogAction($"Launching {vm.Config.Name}...");
+        vm.AppendLog($"Launching {vm.Config.Name}...");
 
-        var pid = await _processService.LaunchServiceAsync(vm.Config.Command, vm.Config.WorkingDirectory);
+        var pid = await _processService.LaunchServiceAsync(vm.Config.Command, vm.Config.WorkingDirectory, vm.AppendLog);
         if (pid.HasValue)
         {
             vm.HasTrackedProcess = true;
             vm.ButtonState = ServiceButtonState.Running;
-            LogAction($"✓ {vm.Config.Name} started (PID: {pid})");
+            vm.AppendLog($"Started (PID: {pid})");
         }
         else
         {
             vm.ButtonState = ServiceButtonState.Launch;
-            LogAction($"✗ Failed to launch {vm.Config.Name}");
+            vm.AppendLog("Failed to launch service");
         }
     }
 
     private void LaunchAll()
     {
-        LogAction("Launching all services...");
         foreach (var svc in Services)
         {
             if (svc.CanLaunch)
@@ -182,30 +185,28 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
 
     private async void LaunchTunnel()
     {
-        LogAction("Launching tunnel...");
         var pid = await _processService.LaunchTunnelAsync(_config.Tunnel.Command, _config.Tunnel.WorkingDirectory);
-        if (pid.HasValue)
+        TunnelStatus.Status = new Models.ServiceStatusResult
         {
-            LogAction($"✓ Tunnel started (PID: {pid})");
-        }
-        else
-        {
-            LogAction("✗ Failed to launch tunnel");
-        }
+            IsRunning = pid.HasValue || TunnelStatus.Status.IsRunning,
+            HasPublicReachability = TunnelStatus.Status.HasPublicReachability,
+            ProcessDetails = pid.HasValue ? $"Tunnel started (PID: {pid})" : "Failed to launch tunnel",
+            PublicSummary = TunnelStatus.Status.PublicSummary
+        };
     }
 
     private void OpenLocal(ServiceStatusViewModel? vm)
     {
         if (vm == null) return;
         _processService.OpenUrl($"http://127.0.0.1:{vm.Config.Port}");
-        LogAction($"Opened local {vm.Config.Name}");
+        vm.AppendLog("Opened local URL");
     }
 
     private void OpenPublic(ServiceStatusViewModel? vm)
     {
         if (vm == null) return;
         _processService.OpenUrl(vm.Config.PublicUrl);
-        LogAction($"Opened public {vm.Config.Name}");
+        vm.AppendLog("Opened public URL");
     }
 
     private void StopService(ServiceStatusViewModel? vm)
@@ -213,17 +214,12 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         if (vm == null) return;
 
         vm.ButtonState = ServiceButtonState.Stopping;
-        LogAction($"Stopping {vm.Config.Name}...");
+        vm.AppendLog("Stopping...");
 
         _processService.StopProcess(vm.Config.WorkingDirectory);
         vm.HasTrackedProcess = false;
         vm.ButtonState = ServiceButtonState.Launch;
-        LogAction($"✓ {vm.Config.Name} stopped");
-    }
-
-    private void LogAction(string message)
-    {
-        LaunchLog.Add($"[{System.DateTime.Now:HH:mm:ss}] {message}");
+        vm.AppendLog("Stopped");
     }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
