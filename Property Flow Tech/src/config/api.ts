@@ -1,7 +1,7 @@
 const rawBase =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL || // legacy fallback
-  "http://localhost:4000/api";
+  "https://api.propertysuite.net/api";
 
 export const API_BASE_URL = rawBase.replace(/\/+$/, "");
 
