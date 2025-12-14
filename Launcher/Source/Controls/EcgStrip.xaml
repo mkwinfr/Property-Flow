@@ -18,7 +18,7 @@
         <PathGeometry x:Key="WaveGeometry3" Figures="M0,22 L8,22 12,14 16,30 22,22 36,22 40,10 44,34 50,22 66,22 72,18 78,26 86,22 102,22 106,12 110,32 114,22 130,22 134,16 138,28 144,22 160,22 164,14 168,30 174,22 188,22 194,10 200,34 206,22 222,22 226,18 230,26 236,22 252,22"/>
     </UserControl.Resources>
 
-    <Border x:Name="LayoutRoot" ClipToBounds="True" Background="#0E1A2D" CornerRadius="12">
+    <Border x:Name="LayoutRoot" ClipToBounds="True" Background="#0E1A2D" CornerRadius="12" Padding="6,4">
         <Border.RenderTransform>
             <TranslateTransform x:Name="JitterTransform"/>
         </Border.RenderTransform>
@@ -40,35 +40,63 @@
                 </Grid.Effect>
 
                 <Canvas x:Name="WaveCanvas" Height="44">
-                    <Path x:Name="Wave1" Data="{StaticResource WaveGeometry1}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.8" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                    <!-- Primary set -->
+                    <Path x:Name="Wave1" Data="{StaticResource WaveGeometry1}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
                         <Path.RenderTransform>
-                            <TranslateTransform x:Name="Wave1Transform"/>
+                            <TranslateTransform x:Name="Wave1Transform" X="0"/>
                         </Path.RenderTransform>
                     </Path>
-                    <Path x:Name="Wave2" Data="{StaticResource WaveGeometry2}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.7" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                    <Path x:Name="Wave2" Data="{StaticResource WaveGeometry2}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
                         <Path.RenderTransform>
-                            <TranslateTransform x:Name="Wave2Transform"/>
+                            <TranslateTransform x:Name="Wave2Transform" X="-80"/>
                         </Path.RenderTransform>
                     </Path>
-                    <Path x:Name="Wave3" Data="{StaticResource WaveGeometry3}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.55" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                    <Path x:Name="Wave3" Data="{StaticResource WaveGeometry3}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.35" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
                         <Path.RenderTransform>
-                            <TranslateTransform x:Name="Wave3Transform"/>
+                            <TranslateTransform x:Name="Wave3Transform" X="-160"/>
                         </Path.RenderTransform>
                     </Path>
 
-                    <Path x:Name="FlatLine" Data="M0,22 L260,22" Stroke="{StaticResource EcgRedBrush}" StrokeThickness="2" Opacity="0.65" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed"/>
+                    <!-- Duplicate set for seamless loop -->
+                    <Path x:Name="Wave1B" Data="{StaticResource WaveGeometry1}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                        <Path.RenderTransform>
+                            <TranslateTransform x:Name="Wave1BTransform" X="260"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Path x:Name="Wave2B" Data="{StaticResource WaveGeometry2}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                        <Path.RenderTransform>
+                            <TranslateTransform x:Name="Wave2BTransform" X="340"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Path x:Name="Wave3B" Data="{StaticResource WaveGeometry3}" Stroke="{Binding WaveStroke, ElementName=Root}" StrokeThickness="2" Opacity="0.35" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                        <Path.RenderTransform>
+                            <TranslateTransform x:Name="Wave3BTransform" X="420"/>
+                        </Path.RenderTransform>
+                    </Path>
 
-                    <Rectangle x:Name="ScanTail" Width="26" Height="4" RadiusX="3" RadiusY="3" Opacity="0.6" Fill="{Binding ScanHeadBrush, ElementName=Root}">
+                    <Path x:Name="FlatLine" Data="M0,22 L280,22" Stroke="{StaticResource EcgRedBrush}" StrokeThickness="2" Opacity="0.65" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed"/>
+
+                    <Rectangle x:Name="ScanTail" Width="24" Height="4" RadiusX="3" RadiusY="3" Opacity="0.8" Canvas.Top="20" Fill="{Binding ScanHeadBrush, ElementName=Root}">
+                        <Rectangle.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                <GradientStop Color="#55FFFFFF" Offset="0.35"/>
+                                <GradientStop Color="#AAFFFFFF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.OpacityMask>
                         <Rectangle.RenderTransform>
                             <TranslateTransform x:Name="ScanTailTransform"/>
                         </Rectangle.RenderTransform>
+                        <Rectangle.Stroke>
+                            <SolidColorBrush Color="#00FFFFFF"/>
+                        </Rectangle.Stroke>
                     </Rectangle>
-                    <Ellipse x:Name="ScanHead" Width="9" Height="9" Fill="{Binding ScanHeadBrush, ElementName=Root}" Opacity="0.9">
+                    <Ellipse x:Name="ScanHead" Width="10" Height="10" Fill="{Binding ScanHeadBrush, ElementName=Root}" Opacity="0.95" Canvas.Top="17">
                         <Ellipse.RenderTransform>
                             <TranslateTransform x:Name="ScanHeadTransform"/>
                         </Ellipse.RenderTransform>
                         <Ellipse.Effect>
-                            <DropShadowEffect Color="#88FFFFFF" BlurRadius="10" ShadowDepth="0" Opacity="0.7"/>
+                            <DropShadowEffect Color="#A0FFFFFF" BlurRadius="10" ShadowDepth="0" Opacity="0.9"/>
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
@@ -79,27 +107,43 @@
             <VisualStateGroup x:Name="EcgStates">
                 <VisualState x:Name="GreenState">
                     <Storyboard RepeatBehavior="Forever">
-                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-240" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-80" To="-320" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-160" To="-400" Duration="0:0:6" />
-                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="-6" To="260" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-22" To="240" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-80" To="-340" Duration="0:0:5" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-160" To="-420" Duration="0:0:6" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2BTransform" Storyboard.TargetProperty="X" From="340" To="80" Duration="0:0:5" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3BTransform" Storyboard.TargetProperty="X" From="420" To="160" Duration="0:0:6" />
+                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:4" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                         </ObjectAnimationUsingKeyFrames>
                         <DoubleAnimation Storyboard.TargetName="ScanHead" Storyboard.TargetProperty="Opacity" To="0.95" Duration="0:0:0.2"/>
                         <DoubleAnimation Storyboard.TargetName="ScanTail" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.2"/>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wave2" Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.35"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:2" Value="0.55"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:4" Value="0.35"/>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wave3" Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.28"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:3" Value="0.5"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:6" Value="0.28"/>
+                        </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
 
                 <VisualState x:Name="AmberState">
                     <Storyboard RepeatBehavior="Forever">
-                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-240" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-60" To="-300" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-140" To="-380" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="-6" To="260" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-22" To="240" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="JitterTransform" Storyboard.TargetProperty="Y" From="-1.5" To="1.5" Duration="0:0:0.14" AutoReverse="True" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:3.5" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-60" To="-320" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-140" To="-400" Duration="0:0:5" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:3.5" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2BTransform" Storyboard.TargetProperty="X" From="320" To="60" Duration="0:0:4" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3BTransform" Storyboard.TargetProperty="X" From="400" To="140" Duration="0:0:5" />
+                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:3.5" />
+                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:3.5" />
+                        <DoubleAnimation Storyboard.TargetName="JitterTransform" Storyboard.TargetProperty="Y" From="-1" To="1" Duration="0:0:0.12" AutoReverse="True" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -118,6 +162,9 @@
                         <DoubleAnimation Storyboard.TargetName="Wave1" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
                         <DoubleAnimation Storyboard.TargetName="Wave2" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
                         <DoubleAnimation Storyboard.TargetName="Wave3" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave1B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave2B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave3B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
                         <DoubleAnimation Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Opacity" From="0.5" To="0.7" Duration="0:0:1.2" AutoReverse="True" RepeatBehavior="Forever"/>
                     </Storyboard>
                 </VisualState>

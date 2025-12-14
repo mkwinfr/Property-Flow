@@ -12,7 +12,7 @@ public class EcgStateConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        // Expected: LocalStatusState, ServiceButtonState?, IsRunning?
+        // Expected: LocalStatusState, ServiceButtonState? or bool? (isRunning), optional bool isRunning
         LocalStatusState localStatus = LocalStatusState.Red;
         ServiceButtonState? buttonState = null;
         bool? isRunning = null;
@@ -27,7 +27,7 @@ public class EcgStateConverter : IMultiValueConverter
         if (values.Length > 2 && values[2] is bool b2)
             isRunning = b2;
 
-        // Map to ECG state
+        // Map to ECG state with graceful fallbacks
         if (isRunning.HasValue && isRunning.Value == false)
             return EcgState.Red;
 
