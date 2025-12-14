@@ -27,6 +27,6 @@
   ],
   "tunnel": {
     "command": "cloudflared tunnel run property-suite-laptop",
-    "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\splash-lab\\Launcher"
+    "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Launcher"
   }
 }

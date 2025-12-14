@@ -96,36 +96,49 @@
     <Grid Background="#1a1a1a">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <!-- Nav + Info Card -->
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Header -->
-        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0 0 0 12">
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
-                <TextBlock Text="Property Flow Launcher" FontSize="22" FontWeight="Bold"/>
-                <TextBlock Text="{Binding MachineNameDisplay}" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
-            </StackPanel>
-        </DockPanel>
+                <!-- Navbar -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0 0 12 0">
+                    <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" IsChecked="True" Cursor="Hand" x:Name="ServicesTab">Services</RadioButton>
+                    <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="PackagesTab">Packages</RadioButton>
+                </StackPanel>
 
-        <!-- Navbar -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 0 0 12">
-            <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" IsChecked="True" Cursor="Hand" x:Name="ServicesTab">Services</RadioButton>
-            <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="PackagesTab">Packages</RadioButton>
-        </StackPanel>
+                <!-- Machine Info -->
+                <TextBlock Grid.Column="1"
+                           Text="{Binding MachineNameDisplay}"
+                           FontSize="12"
+                           Foreground="{StaticResource MutedBrush}"
+                           VerticalAlignment="Center"
+                           Margin="0 0 12 0"/>
 
-        <!-- Content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
-                      Visibility="{Binding IsChecked, ElementName=ServicesTab, Converter={StaticResource BoolToVisibilityConverter}}">
-            <StackPanel>
-                <!-- Launch All Button -->
-                <Button Content="Launch All Services"
+                <!-- Spacer -->
+                <Grid Grid.Column="2"/>
+
+                <!-- Launch All -->
+                <Button Grid.Column="3"
+                        Content="Launch All Services"
                         Command="{Binding LaunchAllCommand}"
                         Style="{StaticResource PillButtonStyle}"
                         Background="{StaticResource AccentBrush}"
-                        Margin="0 0 0 16"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Right"/>
+            </Grid>
+        </Border>
 
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsChecked, ElementName=ServicesTab, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
                 <!-- Services content -->
                 <ItemsControl ItemsSource="{Binding Services}">
                     <ItemsControl.ItemTemplate>
@@ -258,12 +271,12 @@
 
                                 <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
                                     <Border Style="{StaticResource PillStyle}"
-                                            Background="{Binding TunnelStatus.IsProcessRunning, Converter={StaticResource StatusBrushConverter}}">
-                                        <TextBlock Text="Process" FontSize="10"/>
-                                    </Border>
-                                    <Border Style="{StaticResource PillStyle}"
                                             Background="{Binding TunnelStatus.HasPublicReachability, Converter={StaticResource StatusBrushConverter}}">
                                         <TextBlock Text="Public" FontSize="10"/>
+                                    </Border>
+                                    <Border Style="{StaticResource PillStyle}"
+                                            Background="{Binding TunnelStatus.IsProcessRunning, Converter={StaticResource StatusBrushConverter}}">
+                                        <TextBlock Text="Process" FontSize="10"/>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
@@ -305,7 +318,7 @@
         </ScrollViewer>
 
         <!-- Packages content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsChecked, ElementName=PackagesTab, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel>
                 <Button Content="Refresh Packages"
