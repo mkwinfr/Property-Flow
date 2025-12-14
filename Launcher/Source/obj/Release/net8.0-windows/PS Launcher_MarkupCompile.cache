@@ -10,11 +10,11 @@ none
 false
 TRACE;RELEASE;NET;NET8_0;NETCOREAPP
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\App.xaml
-11407045341
+256534816
 
-131002754225
+15750380033
 198338916705
-MainWindow.xaml;
+Controls\EcgStrip.xaml;MainWindow.xaml;
 
 False
 

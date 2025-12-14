@@ -22,3 +22,5 @@ C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.genruntimeconfig.cache
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\ref\PS Launcher.dll
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\App.baml
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\Controls\EcgStrip.baml
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\Controls\EcgStrip.g.cs

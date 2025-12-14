@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PropertyFlow.Launcher"
         xmlns:util="clr-namespace:PropertyFlow.Launcher.Utilities"
+        xmlns:controls="clr-namespace:PropertyFlow.Launcher.Controls"
         Title="PS Launcher" Height="900" Width="1200"
         Background="#1a1a1a" Foreground="#ffffff"
         WindowStartupLocation="CenterScreen">
@@ -38,6 +39,7 @@
         <!-- Converter -->
         <util:StatusBrushConverter x:Key="StatusBrushConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <util:EcgStateConverter x:Key="EcgStateConverter"/>
 
         <!-- Card Style -->
         <Style x:Key="CardStyle" TargetType="Border">
@@ -196,6 +198,7 @@
                             Style="{StaticResource PillButtonStyle}"
                             Background="#27121C"
                             BorderBrush="#F14B6E"
+                            Margin="0 0 8 0"
                             Effect="{StaticResource CardShadow}"/>
                     <Button Content="Launch All Services"
                             Command="{Binding LaunchAllCommand}"
@@ -260,6 +263,16 @@
                                                     <TextBlock Text="Local" FontSize="10"/>
                                                 </Border>
                                             </StackPanel>
+
+                                            <controls:EcgStrip Margin="0 10 0 0">
+                                                <controls:EcgStrip.State>
+                                                    <MultiBinding Converter="{StaticResource EcgStateConverter}">
+                                                        <Binding Path="Status.LocalStatus"/>
+                                                        <Binding Path="ButtonState"/>
+                                                        <Binding Path="Status.IsRunning"/>
+                                                    </MultiBinding>
+                                                </controls:EcgStrip.State>
+                                            </controls:EcgStrip>
                                         </StackPanel>
                                     </Border>
 
@@ -294,19 +307,22 @@
                                                 IsEnabled="{Binding CanLaunch}"
                                                 Style="{StaticResource PillButtonStyle}"
                                                 Background="#1F3A63"
-                                                BorderBrush="#4E8CFF"/>
+                                                BorderBrush="#4E8CFF"
+                                                Margin="0 0 0 8"/>
                                         <Button Content="Open Local"
                                                 Command="{Binding DataContext.OpenLocalCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource PillButtonStyle}"
                                                 Background="#182336"
-                                                BorderBrush="{StaticResource BorderStrongBrush}"/>
+                                                BorderBrush="{StaticResource BorderStrongBrush}"
+                                                Margin="0 0 0 8"/>
                                         <Button Content="Open Public"
                                                 Command="{Binding DataContext.OpenPublicCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource PillButtonStyle}"
                                                 Background="#182336"
-                                                BorderBrush="{StaticResource BorderStrongBrush}"/>
+                                                BorderBrush="{StaticResource BorderStrongBrush}"
+                                                Margin="0 0 0 8"/>
                                         <Button Content="Stop"
                                                 Command="{Binding DataContext.StopServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
@@ -355,6 +371,15 @@
                                         <TextBlock Text="Process" FontSize="10"/>
                                     </Border>
                                 </StackPanel>
+
+                                <controls:EcgStrip Margin="0 10 0 0">
+                                    <controls:EcgStrip.State>
+                                        <MultiBinding Converter="{StaticResource EcgStateConverter}">
+                                            <Binding Path="TunnelStatus.Status.LocalStatus"/>
+                                            <Binding Path="TunnelStatus.Status.IsRunning"/>
+                                        </MultiBinding>
+                                    </controls:EcgStrip.State>
+                                </controls:EcgStrip>
                             </StackPanel>
                         </Border>
 
