@@ -1,0 +1,32 @@
+{
+  "services": [
+    {
+      "name": "Tech App",
+      "command": "npm run dev -- --host",
+      "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Tech",
+      "port": 5173,
+      "publicUrl": "https://tech.propertysuite.net",
+      "healthPath": "/"
+    },
+    {
+      "name": "Desktop App",
+      "command": "npm run dev -- --host",
+      "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Desktop",
+      "port": 5175,
+      "publicUrl": "https://desktop.propertysuit.net",
+      "healthPath": "/"
+    },
+    {
+      "name": "Backend",
+      "command": "npm run dev",
+      "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\Property Flow Backend",
+      "port": 4000,
+      "publicUrl": "https://api.propertysuite.net/health",
+      "healthPath": "/health"
+    }
+  ],
+  "tunnel": {
+    "command": "cloudflared tunnel run property-suite-laptop",
+    "workingDirectory": "C:\\Users\\mkwin\\Desktop\\Property Flow\\splash-lab\\Launcher"
+  }
+}

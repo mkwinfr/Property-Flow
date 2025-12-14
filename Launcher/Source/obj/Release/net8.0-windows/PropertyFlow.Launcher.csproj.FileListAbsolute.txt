@@ -1,0 +1,24 @@
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\App.g.cs
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PS Launcher_MarkupCompile.cache
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\MainWindow.g.cs
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PS Launcher_MarkupCompile.lref
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PS Launcher.dll
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\refint\PS Launcher.dll
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PS Launcher.pdb
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\config.json
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\PS Launcher.exe
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\PS Launcher.deps.json
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\PS Launcher.runtimeconfig.json
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\PS Launcher.dll
+C:\Users\mkwin\Desktop\Property Flow\Launcher\net8.0-windows\PS Launcher.pdb
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\MainWindow.baml
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PS Launcher.g.resources
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.AssemblyInfoInputs.cache
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.AssemblyInfo.cs
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.csproj.CoreCompileInputs.cache
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.sourcelink.json
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\PropertyFlow.Launcher.genruntimeconfig.cache
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\ref\PS Launcher.dll
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\App.baml

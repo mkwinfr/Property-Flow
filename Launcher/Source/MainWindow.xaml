@@ -1,0 +1,363 @@
+<Window x:Class="PropertyFlow.Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PropertyFlow.Launcher"
+        xmlns:util="clr-namespace:PropertyFlow.Launcher.Utilities"
+        Title="PS Launcher" Height="900" Width="1200"
+        Background="#1a1a1a" Foreground="#ffffff"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <!-- Color Definitions -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#0066cc"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#888888"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#2a2a2a"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#404040"/>
+
+        <!-- Converter -->
+        <util:StatusBrushConverter x:Key="StatusBrushConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- Card Style -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0 0 0 12"/>
+        </Style>
+
+        <!-- Pill Button Style -->
+        <Style x:Key="PillButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12 6"/>
+            <Setter Property="MinWidth" Value="110"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="18"
+                                BorderThickness="0">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Pill Status Style -->
+        <Style x:Key="PillStyle" TargetType="Border">
+            <Setter Property="Background" Value="#404040"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10 4"/>
+            <Setter Property="Margin" Value="0 0 6 0"/>
+        </Style>
+
+        <!-- Tab Button Style (for navbar) -->
+        <Style x:Key="TabButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="18 8"/>
+            <Setter Property="Margin" Value="4 0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter Property="Foreground" Value="#ffffff"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#1a1a1a">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0 0 0 12">
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
+                <TextBlock Text="Property Flow Launcher" FontSize="22" FontWeight="Bold"/>
+                <TextBlock Text="{Binding MachineNameDisplay}" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Navbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 0 0 12">
+            <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" IsChecked="True" Cursor="Hand" x:Name="ServicesTab">Services</RadioButton>
+            <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="PackagesTab">Packages</RadioButton>
+        </StackPanel>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsChecked, ElementName=ServicesTab, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <!-- Launch All Button -->
+                <Button Content="Launch All Services"
+                        Command="{Binding LaunchAllCommand}"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource AccentBrush}"
+                        Margin="0 0 0 16"
+                        HorizontalAlignment="Left"/>
+
+                <!-- Services content -->
+                <ItemsControl ItemsSource="{Binding Services}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="300"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left column -->
+                                    <Border Grid.Column="0"
+                                            Background="#111827"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="12"
+                                            Margin="0 0 12 0">
+                                        <StackPanel VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding Config.Name}" FontSize="16" FontWeight="SemiBold" Margin="0 0 0 4"/>
+                                            <TextBlock FontSize="11" Foreground="{StaticResource MutedBrush}">
+                                                <Run Text="Port: "/>
+                                                <Run Text="{Binding Config.Port}"/>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Config.PublicUrl}"
+                                                       FontSize="11"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="Wrap"
+                                                       ToolTip="{Binding Config.PublicUrl}"
+                                                       Margin="0 0 0 8"/>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                                <Border Style="{StaticResource PillStyle}"
+                                                        Background="{Binding Status.HasPublicReachability, Converter={StaticResource StatusBrushConverter}}">
+                                                    <TextBlock Text="Public" FontSize="10"/>
+                                                </Border>
+                                                <Border Style="{StaticResource PillStyle}"
+                                                        Background="{Binding Status.LocalStatus, Converter={StaticResource StatusBrushConverter}}">
+                                                    <TextBlock Text="Local" FontSize="10"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Middle column -->
+                                    <Border Grid.Column="1"
+                                            Background="#111827"
+                                            CornerRadius="6"
+                                            Margin="16 0"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            Padding="12">
+                                        <StackPanel>
+                                            <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                            <TextBlock Text="(Coming soon)" Foreground="{StaticResource MutedBrush}" FontSize="11"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Right column -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Button Content="{Binding LaunchLabel}"
+                                                Command="{Binding DataContext.LaunchServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                IsEnabled="{Binding CanLaunch}"
+                                                Style="{StaticResource PillButtonStyle}"
+                                                Margin="0 0 0 8"/>
+                                        <Button Content="Open Local"
+                                                Command="{Binding DataContext.OpenLocalCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource PillButtonStyle}"
+                                                Background="#5a5a5a"
+                                                Margin="0 0 0 8"/>
+                                        <Button Content="Open Public"
+                                                Command="{Binding DataContext.OpenPublicCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource PillButtonStyle}"
+                                                Background="#5a5a5a"
+                                                Margin="0 0 0 8"/>
+                                        <Button Content="Stop"
+                                                Command="{Binding DataContext.StopServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                IsEnabled="{Binding CanStop}"
+                                                Style="{StaticResource PillButtonStyle}"
+                                                Background="#dc2626"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Tunnel Card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0"
+                                Background="#111827"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="12"
+                                Margin="0 0 12 0">
+                            <StackPanel VerticalAlignment="Top">
+                                <TextBlock Text="Tunnel" FontSize="16" FontWeight="SemiBold" Margin="0 0 0 4"/>
+                                <TextBlock Text="{Binding TunnelStatus.Status.ProcessDetails}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="11"
+                                           Margin="0 0 0 8"
+                                           TextWrapping="Wrap"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                    <Border Style="{StaticResource PillStyle}"
+                                            Background="{Binding TunnelStatus.IsProcessRunning, Converter={StaticResource StatusBrushConverter}}">
+                                        <TextBlock Text="Process" FontSize="10"/>
+                                    </Border>
+                                    <Border Style="{StaticResource PillStyle}"
+                                            Background="{Binding TunnelStatus.HasPublicReachability, Converter={StaticResource StatusBrushConverter}}">
+                                        <TextBlock Text="Public" FontSize="10"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                Background="#111827"
+                                CornerRadius="6"
+                                Margin="16 0"
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                Padding="12">
+                            <StackPanel>
+                                <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                <TextBlock Text="{Binding TunnelStatus.Status.PublicSummary}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Button Content="Launch Tunnel"
+                                    Command="{Binding LaunchTunnelCommand}"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Margin="0 0 0 8"/>
+                            <Button Content="Open Public"
+                                    Command="{Binding OpenPublicCommand}"
+                                    CommandParameter="{Binding DataContext.TunnelStatus, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Background="#5a5a5a"
+                                    Margin="0 0 0 8"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Launch Log Panel -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Launch Log" FontSize="14" FontWeight="SemiBold" Margin="0 0 0 12"/>
+                        <ListBox Grid.Row="1"
+                                 ItemsSource="{Binding LaunchLog}"
+                                 Background="#1a1a1a"
+                                 Foreground="#10B981"
+                                 FontFamily="Consolas"
+                                 FontSize="11"
+                                 BorderThickness="0"
+                                 MaxHeight="200">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Packages content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsChecked, ElementName=PackagesTab, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <Button Content="Refresh Packages"
+                        Command="{Binding RefreshPackagesCommand}"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource AccentBrush}"
+                        Margin="0 0 0 16"
+                        HorizontalAlignment="Left"/>
+
+                <ItemsControl ItemsSource="{Binding PackageProjects}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding WorkingDirectory}" Foreground="{StaticResource MutedBrush}" FontSize="11"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding WorkingDirectory}"/>
+                                    <TextBlock Text="{Binding Status}" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0 4 0 8"/>
+                                    <TextBlock Text="Declared Dependencies" FontWeight="SemiBold" Margin="0 0 0 4"/>
+                                    <ItemsControl ItemsSource="{Binding Declared}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                    <TextBlock Text=" "/>
+                                                    <TextBlock Text="{Binding Version}" Foreground="{StaticResource MutedBrush}"/>
+                                                    <TextBlock Text=" (dev)" Foreground="{StaticResource MutedBrush}"
+                                                               Visibility="{Binding IsDev, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
