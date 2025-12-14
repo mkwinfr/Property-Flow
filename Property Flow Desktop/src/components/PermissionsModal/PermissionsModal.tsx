@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { apiUrl } from '../../config/api';
 import './PermissionsModal.css';
 
 interface User {
@@ -39,7 +40,7 @@ const PermissionsModal: React.FC<PermissionsModalProps> = ({
     try {
       setLoadingProperties(true);
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:4000/api/properties', {
+      const response = await fetch(apiUrl('/api/properties'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

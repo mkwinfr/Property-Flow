@@ -4,6 +4,7 @@ import { Plus, Edit2, Trash2, RotateCcw, Users } from 'lucide-react';
 import './Users.css';
 import UserFormModal from '../../components/UserFormModal/UserFormModal';
 import PermissionsModal from '../../components/PermissionsModal/PermissionsModal';
+import { apiUrl } from '../../config/api';
 
 class ModalErrorBoundary extends React.Component<
   { children: React.ReactNode; onClose: () => void },
@@ -85,7 +86,7 @@ const AdminUsers: React.FC = () => {
       setLoading(true);
       setError(null);
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:4000/api/admin/users', {
+      const response = await fetch(apiUrl('/api/admin/users'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -114,7 +115,7 @@ const AdminUsers: React.FC = () => {
   }) => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:4000/api/admin/users', {
+      const response = await fetch(apiUrl('/api/admin/users'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +147,7 @@ const AdminUsers: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `http://localhost:4000/api/admin/users/${selectedUser.id}`,
+        apiUrl(`/api/admin/users/${selectedUser.id}`),
         {
           method: 'PUT',
           headers: {
@@ -177,7 +178,7 @@ const AdminUsers: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `http://localhost:4000/api/admin/users/${userId}`,
+        apiUrl(`/api/admin/users/${userId}`),
         {
           method: 'DELETE',
           headers: {
@@ -200,7 +201,7 @@ const AdminUsers: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `http://localhost:4000/api/admin/users/${userId}/reset-password`,
+        apiUrl(`/api/admin/users/${userId}/reset-password`),
         {
           method: 'POST',
           headers: {

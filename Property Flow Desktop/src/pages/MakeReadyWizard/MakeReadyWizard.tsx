@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import type { MakeReadyTurnDraft } from '../../types/makeReady';
 import { useMakeReadyBoard } from '../../hooks/useMakeReadyBoard';
+import { apiUrl } from '../../config/api';
 import './MakeReadyWizard.css';
 
 import MakeReadyStepStart from './steps/MakeReadyStepStart';
@@ -105,7 +106,7 @@ export default function MakeReadyWizard() {
             : undefined,
       };
 
-      const response = await fetch('/api/make-ready-turns', {
+      const response = await fetch(apiUrl('/api/make-ready-turns'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

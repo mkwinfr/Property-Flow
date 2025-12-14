@@ -21,3 +21,5 @@ Thumbs.db
 
 # Exclude all batch files except Start.bat
 
+# Local testing workspace
+splash-lab/

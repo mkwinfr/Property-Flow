@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
+import { apiUrl } from "../../config/api";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
 import MakeReadyTurnTechView from "./MakeReadyTurnTechView";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
-const API_URL = `${API_BASE}/api/make-ready-board`;
+const API_URL = apiUrl("/api/make-ready-board");
 
 // Demo fallback data for when the API can't be reached
 /* Demo data removed */

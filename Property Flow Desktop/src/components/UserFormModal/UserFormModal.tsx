@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { apiUrl } from '../../config/api';
 import './UserFormModal.css';
 
 interface User {
@@ -65,7 +66,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
     try {
       setLoadingProperties(true);
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:4000/api/properties', {
+      const response = await fetch(apiUrl('/api/properties'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +98,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
     try {
       setLoadingRoles(true);
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:4000/api/admin/roles', {
+      const response = await fetch(apiUrl('/api/admin/roles'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
