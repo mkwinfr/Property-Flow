@@ -147,6 +147,11 @@
             <StackPanel>
                 <!-- Services content -->
                 <ItemsControl ItemsSource="{Binding Services}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource CardStyle}">
@@ -253,7 +258,7 @@
 
                 <!-- Tunnel Card -->
                 <Border Style="{StaticResource CardStyle}" HorizontalAlignment="Stretch">
-                    <Grid>
+                    <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="300"/>
                             <ColumnDefinition Width="*"/>

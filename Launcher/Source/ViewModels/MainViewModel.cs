@@ -231,7 +231,11 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         vm.ButtonState = ServiceButtonState.Stopping;
         vm.AppendLog("Stopping...");
 
-        _processService.StopProcess(vm.Config.WorkingDirectory);
+        _processService.StopProcess(vm.Config.WorkingDirectory, vm.Config.Port, msg =>
+        {
+            vm.AppendLog(msg);
+            AppendLauncherLog(msg);
+        });
         vm.HasTrackedProcess = false;
         vm.ButtonState = ServiceButtonState.Launch;
         vm.AppendLog("Stopped");
@@ -243,7 +247,12 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
         AppendLauncherLog("Stop all services requested.");
         foreach (var svc in Services)
         {
-            _processService.StopProcess(svc.Config.WorkingDirectory);
+            var name = svc.Config.Name;
+            _processService.StopProcess(svc.Config.WorkingDirectory, svc.Config.Port, msg =>
+            {
+                svc.AppendLog(msg);
+                AppendLauncherLog($"{name}: {msg}");
+            });
             svc.HasTrackedProcess = false;
             svc.ButtonState = ServiceButtonState.Launch;
             svc.AppendLog("Stopped via Stop All");

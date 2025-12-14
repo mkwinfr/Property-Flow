@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 
 namespace PropertyFlow.Launcher.Services;
 
@@ -67,24 +69,28 @@ public class ProcessService
         return _trackedProcesses.TryGetValue(workingDirectory, out processId);
     }
 
-    public void StopProcess(string workingDirectory)
+    public void StopProcess(string workingDirectory, int? port = null, Action<string>? log = null)
     {
+        var stopped = false;
+
         if (TryGetTrackedProcess(workingDirectory, out int pid))
         {
-            try
+            stopped = KillProcessTree(pid, log, $"Stopped tracked process (PID {pid}) for {workingDirectory}");
+            _trackedProcesses.Remove(workingDirectory);
+        }
+
+        if (!stopped && port.HasValue)
+        {
+            stopped = KillProcessesByPort(port.Value, log);
+            if (stopped)
             {
-                var process = Process.GetProcessById(pid);
-                // Graceful close
-                process.CloseMainWindow();
-                bool exited = process.WaitForExit(2000);
-                
-                if (!exited)
-                {
-                    process.Kill(true);
-                }
                 _trackedProcesses.Remove(workingDirectory);
             }
-            catch { }
+        }
+
+        if (!stopped)
+        {
+            log?.Invoke($"No tracked process found to stop for {workingDirectory}");
         }
     }
 
@@ -107,6 +113,78 @@ public class ProcessService
         {
             return false;
         }
+    }
+
+    private bool KillProcessTree(int pid, Action<string>? log = null, string? message = null)
+    {
+        try
+        {
+            var process = Process.GetProcessById(pid);
+            try { process.CloseMainWindow(); } catch { }
+            if (!process.WaitForExit(1000))
+            {
+                process.Kill(entireProcessTree: true);
+            }
+            process.WaitForExit(2000);
+            log?.Invoke(message ?? $"Killed PID {pid}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            log?.Invoke($"Failed to kill PID {pid}: {ex.Message}");
+            return false;
+        }
+    }
+
+    private bool KillProcessesByPort(int port, Action<string>? log = null)
+    {
+        var pids = FindPidsByPort(port).Distinct().ToList();
+        var any = false;
+        foreach (var pid in pids)
+        {
+            any |= KillProcessTree(pid, log, $"Killed PID {pid} on port {port}");
+        }
+        if (!any)
+        {
+            log?.Invoke($"No processes found on port {port}");
+        }
+        return any;
+    }
+
+    private IEnumerable<int> FindPidsByPort(int port)
+    {
+        var result = new List<int>();
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "cmd",
+                Arguments = "/c netstat -ano -p tcp",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(psi);
+            if (process != null)
+            {
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit(2000);
+                var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var pattern = new Regex($":{port}\\s+.*\\s+(\\d+)$");
+                foreach (var line in lines)
+                {
+                    var match = pattern.Match(line);
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out var pid))
+                    {
+                        result.Add(pid);
+                    }
+                }
+            }
+        }
+        catch { }
+
+        return result;
     }
 
     public bool DetectExternalCloudflared()
