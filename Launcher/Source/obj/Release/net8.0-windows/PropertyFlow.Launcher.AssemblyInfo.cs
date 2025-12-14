@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PS Launcher")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3edc221b57928b758cd346667186e1a6d7eb7d6f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+546b149d7d8ad929a38596733c4d220b8551b1b8")]
 [assembly: System.Reflection.AssemblyProductAttribute("PS Launcher")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PS Launcher")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
