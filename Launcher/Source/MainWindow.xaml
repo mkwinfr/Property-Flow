@@ -193,18 +193,18 @@
 
                 <!-- Actions -->
                 <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Stop All Services"
-                            Command="{Binding StopAllCommand}"
-                            Style="{StaticResource PillButtonStyle}"
-                            Background="#27121C"
-                            BorderBrush="#F14B6E"
-                            Margin="0 0 8 0"
-                            Effect="{StaticResource CardShadow}"/>
                     <Button Content="Launch All Services"
                             Command="{Binding LaunchAllCommand}"
                             Style="{StaticResource PillButtonStyle}"
                             Background="#1A2D4F"
                             BorderBrush="#4E8CFF"
+                            Margin="0 0 8 0"
+                            Effect="{StaticResource CardShadow}"/>
+                    <Button Content="Stop All Services"
+                            Command="{Binding StopAllCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#27121C"
+                            BorderBrush="#F14B6E"
                             Effect="{StaticResource CardShadow}"/>
                 </StackPanel>
             </Grid>
@@ -267,9 +267,8 @@
                                             <controls:EcgStrip Margin="0 10 0 0">
                                                 <controls:EcgStrip.State>
                                                     <MultiBinding Converter="{StaticResource EcgStateConverter}">
-                                                        <Binding Path="Status.LocalStatus"/>
+                                                        <Binding Path="Status.HasPublicReachability"/>
                                                         <Binding Path="ButtonState"/>
-                                                        <Binding Path="Status.IsRunning"/>
                                                     </MultiBinding>
                                                 </controls:EcgStrip.State>
                                             </controls:EcgStrip>
@@ -375,8 +374,8 @@
                                 <controls:EcgStrip Margin="0 10 0 0">
                                     <controls:EcgStrip.State>
                                         <MultiBinding Converter="{StaticResource EcgStateConverter}">
-                                            <Binding Path="TunnelStatus.Status.LocalStatus"/>
-                                            <Binding Path="TunnelStatus.Status.IsRunning"/>
+                                            <Binding Path="TunnelStatus.HasPublicReachability"/>
+                                            <Binding Path="TunnelStatus.IsProcessRunning"/>
                                         </MultiBinding>
                                     </controls:EcgStrip.State>
                                 </controls:EcgStrip>

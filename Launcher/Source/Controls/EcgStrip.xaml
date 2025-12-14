@@ -107,53 +107,55 @@
             <VisualStateGroup x:Name="EcgStates">
                 <VisualState x:Name="GreenState">
                     <Storyboard RepeatBehavior="Forever">
-                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-80" To="-340" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-160" To="-420" Duration="0:0:6" />
-                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2BTransform" Storyboard.TargetProperty="X" From="340" To="80" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3BTransform" Storyboard.TargetProperty="X" From="420" To="160" Duration="0:0:6" />
-                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:4" />
+                        <!-- Full ECG spike animation - slow continuous loop -->
+                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:6" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-80" To="-340" Duration="0:0:7" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-160" To="-420" Duration="0:0:8" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:6" />
+                        <DoubleAnimation Storyboard.TargetName="Wave2BTransform" Storyboard.TargetProperty="X" From="340" To="80" Duration="0:0:7" />
+                        <DoubleAnimation Storyboard.TargetName="Wave3BTransform" Storyboard.TargetProperty="X" From="420" To="160" Duration="0:0:8" />
+                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:6" />
+                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:6" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                         </ObjectAnimationUsingKeyFrames>
                         <DoubleAnimation Storyboard.TargetName="ScanHead" Storyboard.TargetProperty="Opacity" To="0.95" Duration="0:0:0.2"/>
                         <DoubleAnimation Storyboard.TargetName="ScanTail" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.2"/>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wave2" Storyboard.TargetProperty="Opacity">
-                            <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.35"/>
-                            <LinearDoubleKeyFrame KeyTime="0:0:2" Value="0.55"/>
-                            <LinearDoubleKeyFrame KeyTime="0:0:4" Value="0.35"/>
-                        </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wave3" Storyboard.TargetProperty="Opacity">
-                            <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.28"/>
-                            <LinearDoubleKeyFrame KeyTime="0:0:3" Value="0.5"/>
-                            <LinearDoubleKeyFrame KeyTime="0:0:6" Value="0.28"/>
-                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimation Storyboard.TargetName="Wave1" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave2" Storyboard.TargetProperty="Opacity" To="0.4" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave3" Storyboard.TargetProperty="Opacity" To="0.35" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave1B" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave2B" Storyboard.TargetProperty="Opacity" To="0.4" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave3B" Storyboard.TargetProperty="Opacity" To="0.35" Duration="0:0:0.2"/>
                     </Storyboard>
                 </VisualState>
 
                 <VisualState x:Name="AmberState">
                     <Storyboard RepeatBehavior="Forever">
-                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2Transform" Storyboard.TargetProperty="X" From="-60" To="-320" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3Transform" Storyboard.TargetProperty="X" From="-140" To="-400" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="Wave2BTransform" Storyboard.TargetProperty="X" From="320" To="60" Duration="0:0:4" />
-                        <DoubleAnimation Storyboard.TargetName="Wave3BTransform" Storyboard.TargetProperty="X" From="400" To="140" Duration="0:0:5" />
-                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:3.5" />
-                        <DoubleAnimation Storyboard.TargetName="JitterTransform" Storyboard.TargetProperty="Y" From="-1" To="1" Duration="0:0:0.12" AutoReverse="True" />
+                        <!-- Slow spike animation with reduced waves - for starting/restarting -->
+                        <DoubleAnimation Storyboard.TargetName="Wave1Transform" Storyboard.TargetProperty="X" From="0" To="-260" Duration="0:0:8" />
+                        <DoubleAnimation Storyboard.TargetName="Wave1BTransform" Storyboard.TargetProperty="X" From="260" To="0" Duration="0:0:8" />
+                        <DoubleAnimation Storyboard.TargetName="ScanHeadTransform" Storyboard.TargetProperty="X" From="0" To="268" Duration="0:0:8" />
+                        <DoubleAnimation Storyboard.TargetName="ScanTailTransform" Storyboard.TargetProperty="X" From="-12" To="256" Duration="0:0:8" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <DoubleAnimation Storyboard.TargetName="ScanHead" Storyboard.TargetProperty="Opacity" To="0.95" Duration="0:0:0.2"/>
-                        <DoubleAnimation Storyboard.TargetName="ScanTail" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="ScanHead" Storyboard.TargetProperty="Opacity" To="0.85" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="ScanTail" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.2"/>
+                        <!-- Only show Wave1 for minimal spikes -->
+                        <DoubleAnimation Storyboard.TargetName="Wave1" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave1B" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.2"/>
+                        <!-- Hide other waves for amber state -->
+                        <DoubleAnimation Storyboard.TargetName="Wave2" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave3" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave2B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="Wave3B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
                     </Storyboard>
                 </VisualState>
 
                 <VisualState x:Name="RedState">
                     <Storyboard>
+                        <!-- ECG flatline for offline -->
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -165,7 +167,7 @@
                         <DoubleAnimation Storyboard.TargetName="Wave1B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
                         <DoubleAnimation Storyboard.TargetName="Wave2B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
                         <DoubleAnimation Storyboard.TargetName="Wave3B" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
-                        <DoubleAnimation Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Opacity" From="0.5" To="0.7" Duration="0:0:1.2" AutoReverse="True" RepeatBehavior="Forever"/>
+                        <DoubleAnimation Storyboard.TargetName="FlatLine" Storyboard.TargetProperty="Opacity" From="0.5" To="0.7" Duration="0:0:2" AutoReverse="True" RepeatBehavior="Forever"/>
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>

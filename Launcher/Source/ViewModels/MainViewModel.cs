@@ -102,6 +102,9 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
 
         TunnelStatus = new TunnelStatusViewModel();
 
+        // Check and close any running services on startup
+        CleanupRunningServicesOnStartup();
+
         _ = RefreshStatusAsync();
         RefreshPackages();
     }
@@ -196,6 +199,12 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
                 LaunchService(svc);
             }
         }
+        
+        // Also launch tunnel if not already running
+        if (!_processService.DetectExternalCloudflared())
+        {
+            LaunchTunnel();
+        }
     }
 
     private async void LaunchTunnel()
@@ -258,6 +267,52 @@ public class MainViewModel : System.ComponentModel.INotifyPropertyChanged
             svc.AppendLog("Stopped via Stop All");
         }
         _processService.StopAllProcesses();
+    }
+
+    /// <summary>
+    /// Called on startup to check if services are running and close them
+    /// </summary>
+    private void CleanupRunningServicesOnStartup()
+    {
+        AppendLauncherLog("Checking for running services on startup...");
+        foreach (var svc in Services)
+        {
+            if (_processService.IsPortInUse(svc.Config.Port))
+            {
+                var name = svc.Config.Name;
+                AppendLauncherLog($"Found {name} running on port {svc.Config.Port}, stopping...");
+                _processService.StopProcess(svc.Config.WorkingDirectory, svc.Config.Port, msg =>
+                {
+                    AppendLauncherLog($"{name}: {msg}");
+                });
+            }
+        }
+        
+        // Also check and stop cloudflared tunnel if running
+        if (_processService.DetectExternalCloudflared())
+        {
+            AppendLauncherLog("Found cloudflared tunnel running, stopping...");
+            _processService.StopCloudflared(msg => AppendLauncherLog(msg));
+        }
+        
+        AppendLauncherLog("Startup cleanup complete.");
+    }
+
+    /// <summary>
+    /// Called when the launcher window is closing to cleanup all processes
+    /// </summary>
+    public void CleanupOnClose()
+    {
+        AppendLauncherLog("Launcher closing, stopping all services...");
+        foreach (var svc in Services)
+        {
+            _processService.StopProcess(svc.Config.WorkingDirectory, svc.Config.Port, msg =>
+            {
+                System.Diagnostics.Debug.WriteLine($"{svc.Config.Name}: {msg}");
+            });
+        }
+        _processService.StopAllProcesses();
+        _processService.StopCloudflared(msg => System.Diagnostics.Debug.WriteLine(msg));
     }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;

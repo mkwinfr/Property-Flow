@@ -12,32 +12,38 @@ public class EcgStateConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        // Expected: LocalStatusState, ServiceButtonState? or bool? (isRunning), optional bool isRunning
-        LocalStatusState localStatus = LocalStatusState.Red;
+        // Expected: HasPublicReachability (bool), ServiceButtonState? or bool? (isRunning)
+        bool hasPublicReachability = false;
         ServiceButtonState? buttonState = null;
-        bool? isRunning = null;
+        bool isStarting = false;
 
-        if (values.Length > 0 && values[0] is LocalStatusState ls)
-            localStatus = ls;
+        if (values.Length > 0 && values[0] is bool pub)
+            hasPublicReachability = pub;
         if (values.Length > 1)
         {
-            if (values[1] is ServiceButtonState sb) buttonState = sb;
-            else if (values[1] is bool b1) isRunning = b1;
+            if (values[1] is ServiceButtonState sb)
+            {
+                buttonState = sb;
+                isStarting = sb == ServiceButtonState.Starting;
+            }
+            else if (values[1] is bool b1)
+                isStarting = b1; // For tunnel, this could be isRunning while not yet public
         }
-        if (values.Length > 2 && values[2] is bool b2)
-            isRunning = b2;
+        if (values.Length > 2 && values[2] is bool starting)
+            isStarting = starting;
 
-        // Map to ECG state with graceful fallbacks
-        if (isRunning.HasValue && isRunning.Value == false)
-            return EcgState.Red;
-
-        if (localStatus == LocalStatusState.Red)
-            return EcgState.Red;
-
-        if (buttonState == ServiceButtonState.Starting || localStatus == LocalStatusState.Yellow)
+        // Map to ECG state based on Public status
+        // Green: Public is reachable (full spike animation)
+        // Yellow: Starting/restarting (slow 1-2 spikes)
+        // Red: Public offline (flatline)
+        
+        if (isStarting && !hasPublicReachability)
             return EcgState.Amber;
 
-        return EcgState.Green;
+        if (hasPublicReachability)
+            return EcgState.Green;
+
+        return EcgState.Red;
     }
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

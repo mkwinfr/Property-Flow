@@ -200,6 +200,35 @@ public class ProcessService
         }
     }
 
+    public void StopCloudflared(Action<string>? log = null)
+    {
+        try
+        {
+            var processes = Process.GetProcessesByName("cloudflared");
+            foreach (var process in processes)
+            {
+                try
+                {
+                    process.Kill(entireProcessTree: true);
+                    process.WaitForExit(2000);
+                    log?.Invoke($"Stopped cloudflared process (PID: {process.Id})");
+                }
+                catch (Exception ex)
+                {
+                    log?.Invoke($"Failed to stop cloudflared PID {process.Id}: {ex.Message}");
+                }
+            }
+            if (processes.Length == 0)
+            {
+                log?.Invoke("No cloudflared processes found to stop.");
+            }
+        }
+        catch (Exception ex)
+        {
+            log?.Invoke($"Error stopping cloudflared: {ex.Message}");
+        }
+    }
+
     public async Task<int?> LaunchTunnelAsync(string command, string workingDirectory, Action<string>? log = null)
     {
         return await LaunchServiceAsync(command, workingDirectory, log);

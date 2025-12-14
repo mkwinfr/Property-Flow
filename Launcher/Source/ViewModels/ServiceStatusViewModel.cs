@@ -33,6 +33,7 @@ public class ServiceStatusViewModel : System.ComponentModel.INotifyPropertyChang
             _status = value;
             OnPropertyChanged(nameof(Status));
             OnPropertyChanged(nameof(CanLaunch));
+            OnPropertyChanged(nameof(CanStop));
         }
     }
 
@@ -68,7 +69,8 @@ public class ServiceStatusViewModel : System.ComponentModel.INotifyPropertyChang
             OnPropertyChanged(nameof(CanStop));
         }
     }
-    public bool CanStop => (HasTrackedProcess || ButtonState == ServiceButtonState.Running) && ButtonState != ServiceButtonState.Stopping;
+    // Allow stop if: (we have a tracked process OR service is detected running OR Local status shows it's active) AND not already stopping
+    public bool CanStop => (HasTrackedProcess || Status.LocalStatus != Models.LocalStatusState.Red || ButtonState == ServiceButtonState.Running) && ButtonState != ServiceButtonState.Stopping;
 
     public void AppendLog(string message)
     {
