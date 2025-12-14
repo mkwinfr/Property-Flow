@@ -19,7 +19,7 @@ utils/
 Handle all HTTP requests:
 
 ```typescript
-const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
 export async function fetchApartments() {
   const response = await fetch(`${API_BASE_URL}/apartments`);
@@ -104,7 +104,7 @@ describe('format utils', () => {
 ## Constants (constants.ts)
 
 ```typescript
-export const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:4000/api';
+export const API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
 export const APARTMENT_STATUS = {
   VACANT: 'vacant',

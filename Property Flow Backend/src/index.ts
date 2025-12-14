@@ -55,6 +55,11 @@ app.get("/", (_req, res) => {
   res.send("Property Flow Backend Running");
 });
 
+// Lightweight health endpoint for uptime checks
+app.get("/health", (_req, res) => {
+  res.json({ ok: true, service: "Property Flow Backend" });
+});
+
 const PORT = Number(process.env.PORT) || 4000;
 
 app.listen(PORT, "0.0.0.0", () => {

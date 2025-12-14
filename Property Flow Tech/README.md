@@ -84,7 +84,7 @@ npm run type-check    # TypeScript validation
 ### Environment Configuration
 Create `.env` file:
 ```
-VITE_API_URL=https://api.propertysuite.net
+VITE_API_BASE_URL=https://api.propertysuite.net/api
 ```
 
 See `.env.example` for all options.
@@ -179,7 +179,7 @@ npm run type-check
 
 ### API Connection Issues
 - Verify backend running on localhost:4000
-- Check `VITE_API_URL` in `.env`
+- Check `VITE_API_BASE_URL` in `.env`
 - Check browser console for CORS errors
 
 ## Contributing

@@ -1,11 +1,16 @@
 const rawBase =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE_URL || // legacy fallback
-  "http://localhost:4000";
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL || // legacy fallback
+  "http://localhost:4000/api";
 
-export const API_BASE_URL = rawBase.endsWith("/") ? rawBase.slice(0, -1) : rawBase;
+export const API_BASE_URL = rawBase.replace(/\/+$/, "");
 
 export function apiUrl(path: string): string {
-  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  const cleanPath = path.replace(/^\/+/, "");
+
+  if (API_BASE_URL.endsWith("/api") && cleanPath.startsWith("api/")) {
+    return `${API_BASE_URL}/${cleanPath.slice(4)}`;
+  }
+
   return `${API_BASE_URL}/${cleanPath}`;
 }
