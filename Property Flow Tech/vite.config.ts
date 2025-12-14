@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['tech.propertysuite.net'],
+    allowedHosts: ['tech.propertysuite.net', 'desktop.propertysuite.net'],
   },
 });
