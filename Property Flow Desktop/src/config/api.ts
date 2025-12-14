@@ -1,4 +1,7 @@
-const rawBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+const rawBase =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL || // fallback for older env files
+  "http://localhost:4000";
 const API_BASE_URL = rawBase.endsWith("/") ? rawBase.slice(0, -1) : rawBase;
 
 export { API_BASE_URL };

@@ -57,7 +57,7 @@ Property Flow Desktop/
    - ✅ Integrated from `Property Flow Tech/src/pages/MakeReadyBoard`
    - ✅ Includes main board component + TurnTechView detail panel
    - ✅ MakeReadyBoardProvider context wrapped around entire app
-   - ✅ Connected to backend API via VITE_API_BASE_URL
+- ✅ Connected to backend API via VITE_API_URL
    - ✅ Event listeners for refresh/turn-created working
    - ✅ No modifications to original component logic
 
@@ -67,7 +67,7 @@ Property Flow Desktop/
 
 **Minimal Adaptation**:
 - Fixed import paths (changed `@/types/makeReady` to `../../types/makeReady`)
-- Added `.env` file with `VITE_API_BASE_URL=http://localhost:4000`
+- Added `.env` file with `VITE_API_URL=https://api.propertysuite.net` (override locally as needed)
 - Added `vite-env.d.ts` for TypeScript environment types
 - Added compatibility CSS classes (`.pf-page`, `.page-root`, etc.) to global styles
 
@@ -151,7 +151,7 @@ Build output: `dist/` directory
 Create/edit `.env` file in project root:
 
 ```env
-VITE_API_BASE_URL=http://localhost:4000
+VITE_API_URL=https://api.propertysuite.net
 ```
 
 This configures the backend API endpoint for Make Ready Board and other features.
@@ -211,13 +211,13 @@ const MaintenanceMakeReady = () => {
 **Dependencies**:
 - `lucide-react` - Icon library (installed)
 - `makeReady.ts` types (copied to `src/types/`)
-- Environment variable: `VITE_API_BASE_URL`
+- Environment variable: `VITE_API_URL`
 
 **Modifications made**:
 1. Import paths: Changed `@/types/makeReady` → `../../types/makeReady`
 2. Import extension: Added `.tsx` to component import for TypeScript resolution
 
-**API Integration**: Board fetches from `${VITE_API_BASE_URL}/api/make-ready-board`
+**API Integration**: Board fetches from `${VITE_API_URL}/api/make-ready-board`
 
 ### Compatibility Styles Added
 
@@ -275,7 +275,7 @@ Similar to wizard, the apartment detail view can be integrated when needed.
    - ~~Import existing MakeReadyBoard component from Property Flow Tech~~
 
 3. **Connect to Backend** (Partially complete)
-   - ✅ Make Ready Board connected via VITE_API_BASE_URL
+- ✅ Make Ready Board connected via VITE_API_URL
    - ⏳ Update AuthContext to call actual login API
    - ⏳ Implement proper error handling
 

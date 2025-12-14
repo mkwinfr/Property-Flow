@@ -1,5 +1,6 @@
 // src/pages/MakeReadyWizard/steps/MakeReadyStepTurnDetails.tsx
 import { useState, useEffect } from 'react';
+import { apiUrl } from '@/config/api';
 import type { MakeReadyTurnDraft, TurnType, PriorityLevel } from '../../../types/makeReady';
 
 interface Props {
@@ -30,7 +31,6 @@ interface Apartment {
 
 const TURN_TYPES: TurnType[] = ['STANDARD_MOVE_OUT', 'TRANSFER', 'RENOVATION', 'SPECIAL'];
 const PRIORITY_LEVELS: PriorityLevel[] = ['LOW', 'NORMAL', 'HIGH', 'DOWN_UNIT'];
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export default function MakeReadyStepTurnDetails({
   turnDraft,
@@ -50,7 +50,7 @@ export default function MakeReadyStepTurnDetails({
       try {
         // Adjust this endpoint based on your API structure
         // If you have a propertyId in context, use it here
-        const response = await fetch(`${API_BASE}/api/buildings`);
+        const response = await fetch(apiUrl('/api/buildings'));
         if (!response.ok) throw new Error('Failed to load buildings');
         const data = await response.json();
         setBuildings(Array.isArray(data) ? data : data.buildings || []);
@@ -74,7 +74,7 @@ export default function MakeReadyStepTurnDetails({
     const fetchApartments = async () => {
       try {
         const response = await fetch(
-          `${API_BASE}/api/buildings/${selectedBuildingId}/apartments`
+          apiUrl(`/api/buildings/${selectedBuildingId}/apartments`)
         );
         if (!response.ok) throw new Error('Failed to load apartments');
         const data = await response.json();

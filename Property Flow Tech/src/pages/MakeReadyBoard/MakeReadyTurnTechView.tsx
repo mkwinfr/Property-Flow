@@ -1,5 +1,6 @@
 // src/pages/MakeReadyBoard/MakeReadyTurnTechView.tsx
 import { useState, useEffect } from 'react';
+import { apiUrl } from '@/config/api';
 import type { TaskStatus } from '@/types/makeReady';
 import './MakeReadyTurnTechView.css';
 
@@ -21,7 +22,7 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/make-ready-turns/${turnId}`);
+        const response = await fetch(apiUrl(`/api/make-ready-turns/${turnId}`));
         if (!response.ok) throw new Error('Failed to fetch turn');
         const data = await response.json();
         setTurn(data);
@@ -41,7 +42,7 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
     setUpdatingTaskId(taskId);
     try {
       const response = await fetch(
-        `/api/make-ready-turns/${turnId}/tasks/${taskId}`,
+        apiUrl(`/api/make-ready-turns/${turnId}/tasks/${taskId}`),
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },

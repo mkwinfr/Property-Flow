@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { MemoryRouter, useInRouterContext } from "react-router-dom";
+import { apiUrl } from "@/config/api";
 
 type Apartment = {
   id: number | string;
@@ -9,8 +10,6 @@ type Apartment = {
   baths?: number | null;
   status?: string | null;
 };
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
 type ApartmentsResponse =
   | Apartment[]
@@ -44,7 +43,7 @@ function ApartmentDetailPageContent() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`${API_BASE}/api/apartments`);
+        const response = await fetch(apiUrl("/api/apartments"));
 
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
@@ -137,7 +136,7 @@ function ApartmentDetailPageContent() {
       try {
         setDetailLoading(true);
         setDetailError(null);
-        const res = await fetch(`${API_BASE}/api/apartments/${selectedApartmentId}/detail`);
+        const res = await fetch(apiUrl(`/api/apartments/${selectedApartmentId}/detail`));
         if (!res.ok) throw new Error(`Failed to load apartment ${selectedApartmentId}`);
         const data = await res.json();
         setApartmentDetail(data);

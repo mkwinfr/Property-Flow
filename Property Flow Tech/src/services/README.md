@@ -24,7 +24,7 @@ services/
 import type { Apartment } from '@/types';
 
 class ApartmentService {
-  private baseUrl = process.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+  private baseUrl = process.env.VITE_API_URL || 'http://localhost:4000/api';
 
   /**
    * Fetch all apartments
