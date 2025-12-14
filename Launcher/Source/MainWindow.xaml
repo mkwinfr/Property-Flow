@@ -7,12 +7,33 @@
         Background="#1a1a1a" Foreground="#ffffff"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <!-- Color Definitions -->
-        <SolidColorBrush x:Key="PrimaryBrush" Color="#0066cc"/>
+        <!-- Theme Tokens -->
+        <SolidColorBrush x:Key="AppBackgroundBrush">
+            <SolidColorBrush.Color>
+                <Color>#0B111C</Color>
+            </SolidColorBrush.Color>
+        </SolidColorBrush>
+        <LinearGradientBrush x:Key="AppBackgroundGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0E1624" Offset="0"/>
+            <GradientStop Color="#0A1019" Offset="0.6"/>
+            <GradientStop Color="#0B1421" Offset="1"/>
+        </LinearGradientBrush>
+
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2D8CFF"/>
         <SolidColorBrush x:Key="AccentBrush" Color="#10B981"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="#888888"/>
-        <SolidColorBrush x:Key="CardBrush" Color="#2a2a2a"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#404040"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#9AA3B5"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#F14B6E"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#22C55E"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="#F59E0B"/>
+
+        <SolidColorBrush x:Key="CardBrush" Color="#CC0F1726"/>
+        <SolidColorBrush x:Key="InsetBrush" Color="#B30A101C"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#364152"/>
+        <SolidColorBrush x:Key="BorderStrongBrush" Color="#4A5A73"/>
+        <SolidColorBrush x:Key="NavGlassBrush" Color="#B311192A"/>
+
+        <DropShadowEffect x:Key="CardShadow" Color="#1A5EAFFF" BlurRadius="18" Direction="270" ShadowDepth="6" Opacity="0.55"/>
+        <DropShadowEffect x:Key="InsetShadow" Color="#802D384D" BlurRadius="12" ShadowDepth="1" Direction="90" Opacity="0.5"/>
 
         <!-- Converter -->
         <util:StatusBrushConverter x:Key="StatusBrushConverter"/>
@@ -23,68 +44,110 @@
             <Setter Property="Background" Value="{StaticResource CardBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="14"/>
             <Setter Property="Padding" Value="16"/>
-            <Setter Property="Margin" Value="0 0 0 12"/>
+            <Setter Property="Margin" Value="0 0 0 16"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+        </Style>
+
+        <!-- Inset Panel Style (Logs) -->
+        <Style x:Key="InsetCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource InsetBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderStrongBrush}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Effect" Value="{StaticResource InsetShadow}"/>
         </Style>
 
         <!-- Pill Button Style -->
         <Style x:Key="PillButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="Background" Value="#19355F"/>
+            <Setter Property="Foreground" Value="#F5F7FB"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="12 6"/>
-            <Setter Property="MinWidth" Value="110"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="14 8"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Height" Value="38"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="18"
-                                BorderThickness="0">
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource BorderStrongBrush}"/>
+                    <Setter Property="Background" Value="#25507D"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#2D8CFF"/>
+                    <Setter Property="BorderBrush" Value="#5EA6FF"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <!-- Pill Status Style -->
         <Style x:Key="PillStyle" TargetType="Border">
-            <Setter Property="Background" Value="#404040"/>
+            <Setter Property="Background" Value="#1D2533"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="10 4"/>
             <Setter Property="Margin" Value="0 0 6 0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#66182640" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Tab Button Style (for navbar) -->
         <Style x:Key="TabButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="Background" Value="#142035"/>
             <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="18 8"/>
+            <Setter Property="Padding" Value="16 8"/>
             <Setter Property="Margin" Value="4 0"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="12"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                <Setter Property="Foreground" Value="#ffffff"/>
+                                <Setter Property="Background" Value="#213B63"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#4E8CFF"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource BorderStrongBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -93,13 +156,13 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="#1a1a1a">
+    <Grid Background="{StaticResource AppBackgroundGradient}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Nav + Info Card -->
-        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}" Background="{StaticResource NavGlassBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -131,12 +194,15 @@
                     <Button Content="Stop All Services"
                             Command="{Binding StopAllCommand}"
                             Style="{StaticResource PillButtonStyle}"
-                            Background="#dc2626"
-                            Margin="0 0 8 0"/>
+                            Background="#27121C"
+                            BorderBrush="#F14B6E"
+                            Effect="{StaticResource CardShadow}"/>
                     <Button Content="Launch All Services"
                             Command="{Binding LaunchAllCommand}"
                             Style="{StaticResource PillButtonStyle}"
-                            Background="{StaticResource AccentBrush}"/>
+                            Background="#1A2D4F"
+                            BorderBrush="#4E8CFF"
+                            Effect="{StaticResource CardShadow}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -164,10 +230,10 @@
 
                                     <!-- Left column -->
                                     <Border Grid.Column="0"
-                                            Background="#111827"
-                                            BorderBrush="{StaticResource BorderBrush}"
+                                            Background="#CC121B2B"
+                                            BorderBrush="{StaticResource BorderStrongBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="8"
+                                            CornerRadius="12"
                                             Padding="12"
                                             Margin="0 0 12 0">
                                         <StackPanel VerticalAlignment="Top">
@@ -199,20 +265,17 @@
 
                                     <!-- Middle column -->
                                     <Border Grid.Column="1"
-                                            Background="#111827"
-                                            CornerRadius="6"
-                                            Margin="16 0"
-                                            BorderThickness="1"
-                                            BorderBrush="{StaticResource BorderBrush}"
-                                            Padding="12">
+                                            Style="{StaticResource InsetCardStyle}"
+                                            Margin="16 0">
                                         <StackPanel>
-                                            <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                            <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8" Foreground="{StaticResource MutedBrush}"/>
                                             <ListBox ItemsSource="{Binding Logs}"
-                                                     Background="#0d0d0d"
-                                                     Foreground="#10B981"
+                                                     Background="#120C1220"
+                                                     Foreground="#CDE8FF"
                                                      FontFamily="Consolas"
                                                      FontSize="11"
-                                                     BorderThickness="0"
+                                                     BorderThickness="1"
+                                                     BorderBrush="{StaticResource BorderBrush}"
                                                      MaxHeight="140">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate>
@@ -230,25 +293,27 @@
                                                 CommandParameter="{Binding}"
                                                 IsEnabled="{Binding CanLaunch}"
                                                 Style="{StaticResource PillButtonStyle}"
-                                                Margin="0 0 0 8"/>
+                                                Background="#1F3A63"
+                                                BorderBrush="#4E8CFF"/>
                                         <Button Content="Open Local"
                                                 Command="{Binding DataContext.OpenLocalCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource PillButtonStyle}"
-                                                Background="#5a5a5a"
-                                                Margin="0 0 0 8"/>
+                                                Background="#182336"
+                                                BorderBrush="{StaticResource BorderStrongBrush}"/>
                                         <Button Content="Open Public"
                                                 Command="{Binding DataContext.OpenPublicCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource PillButtonStyle}"
-                                                Background="#5a5a5a"
-                                                Margin="0 0 0 8"/>
+                                                Background="#182336"
+                                                BorderBrush="{StaticResource BorderStrongBrush}"/>
                                         <Button Content="Stop"
                                                 Command="{Binding DataContext.StopServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}"
                                                 IsEnabled="{Binding CanStop}"
                                                 Style="{StaticResource PillButtonStyle}"
-                                                Background="#dc2626"/>
+                                                Background="#281321"
+                                                BorderBrush="{StaticResource DangerBrush}"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -266,10 +331,10 @@
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0"
-                                Background="#111827"
-                                BorderBrush="{StaticResource BorderBrush}"
+                                Background="#CC121B2B"
+                                BorderBrush="{StaticResource BorderStrongBrush}"
                                 BorderThickness="1"
-                                CornerRadius="8"
+                                CornerRadius="12"
                                 Padding="12"
                                 Margin="0 0 12 0">
                             <StackPanel VerticalAlignment="Top">
@@ -294,12 +359,8 @@
                         </Border>
 
                         <Border Grid.Column="1"
-                                Background="#111827"
-                                CornerRadius="6"
-                                Margin="16 0"
-                                BorderThickness="1"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                Padding="12">
+                                Style="{StaticResource InsetCardStyle}"
+                                Margin="16 0">
                             <StackPanel>
                                 <TextBlock Text="Logs" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
                                 <TextBlock Text="{Binding TunnelStatus.Status.PublicSummary}"
@@ -403,11 +464,12 @@
                     <StackPanel>
                         <TextBlock Text="Launcher Events" FontSize="16" FontWeight="SemiBold" Margin="0 0 0 8"/>
                         <ListBox ItemsSource="{Binding LauncherLogs}"
-                                 Background="#0d0d0d"
-                                 Foreground="#10B981"
+                                 Background="#120C1220"
+                                 Foreground="#CDE8FF"
                                  FontFamily="Consolas"
                                  FontSize="11"
-                                 BorderThickness="0"
+                                 BorderThickness="1"
+                                 BorderBrush="{StaticResource BorderBrush}"
                                  MaxHeight="400">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
