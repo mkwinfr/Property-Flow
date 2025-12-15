@@ -24,3 +24,5 @@ C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\App.baml
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\Controls\EcgStrip.baml
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\Controls\EcgStrip.g.cs
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\ResetConfirmationDialog.baml
+C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\obj\Release\net8.0-windows\ResetConfirmationDialog.g.cs

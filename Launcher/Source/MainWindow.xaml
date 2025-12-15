@@ -4,6 +4,7 @@
         xmlns:local="clr-namespace:PropertyFlow.Launcher"
         xmlns:util="clr-namespace:PropertyFlow.Launcher.Utilities"
         xmlns:controls="clr-namespace:PropertyFlow.Launcher.Controls"
+        xmlns:vm="clr-namespace:PropertyFlow.Launcher.ViewModels"
         Title="PS Launcher" Height="900" Width="1200"
         Background="#1a1a1a" Foreground="#ffffff"
         WindowStartupLocation="CenterScreen">
@@ -40,6 +41,13 @@
         <util:StatusBrushConverter x:Key="StatusBrushConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <util:EcgStateConverter x:Key="EcgStateConverter"/>
+        <util:DirtyStateConverter x:Key="DirtyStateConverter"/>
+        <util:DirtyStateTextConverter x:Key="DirtyStateTextConverter"/>
+        <util:AheadBehindVisibilityConverter x:Key="AheadBehindVisibilityConverter"/>
+        <util:BoolInverter x:Key="BoolInverter"/>
+
+        <!-- ViewModels -->
+        <vm:SourceViewModel x:Key="SourceViewModel"/>
 
         <!-- Card Style -->
         <Style x:Key="CardStyle" TargetType="Border">
@@ -177,6 +185,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0 0 12 0">
                     <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" IsChecked="True" Cursor="Hand" x:Name="ServicesTab">Services</RadioButton>
                     <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="PackagesTab">Packages</RadioButton>
+                    <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="SourceTab">Source</RadioButton>
                     <RadioButton GroupName="NavTabs" Style="{StaticResource TabButtonStyle}" Cursor="Hand" x:Name="LogsTab">Logs</RadioButton>
                 </StackPanel>
 
@@ -477,6 +486,221 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Source content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsChecked, ElementName=SourceTab, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel DataContext="{StaticResource SourceViewModel}">
+                <!-- Repo selector card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="Repository:"
+                                   FontSize="12"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   VerticalAlignment="Center"
+                                   Margin="0 0 12 0"/>
+
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding Repositories}"
+                                  SelectedItem="{Binding SelectedRepository}"
+                                  DisplayMemberPath="Name"
+                                  Background="#0A1019"
+                                  Foreground="#FFFFFF"
+                                  BorderBrush="#364152"
+                                  BorderThickness="1"
+                                  Padding="12 8"
+                                  Height="40"/>
+                    </Grid>
+                </Border>
+
+                <!-- Repo path display -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Path" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                        <TextBlock Text="{Binding SelectedRepository.DisplayPath}"
+                                   FontSize="11"
+                                   Foreground="#FFFFFF"
+                                   TextWrapping="Wrap"
+                                   ToolTip="{Binding SelectedRepository.DisplayPath}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Status cards -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Branch info -->
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="Branch" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                            <TextBlock Text="{Binding RepoStatus.CurrentBranch}"
+                                       FontSize="12"
+                                       Foreground="#FFFFFF"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding RepoStatus.TrackingBranch}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       Margin="0 4 0 0"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Working tree state -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="4 0 4 0">
+                        <StackPanel>
+                            <TextBlock Text="Status" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                            <Border Background="{Binding RepoStatus.WorkingTreeState, Converter={StaticResource DirtyStateConverter}}"
+                                    CornerRadius="6"
+                                    Padding="8 4">
+                                <TextBlock Text="{Binding RepoStatus.WorkingTreeState, Converter={StaticResource DirtyStateTextConverter}}"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- File counts -->
+                    <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8 0 0 0">
+                        <StackPanel>
+                            <TextBlock Text="Changes" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                            <TextBlock FontSize="12" Foreground="#FFFFFF">
+                                <Run Text="{Binding RepoStatus.ModifiedFileCount}" FontWeight="SemiBold"/>
+                                <Run Text=" modified,"/>
+                                <LineBreak/>
+                                <Run Text="{Binding RepoStatus.UntrackedFileCount}" FontWeight="SemiBold"/>
+                                <Run Text=" untracked"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Ahead/Behind info -->
+                <Border Style="{StaticResource CardStyle}"
+                        Visibility="{Binding RepoStatus.IsTrackingBranch, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Visibility="{Binding RepoStatus.AheadCount, Converter={StaticResource AheadBehindVisibilityConverter}}">
+                            <TextBlock Text="Ahead" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                            <TextBlock Text="{Binding RepoStatus.AheadCount}"
+                                       FontSize="14"
+                                       Foreground="#A78BFA"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Visibility="{Binding RepoStatus.BehindCount, Converter={StaticResource AheadBehindVisibilityConverter}}">
+                            <TextBlock Text="Behind" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0 0 0 4"/>
+                            <TextBlock Text="{Binding RepoStatus.BehindCount}"
+                                       FontSize="14"
+                                       Foreground="#60A5FA"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Changed files preview -->
+                <Border Style="{StaticResource CardStyle}"
+                        Visibility="{Binding RepoStatus.ChangedFiles.Count, Converter={StaticResource AheadBehindVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock Text="Changed Files (first 10)" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                        <ItemsControl ItemsSource="{Binding RepoStatus.ChangedFiles}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"
+                                               FontSize="10"
+                                               Foreground="#CDE8FF"
+                                               FontFamily="Consolas"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding}"
+                                               Margin="0 2 0 2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action buttons -->
+                <Grid Margin="0 0 0 16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0"
+                            Content="Refresh Status"
+                            Command="{Binding RefreshStatusCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#1F3A63"
+                            BorderBrush="#4E8CFF"
+                            Margin="0 0 8 0"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
+
+                    <Button Grid.Column="1"
+                            Content="Fetch"
+                            Command="{Binding FetchCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#1F3A63"
+                            BorderBrush="#4E8CFF"
+                            Margin="4 0 4 0"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
+
+                    <Button Grid.Column="2"
+                            Content="Pull"
+                            Command="{Binding PullCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#1F3A63"
+                            BorderBrush="#4E8CFF"
+                            Margin="4 0 8 0"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
+
+                    <Button Grid.Column="3"
+                            Content="Reset Local Repo"
+                            Command="{Binding ResetLocalCommand}"
+                            Style="{StaticResource PillButtonStyle}"
+                            Background="#27121C"
+                            BorderBrush="#F14B6E"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
+                </Grid>
+
+                <!-- Command output console -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Command Output" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                        <ListBox ItemsSource="{Binding CommandLog}"
+                                 Background="#120C1220"
+                                 Foreground="#CDE8FF"
+                                 FontFamily="Consolas"
+                                 FontSize="10"
+                                 BorderThickness="1"
+                                 BorderBrush="{StaticResource BorderBrush}"
+                                 MaxHeight="200">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 

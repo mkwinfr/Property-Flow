@@ -10,11 +10,11 @@ none
 false
 TRACE;RELEASE;NET;NET8_0;NETCOREAPP
 C:\Users\mkwin\Desktop\Property Flow\Launcher\Source\App.xaml
-256534816
+31491680934
 
-15750380033
+20-970868064
 198338916705
-Controls\EcgStrip.xaml;MainWindow.xaml;
+Controls\EcgStrip.xaml;MainWindow.xaml;ResetConfirmationDialog.xaml;
 
 False
 
