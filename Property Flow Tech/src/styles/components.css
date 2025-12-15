@@ -729,74 +729,142 @@
 
 /* === Card & Chip components === */
 .make-ready-card {
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 8px 12px;
   background: #1e1f25;
-  box-shadow: 0 18px 40px rgba(10, 14, 34, 0.7);
+  box-shadow: 0 8px 20px rgba(10, 14, 34, 0.5);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
+}
+
+.make-ready-card > span {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.make-ready-card-apt {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pf-ivory);
+  min-width: 60px;
+}
+
+.make-ready-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 6px;
+}
+
+.make-ready-header-col {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pf-muted);
+  min-width: 60px;
+}
+
+.make-ready-header-col:nth-child(2) {
+  min-width: 80px;
+}
+
+.make-ready-header-col:nth-child(3),
+.make-ready-header-col:nth-child(4) {
+  min-width: 50px;
+}
+
+.make-ready-card-tech {
+  font-size: 11px;
+  color: var(--pf-cream);
+  min-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.make-ready-card-date {
+  font-size: 10px;
+  color: var(--pf-muted);
+  min-width: 50px;
 }
 
 .make-ready-chip {
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: 999px;
   border-width: 1px;
   border-style: solid;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
 }
 
 .make-ready-chip-status.status-not_started {
-  background: rgba(46, 55, 96, 0.6);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(46, 55, 96, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
   color: var(--pf-ivory);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-status.status-in_progress {
-  background: rgba(154, 181, 255, 0.2);
-  border-color: rgba(154, 181, 255, 0.55);
+  background: rgba(154, 181, 255, 0.12);
+  border-color: rgba(154, 181, 255, 0.35);
   color: var(--pf-cream);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-status.status-ready {
-  background: rgba(229, 108, 116, 0.18);
-  border-color: rgba(229, 108, 116, 0.6);
-  color: #ffe5ea;
+  background: rgba(229, 108, 116, 0.12);
+  border-color: rgba(229, 108, 116, 0.35);
+  color: rgba(255, 229, 234, 0.85);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-status.status-on_hold {
-  background: rgba(255, 154, 166, 0.2);
-  border-color: rgba(255, 154, 166, 0.55);
-  color: #ffe8ef;
+  background: rgba(255, 154, 166, 0.12);
+  border-color: rgba(255, 154, 166, 0.35);
+  color: rgba(255, 232, 239, 0.8);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-priority.priority-urgent {
-  background: rgba(229, 108, 116, 0.25);
-  border-color: rgba(229, 108, 116, 0.65);
-  color: #ffe5ea;
+  background: rgba(229, 108, 116, 0.12);
+  border-color: rgba(229, 108, 116, 0.35);
+  color: rgba(255, 229, 234, 0.85);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-priority.priority-high {
-  background: rgba(255, 154, 166, 0.25);
-  border-color: rgba(255, 154, 166, 0.7);
-  color: #ffe8ef;
+  background: rgba(255, 154, 166, 0.12);
+  border-color: rgba(255, 154, 166, 0.35);
+  color: rgba(255, 232, 239, 0.8);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-priority.priority-medium {
-  background: rgba(154, 181, 255, 0.22);
-  border-color: rgba(154, 181, 255, 0.7);
-  color: #e9edff;
+  background: rgba(154, 181, 255, 0.12);
+  border-color: rgba(154, 181, 255, 0.35);
+  color: rgba(233, 237, 255, 0.85);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-chip-priority.priority-low {
-  background: rgba(46, 55, 96, 0.45);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(46, 55, 96, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
   color: var(--pf-ivory);
+  width: 100%;
+  justify-content: center;
 }
 
 .make-ready-meta {
@@ -805,15 +873,29 @@
   gap: 2px;
 }
 
+.make-ready-meta-full {
+  width: 100%;
+}
+
 .make-ready-meta-label {
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   color: var(--pf-muted);
+  font-weight: 600;
 }
 
 .make-ready-meta-value {
   color: var(--pf-cream);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.make-ready-notes-text {
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .apartment-card {

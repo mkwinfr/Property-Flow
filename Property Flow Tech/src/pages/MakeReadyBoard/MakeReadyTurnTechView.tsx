@@ -14,6 +14,12 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
+  
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!turnId) return;
@@ -26,6 +32,9 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
         if (!response.ok) throw new Error('Failed to fetch turn');
         const data = await response.json();
         setTurn(data);
+        setEditData(null);
+        setIsEditing(false);
+        setSaveError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load turn');
       } finally {
@@ -35,6 +44,67 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
 
     fetchTurn();
   }, [turnId]);
+
+  const handleEditClick = () => {
+    if (turn) {
+      setEditData({
+        techName: turn.techName || '',
+        priority: turn.priority || 'Medium',
+        status: turn.status || 'NOT_STARTED',
+        dueDate: turn.dueDate ? new Date(turn.dueDate).toISOString().split('T')[0] : '',
+        turnNotes: turn.turnNotes || '',
+      });
+      setIsEditing(true);
+      setSaveError(null);
+    }
+  };
+
+  const handleEditChange = (field: string, value: any) => {
+    setEditData((prev: any) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setSaveError(null);
+  };
+
+  const handleSave = async () => {
+    if (!turnId || !editData) return;
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const response = await fetch(
+        apiUrl(`/api/make-ready-turns/${turnId}`),
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            techName: editData.techName || null,
+            priority: editData.priority,
+            status: editData.status,
+            dueDate: editData.dueDate || null,
+            turnNotes: editData.turnNotes || null,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to save turn');
+
+      const updatedData = await response.json();
+      setTurn(updatedData);
+      setIsEditing(false);
+      setEditData(null);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save turn');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditData(null);
+    setSaveError(null);
+  };
 
   const handleTaskStatusChange = async (taskId: string, newStatus: TaskStatus) => {
     if (!turnId) return;
@@ -101,65 +171,200 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
 
   return (
     <div className="tech-view-container">
-      <div className="tech-view-header">
-        <div className="tech-view-title-group">
-          <h2 className="tech-view-title">
-            {turn.apartment?.unitNumber || 'Unknown Unit'}
-          </h2>
-          <span className={`tech-view-status status-${turn.status?.toLowerCase()}`}>
-            {turn.status}
-          </span>
-        </div>
-        <button onClick={onClose} className="tech-view-close-btn" aria-label="Close">
-          ✕
-        </button>
-      </div>
+      {isEditing ? (
+        // Sheet Editor Mode
+        <div className="editor-sheet">
+          <div className="editor-header">
+            <div className="editor-header-content">
+              <h2 className="editor-title">Unit {turn.apartment?.unitNumber || 'Unknown'}</h2>
+              <p className="editor-subtitle">
+                {turn.targetReadyDate && `Move-out ${new Date(turn.targetReadyDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}  •  `}
+                Assigned {editData.techName || 'Unassigned'}
+              </p>
+            </div>
+            <button onClick={handleCancel} className="editor-close-btn" aria-label="Close editor">
+              ✕
+            </button>
+          </div>
 
-      <div className="tech-view-info">
-        <div className="info-item">
-          <label>Building</label>
-          <span>{turn.apartment?.building || 'N/A'}</span>
-        </div>
-        <div className="info-item">
-          <label>Project Manager</label>
-          <span>{turn.turnOwnerId || 'Unassigned'}</span>
-        </div>
-        <div className="info-item">
-          <label>Priority</label>
-          <span className={`priority-badge priority-${turn.priority?.toLowerCase()}`}>
-            {turn.priority || 'Normal'}
-          </span>
-        </div>
-        <div className="info-item">
-          <label>Target Ready</label>
-          <span>
-            {turn.targetReadyDate
-              ? new Date(turn.targetReadyDate).toLocaleDateString()
-              : 'N/A'}
-          </span>
-        </div>
-      </div>
+          {saveError && (
+            <div className="editor-error-banner">
+              <p>{saveError}</p>
+            </div>
+          )}
 
-      <div className="tech-view-progress">
-        <div className="progress-label">
-          <span className="progress-text">
-            Task Progress: {completedCount} of {totalCount} complete
-          </span>
-          <span className="progress-percent">{Math.round(progress)}%</span>
-        </div>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${progress}%` }} />
-        </div>
-      </div>
+          <div className="editor-body">
+            {/* Assignment Section */}
+            <div className="editor-section">
+              <div className="section-label">Assignment</div>
+              <div className="section-card">
+                <div className="form-group">
+                  <label>Technician</label>
+                  <input
+                    type="text"
+                    value={editData.techName}
+                    onChange={(e) => handleEditChange('techName', e.target.value)}
+                    placeholder="Enter technician name"
+                    className="form-input"
+                  />
+                </div>
+              </div>
+            </div>
 
-      {turn.turnNotes && (
-        <div className="tech-view-notes">
-          <h3>Notes</h3>
-          <p>{turn.turnNotes}</p>
-        </div>
-      )}
+            {/* Status Section */}
+            <div className="editor-section">
+              <div className="section-label">Status</div>
+              <div className="section-card">
+                <div className="form-row-2col">
+                  <div className="form-group">
+                    <label>Status</label>
+                    <select
+                      value={editData.status}
+                      onChange={(e) => handleEditChange('status', e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="NOT_STARTED">Not Started</option>
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="READY">Ready</option>
+                      <option value="ON_HOLD">On Hold</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Priority</label>
+                    <select
+                      value={editData.priority}
+                      onChange={(e) => handleEditChange('priority', e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                      <option value="Urgent">Urgent</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <div className="tech-view-tasks">
+            {/* Dates Section */}
+            <div className="editor-section">
+              <div className="section-label">Dates</div>
+              <div className="section-card">
+                <div className="form-group">
+                  <label>Target Ready Date</label>
+                  <input
+                    type="date"
+                    value={editData.dueDate}
+                    onChange={(e) => handleEditChange('dueDate', e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Notes Section */}
+            <div className="editor-section">
+              <div className="section-label">Notes</div>
+              <div className="section-card">
+                <div className="form-group">
+                  <textarea
+                    value={editData.turnNotes}
+                    onChange={(e) => handleEditChange('turnNotes', e.target.value)}
+                    placeholder="Enter notes for this turn"
+                    className="form-input form-textarea"
+                    rows={5}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="editor-footer">
+            <button
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="editor-cancel-btn"
+              aria-label="Cancel editing"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="editor-save-btn"
+              aria-label="Save changes"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        // View Mode
+        <>
+          <div className="tech-view-header">
+            <div className="tech-view-title-group">
+              <h2 className="tech-view-title">
+                {turn.apartment?.unitNumber || 'Unknown Unit'}
+              </h2>
+              <span className={`tech-view-status status-${turn.status?.toLowerCase()}`}>
+                {turn.status}
+              </span>
+            </div>
+            <div className="tech-view-header-actions">
+              <button onClick={handleEditClick} className="tech-view-edit-btn" aria-label="Edit turn">
+                ✎ Edit
+              </button>
+              <button onClick={onClose} className="tech-view-close-btn" aria-label="Close">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div className="tech-view-info">
+            <div className="info-item">
+              <label>Building</label>
+              <span>{turn.apartment?.building || 'N/A'}</span>
+            </div>
+            <div className="info-item">
+              <label>Project Manager</label>
+              <span>{turn.turnOwnerId || 'Unassigned'}</span>
+            </div>
+            <div className="info-item">
+              <label>Priority</label>
+              <span className={`priority-badge priority-${turn.priority?.toLowerCase()}`}>
+                {turn.priority || 'Normal'}
+              </span>
+            </div>
+            <div className="info-item">
+              <label>Target Ready</label>
+              <span>
+                {turn.targetReadyDate
+                  ? new Date(turn.targetReadyDate).toLocaleDateString()
+                  : 'N/A'}
+              </span>
+            </div>
+          </div>
+
+          <div className="tech-view-progress">
+            <div className="progress-label">
+              <span className="progress-text">
+                Task Progress: {completedCount} of {totalCount} complete
+              </span>
+              <span className="progress-percent">{Math.round(progress)}%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+
+          {turn.turnNotes && (
+            <div className="tech-view-notes">
+              <h3>Notes</h3>
+              <p>{turn.turnNotes}</p>
+            </div>
+          )}
+
+          <div className="tech-view-tasks">
         <h3>Tasks</h3>
         {turn.tasks && turn.tasks.length > 0 ? (
           <div className="tasks-grid">
@@ -231,6 +436,8 @@ export default function MakeReadyTurnTechView({ turnId, onClose }: Props) {
             ))}
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

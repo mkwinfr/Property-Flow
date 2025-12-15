@@ -27,6 +27,7 @@ function ApartmentDetailPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildingFilter, setBuildingFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedApartmentId, setSelectedApartmentId] = useState<number | string | null>(null);
   const [apartmentDetail, setApartmentDetail] = useState<any | null>(null);
@@ -82,6 +83,15 @@ function ApartmentDetailPageContent() {
     return Array.from(unique).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   }, [apartments]);
 
+  const statuses = useMemo(() => {
+    const unique = new Set<string>();
+    apartments.forEach((apartment) => {
+      const status = (apartment.status ?? "").trim();
+      if (status) unique.add(status);
+    });
+    return Array.from(unique).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  }, [apartments]);
+
   const filteredApartments = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
 
@@ -89,15 +99,18 @@ function ApartmentDetailPageContent() {
       const matchesBuilding =
         buildingFilter === "all" || (apartment.building ?? "").toLowerCase() === buildingFilter;
 
+      const matchesStatus =
+        statusFilter === "all" || (apartment.status ?? "").toLowerCase() === statusFilter;
+
       const label = `${apartment.unitNumber ?? ""} ${apartment.building ?? ""}`.toLowerCase();
       const matchesSearch =
         search === "" ||
         label.includes(search) ||
         String(apartment.id ?? "").toLowerCase().includes(search);
 
-      return matchesBuilding && matchesSearch;
+      return matchesBuilding && matchesStatus && matchesSearch;
     });
-  }, [apartments, buildingFilter, searchTerm]);
+  }, [apartments, buildingFilter, statusFilter, searchTerm]);
 
   const groupedApartments = useMemo(() => {
     const isFiltered = buildingFilter !== "all";
@@ -191,53 +204,66 @@ function ApartmentDetailPageContent() {
   return (
     <div className="apartments-page pf-page">
       <div className="apartments-container">
-        <header className="apartments-header">
-          <div className="apartments-hero">
-            <h1 className="apartments-title pf-page-title">Apartment Index</h1>
-            <p className="apartments-subtitle pf-page-subtitle">
-              Browse every unit, filter by building, or search by number.
-            </p>
-          </div>
-          <div className="apartments-meta">
-            <div>
-              <p className="meta-label pf-meta-label">Total units</p>
-              <strong className="meta-value pf-meta-value">{apartments.length}</strong>
-            </div>
-            <div>
-              <p className="meta-label pf-meta-label">Showing</p>
-              <strong className="meta-value pf-meta-value">{filteredApartments.length}</strong>
-            </div>
-          </div>
-        </header>
+        <div className="apartments-topline">
+          <h1 className="apartments-title pf-page-title">Apartment Index</h1>
+        </div>
 
         <section className="apartments-toolbar">
-          <div className="apartments-controls">
-            <label className="control-group">
-              <span>Building</span>
-              <select
-                value={buildingFilter}
-                onChange={(event) => setBuildingFilter(event.target.value)}
-                aria-label="Filter apartments by building"
-              >
-                <option value="all">All buildings</option>
-                {buildings.map((building) => (
-                  <option key={building} value={building.toLowerCase()}>
-                    {building}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className="apartments-toolbar-card">
+              <div className="apartments-toolbar-row">
+              <label className="control-group">
+                <select
+                  value={buildingFilter}
+                  onChange={(event) => setBuildingFilter(event.target.value)}
+                  aria-label="Filter apartments by building"
+                >
+                  <option value="all">Building</option>
+                  {buildings.map((building) => (
+                    <option key={building} value={building.toLowerCase()}>
+                      {building}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label className="control-group search">
-              <span>Search</span>
-              <input
-                type="search"
-                placeholder="Search by unit or building"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                aria-label="Search apartments"
-              />
-            </label>
+              <label className="control-group">
+                <select
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                  aria-label="Filter apartments by status"
+                >
+                  <option value="all">Status</option>
+                  {statuses.map((status) => (
+                    <option key={status} value={status.toLowerCase()}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="control-group search search-inline">
+                <div className="search-with-meta">
+                  <input
+                    type="search"
+                    placeholder="Search by unit or building"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    aria-label="Search apartments"
+                  />
+                  <div className="search-meta">
+                    <div>
+                      <p className="meta-label pf-meta-label">Total</p>
+                      <strong className="meta-value pf-meta-value">{apartments.length}</strong>
+                    </div>
+                    <span className="meta-divider" aria-hidden="true" />
+                    <div>
+                      <p className="meta-label pf-meta-label">Showing</p>
+                      <strong className="meta-value pf-meta-value">{filteredApartments.length}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -255,68 +281,29 @@ function ApartmentDetailPageContent() {
                     <h3>{group.label}</h3>
                     <span>{group.units.length} units</span>
                   </div>
-                  <div className="apartments-list">
+                  <div className="apartments-table">
+                    <div className="apartments-table-header">
+                      <span>Unit</span>
+                      <span>Building</span>
+                      <span>Status</span>
+                      <span>Layout</span>
+                    </div>
                     {group.units.map((apartment) => (
-                      <article
+                      <button
                         key={apartment.id}
-                        className="apartment-card pf-card"
+                        className="apartments-table-row"
+                        type="button"
                         onClick={() => handleOpenDetail(apartment.id)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            handleOpenDetail(apartment.id);
-                          }
-                        }}
                       >
-                        <div className="card-top">
-                          <div>
-                            <p className="card-kicker">Apartment</p>
-                            <h2 className="card-title">
-                              {apartment.unitNumber ? `Apartment ${apartment.unitNumber}` : "Unit"}
-                            </h2>
-                            <p className="card-subtitle">
-                              Building: {apartment.building ?? "N/A"}
-                            </p>
-                          </div>
-                          {apartment.status && (
-                            <span className="status-pill pf-pill pf-pill-success">
-                              {apartment.status}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="card-grid">
-                          <div>
-                            <p className="meta-label pf-meta-label">Layout</p>
-                            <p className="meta-value pf-meta-value">
-                              {apartment.beds ?? "N/A"} BD {apartment.baths ?? "N/A"} BA
-                            </p>
-                          </div>
-                          <div>
-                            <p className="meta-label pf-meta-label">Building</p>
-                            <p className="meta-value pf-meta-value">{apartment.building ?? "N/A"}</p>
-                          </div>
-                          <div>
-                            <p className="meta-label pf-meta-label">Status</p>
-                            <p className="meta-value pf-meta-value">
-                              {apartment.status ?? "Pending"}
-                            </p>
-                          </div>
-                        </div>
-
-                        <button
-                          className="card-action"
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleOpenDetail(apartment.id);
-                          }}
-                        >
-                          View details
-                        </button>
-                      </article>
+                        <span className="cell primary">
+                          {apartment.unitNumber ? `Apartment ${apartment.unitNumber}` : "Unit"}
+                        </span>
+                        <span className="cell">{apartment.building ?? "N/A"}</span>
+                        <span className="cell status">{apartment.status ?? "Pending"}</span>
+                        <span className="cell">
+                          {apartment.beds ?? "N/A"} BD {apartment.baths ?? "N/A"} BA
+                        </span>
+                      </button>
                     ))}
                   </div>
                 </div>

@@ -9,6 +9,13 @@ const API_URL = apiUrl("/api/make-ready-board");
 // Demo fallback data for when the API can't be reached
 /* Demo data removed */
 
+const STATUS_LABEL: Record<MakeReadyStatus, string> = {
+  NOT_STARTED: "Not Started",
+  IN_PROGRESS: "In Progress",
+  READY: "Ready",
+  ON_HOLD: "On Hold",
+};
+
 type MakeReadyBoardProps = {
   selectedTurnId?: string | null;
   onSelectTurn?: (id: string | null) => void;
@@ -151,12 +158,6 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
 
       <div className="make-ready-layout">
         <div className="make-ready-list">
-          <div className="make-ready-header-row">
-            <span className="make-ready-header-col">Apartment</span>
-            <span className="make-ready-header-col">Tech</span>
-            <span className="make-ready-header-col">Move Out</span>
-            <span className="make-ready-header-col">Target</span>
-          </div>
           {sortedItems.map((item) => (
             <MakeReadyCard 
               key={item.id} 
@@ -187,6 +188,8 @@ interface CardProps {
 }
 
 const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect }) => {
+  const statusLabel = STATUS_LABEL[item.status];
+
   return (
     <div 
       className={`make-ready-card ${isSelected ? 'make-ready-card--selected' : ''}`}
@@ -194,18 +197,49 @@ const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect }) => {
       role="button"
       tabIndex={0}
     >
-      <span className="make-ready-card-apt">{item.apartmentNumber}</span>
-      <span className="make-ready-card-tech">{item.techName || "Unassigned"}</span>
-      <span className="make-ready-card-date">
-        {item.updatedAt
-          ? new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : "—"}
-      </span>
-      <span className="make-ready-card-date">
-        {item.dueDate
-          ? new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : "—"}
-      </span>
+      <div className="make-ready-card-header">
+        <div className="make-ready-unit-block">
+          <span className="make-ready-unit-label">Unit</span>
+          <div className="make-ready-unit-chip-row">
+            <span className="make-ready-unit-number">{item.apartmentNumber}</span>
+            {item.building && (
+              <span className="make-ready-unit-building">Bldg {item.building}</span>
+            )}
+          </div>
+        </div>
+
+        <div className="make-ready-chip-row">
+          <span className={`make-ready-chip make-ready-chip-status status-${item.status.toLowerCase()}`}>
+            {statusLabel}
+          </span>
+          <span className={`make-ready-chip make-ready-chip-priority priority-${(item.priority || "Medium").toLowerCase()}`}>
+            {item.priority ?? "Priority"}
+          </span>
+        </div>
+      </div>
+
+        <div className="make-ready-meta-grid">
+          <div className="make-ready-meta">
+          <span className="make-ready-meta-label pf-meta-label">Tech</span>
+          <span className="make-ready-meta-value pf-meta-value">{item.techName || "Unassigned"}</span>
+        </div>
+
+        <div className="make-ready-meta">
+          <span className="make-ready-meta-label pf-meta-label">Due</span>
+          <span className="make-ready-meta-value pf-meta-value">
+            {item.dueDate
+              ? new Date(item.dueDate).toLocaleDateString()
+              : "No due date"}
+          </span>
+        </div>
+
+        <div className="make-ready-meta make-ready-meta-notes">
+          <span className="make-ready-meta-label pf-meta-label">Notes</span>
+          <span className="make-ready-meta-value pf-meta-value">
+            {item.notes || item.turnType || "No notes"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
