@@ -1,7 +1,16 @@
-const rawBase =
+const DEFAULT_API_BASE = "https://api.propertysuite.net/api";
+
+// Prefer configured env, but never ship a localhost API in production builds.
+const envBase =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL || // legacy fallback
-  "https://api.propertysuite.net/api";
+  "";
+
+const rawBase =
+  import.meta.env.PROD &&
+  /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(envBase)
+    ? DEFAULT_API_BASE
+    : envBase || DEFAULT_API_BASE;
 
 export const API_BASE_URL = rawBase.replace(/\/+$/, "");
 
