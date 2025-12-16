@@ -1,14 +1,24 @@
 const DEFAULT_API_BASE = "https://api.propertysuite.net/api";
 
-// Prefer configured env, but never ship a localhost API in production builds.
 const envBase =
   import.meta.env.VITE_API_BASE_URL ||
-  import.meta.env.VITE_API_URL || // legacy fallback
+  import.meta.env.VITE_API_URL ||
   "";
 
+// Is the configured API pointing to localhost?
+const isLocalApi =
+  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(envBase);
+
+// Is the frontend itself running on localhost?
+const isFrontendLocal =
+  typeof window !== "undefined" &&
+  /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
+
+// Final decision:
+// - Local frontend → allow localhost API
+// - Remote frontend → force production API
 const rawBase =
-  import.meta.env.PROD &&
-  /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(envBase)
+  isLocalApi && !isFrontendLocal
     ? DEFAULT_API_BASE
     : envBase || DEFAULT_API_BASE;
 
