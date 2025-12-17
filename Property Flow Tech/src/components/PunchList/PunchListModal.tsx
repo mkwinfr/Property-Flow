@@ -23,6 +23,10 @@ interface RenderedTemplateItem extends PunchTemplateItem {
   isCustom?: boolean;
 }
 
+interface EditingItem extends RenderedTemplateItem {
+  templateKey: string;
+}
+
 export const PunchListModal: React.FC<PunchListModalProps> = ({
   isOpen,
   onClose,
@@ -32,6 +36,7 @@ export const PunchListModal: React.FC<PunchListModalProps> = ({
 }) => {
   const [punchItems, setPunchItems] = useState<Map<string, PunchItem>>(new Map());
   const [filters, setFilters] = useState<FilterState>({});
+  const [selectedItem, setSelectedItem] = useState<EditingItem | null>(null);
 
   // Get template items
   const flatTemplate = useMemo(() => {
@@ -128,6 +133,32 @@ export const PunchListModal: React.FC<PunchListModalProps> = ({
     setPunchItems((prev) => new Map(prev).set(item.templateKey, newItem));
   }, [turnId]);
 
+  const handleEditItem = useCallback((item: RenderedTemplateItem) => {
+    setSelectedItem(item as EditingItem);
+  }, []);
+
+  const handleSaveItem = useCallback((updates: Partial<EditingItem>) => {
+    if (selectedItem) {
+      const newItem: PunchItem = {
+        id: selectedItem.instanceId || `new-${selectedItem.templateKey}`,
+        punchListId: `turn-${turnId}`,
+        templateKey: selectedItem.templateKey,
+        title: selectedItem.title,
+        area: selectedItem.area,
+        category: selectedItem.category,
+        status: (updates.status as PunchItemStatus) || selectedItem.status,
+        priority: (updates.priority as any) || selectedItem.priority,
+        notes: updates.notes,
+        assignedTo: updates.assignedTo,
+        completedAt: selectedItem.completedAt,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      setPunchItems((prev) => new Map(prev).set(selectedItem.templateKey, newItem));
+      setSelectedItem(null);
+    }
+  }, [selectedItem, turnId]);
+
   if (!isOpen) return null;
 
   const completedCount = templatedItems.filter((item) => item.status === 'Complete').length;
@@ -213,21 +244,42 @@ export const PunchListModal: React.FC<PunchListModalProps> = ({
                   <div key={`${area}-${category}`} className="punch-list-category">
                     <h4 className="punch-list-category-title">{category}</h4>
                     <div className="punch-list-items">
-                      {items.map((item) => (
-                        <div
-                          key={item.templateKey}
-                          className={`punch-list-item ${item.status === 'Complete' ? 'complete' : ''}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={item.status === 'Complete'}
-                            onChange={() => handleToggleStatus(item)}
-                            className="punch-item-checkbox"
-                          />
-                          <span className="punch-item-label">{item.title}</span>
-                          {item.notes && <span className="punch-item-notes">📝</span>}
-                        </div>
-                      ))}
+                      {items.map((item) => {
+                        const hasWork = item.hasInstance || item.status !== 'Open' || Boolean(item.notes) || Boolean(item.assignedTo);
+                        const editSymbol = hasWork ? '✎' : '+';
+
+                        return (
+                          <div
+                            key={item.templateKey}
+                            className={`punch-list-item ${item.status === 'Complete' ? 'complete' : ''}`}
+                          >
+                            <div className="punch-item-content">
+                              <span className="punch-item-label">{item.title}</span>
+                              {item.notes && <p className="punch-item-notes">Note: {item.notes}</p>}
+                              {item.assignedTo && <p className="punch-item-assigned">- {item.assignedTo}</p>}
+                            </div>
+                            <div className="punch-item-actions">
+                              <button
+                                className={`action-btn checkmark ${item.status === 'Complete' ? 'checked' : ''}`}
+                                onClick={() => handleToggleStatus(item)}
+                                title={item.status === 'Complete' ? 'Mark as Open' : 'Mark as Complete'}
+                              >
+                                ✓
+                              </button>
+                              <button
+                                className="action-btn edit"
+                                onClick={() => handleEditItem(item)}
+                                title="Edit item"
+                              >
+                                {editSymbol}
+                              </button>
+                              <span className={`status-pill status-${item.status.toLowerCase()}`}>
+                                {item.status}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
@@ -235,6 +287,67 @@ export const PunchListModal: React.FC<PunchListModalProps> = ({
             ))
           )}
         </div>
+
+        {selectedItem && (
+          <div className="punch-item-editor-overlay" onClick={() => setSelectedItem(null)}>
+            <div className="punch-item-editor" onClick={(e) => e.stopPropagation()}>
+              <div className="editor-header">
+                <h3>Edit: {selectedItem.title}</h3>
+                <button className="editor-close" onClick={() => setSelectedItem(null)}>
+                  ✕
+                </button>
+              </div>
+
+              <div className="editor-body">
+                <div className="editor-group">
+                  <label>Notes</label>
+                  <textarea
+                    value={selectedItem.notes || ''}
+                    onChange={(e) => setSelectedItem({ ...selectedItem, notes: e.target.value })}
+                    placeholder="Add notes here..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="editor-group">
+                  <label>Status</label>
+                  <select
+                    value={selectedItem.status}
+                    onChange={(e) => setSelectedItem({ ...selectedItem, status: e.target.value as PunchItemStatus })}
+                  >
+                    <option value="Open">Open</option>
+                    <option value="Complete">Complete</option>
+                  </select>
+                </div>
+
+                <div className="editor-group">
+                  <label>Assigned To</label>
+                  <input
+                    type="text"
+                    value={selectedItem.assignedTo || ''}
+                    onChange={(e) => setSelectedItem({ ...selectedItem, assignedTo: e.target.value })}
+                    placeholder="Person name"
+                  />
+                </div>
+              </div>
+
+              <div className="editor-footer">
+                <button
+                  className="btn-cancel"
+                  onClick={() => setSelectedItem(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn-save"
+                  onClick={() => handleSaveItem(selectedItem)}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="punch-list-modal-footer">
           <button onClick={onClose} className="btn-close">
