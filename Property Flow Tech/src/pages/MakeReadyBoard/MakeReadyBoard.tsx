@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { apiUrl } from "@/config/api";
+import { PunchListModal } from "@/components/PunchList/PunchListModal";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
 import MakeReadyTurnTechView from "./MakeReadyTurnTechView";
 
@@ -22,6 +23,8 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [localSelectedTurnId, setLocalSelectedTurnId] = useState<string | null>(null);
+  const [showPunchList, setShowPunchList] = useState(false);
+  const [selectedApartment, setSelectedApartment] = useState<{ id: string; number: string } | null>(null);
 
   const isControlled = typeof onSelectTurn === "function";
   const activeSelection = isControlled ? selectedTurnId ?? null : localSelectedTurnId;
@@ -36,6 +39,14 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
     },
     [onSelectTurn]
   );
+
+  const handleOpenPunchList = useCallback((item: MakeReadyItem) => {
+    setSelectedApartment({
+      id: item.id,
+      number: item.apartmentNumber,
+    });
+    setShowPunchList(true);
+  }, []);
 
   useEffect(() => {
     if (isControlled) {
@@ -163,6 +174,7 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
               item={item}
               isSelected={activeSelection === item.id}
               onSelect={() => handleSelect(item.id)}
+              onPunchList={() => handleOpenPunchList(item)}
             />
           ))}
         </div>
@@ -176,6 +188,17 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
           </div>
         )}
       </div>
+
+      <PunchListModal
+        isOpen={showPunchList}
+        onClose={() => {
+          setShowPunchList(false);
+          setSelectedApartment(null);
+        }}
+        turnId={selectedApartment ? parseInt(selectedApartment.id) : undefined}
+        apartmentNumber={selectedApartment?.number || ""}
+        floorPlan="Floor Plan A"
+      />
     </div>
   );
 };
@@ -184,28 +207,38 @@ interface CardProps {
   item: MakeReadyItem;
   isSelected?: boolean;
   onSelect?: () => void;
+  onPunchList?: () => void;
 }
 
-const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect }) => {
+const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect, onPunchList }) => {
   return (
     <div 
       className={`make-ready-card ${isSelected ? 'make-ready-card--selected' : ''}`}
-      onClick={onSelect}
-      role="button"
-      tabIndex={0}
     >
-      <span className="make-ready-card-apt">{item.apartmentNumber}</span>
-      <span className="make-ready-card-tech">{item.techName || "Unassigned"}</span>
-      <span className="make-ready-card-date">
-        {item.updatedAt
-          ? new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : "—"}
-      </span>
-      <span className="make-ready-card-date">
-        {item.dueDate
-          ? new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : "—"}
-      </span>
+      <div className="make-ready-card-content" onClick={onSelect} role="button" tabIndex={0}>
+        <span className="make-ready-card-apt">{item.apartmentNumber}</span>
+        <span className="make-ready-card-tech">{item.techName || "Unassigned"}</span>
+        <span className="make-ready-card-date">
+          {item.updatedAt
+            ? new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            : "—"}
+        </span>
+        <span className="make-ready-card-date">
+          {item.dueDate
+            ? new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            : "—"}
+        </span>
+      </div>
+      <button 
+        className="make-ready-card-punch-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPunchList?.();
+        }}
+        title="Open Punch List"
+      >
+        📋
+      </button>
     </div>
   );
 };

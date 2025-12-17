@@ -106,6 +106,10 @@
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: all 0.2s ease;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: var(--spacing-md);
+  align-items: center;
 }
 
 .make-ready-card:hover {
@@ -118,6 +122,27 @@
   border-color: var(--pf-coral);
   background: rgba(206, 102, 65, 0.1);
   box-shadow: 0 0 0 2px rgba(206, 102, 65, 0.2);
+}
+
+.make-ready-card-content {
+  display: contents;
+}
+
+.make-ready-card-punch-btn {
+  padding: 0.5rem 0.75rem;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.make-ready-card-punch-btn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+  transform: scale(1.1);
 }
 
 .make-ready-card-header {
