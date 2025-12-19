@@ -74,6 +74,12 @@ const TurnModal: React.FC<TurnModalProps> = ({ isOpen, turn, onClose }) => {
   if (!isOpen || !enrichedTurn) return null;
 
   const displayTurn = enrichedTurn;
+  
+  // Calculate completion stats for punch list
+  const punchListItems = displayTurn.punchListItems || [];
+  const completedCount = punchListItems.filter((item) => item.status === 'COMPLETE').length;
+  const totalCount = punchListItems.length;
+  const completionPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
     <div className="turn-modal-overlay" onClick={onClose}>
@@ -85,6 +91,11 @@ const TurnModal: React.FC<TurnModalProps> = ({ isOpen, turn, onClose }) => {
             <span className={`status-badge status-${displayTurn.status.toLowerCase()}`}>
               {displayTurn.status.replace(/_/g, ' ')}
             </span>
+            {totalCount > 0 && (
+              <span className="completion-badge">
+                Completion: {completedCount} of {totalCount} items {completionPercentage}%
+              </span>
+            )}
           </div>
           <button className="turn-modal-close" onClick={onClose}>✕</button>
         </div>

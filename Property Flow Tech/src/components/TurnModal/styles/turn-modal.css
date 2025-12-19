@@ -40,6 +40,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .turn-modal-title h2 {
@@ -48,6 +49,19 @@
   font-weight: 600;
   color: var(--pf-cream);
   letter-spacing: -0.01em;
+}
+
+.completion-badge {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  background: rgba(229, 108, 116, 0.12);
+  border: 1px solid rgba(229, 108, 116, 0.25);
+  color: #e56c74;
 }
 
 .status-badge {

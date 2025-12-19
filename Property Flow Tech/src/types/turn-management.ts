@@ -16,6 +16,7 @@ export type TurnStatus = typeof TurnStatus[keyof typeof TurnStatus];
 // Punch List Item Status
 export const PunchListItemStatus = {
   OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
   COMPLETE: 'COMPLETE',
 } as const;
 export type PunchListItemStatus = typeof PunchListItemStatus[keyof typeof PunchListItemStatus];

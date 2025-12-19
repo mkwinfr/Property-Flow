@@ -245,7 +245,11 @@ router.get('/:id', async (req, res) => {
     const turn = await prisma.turn.findUnique({
       where: { id },
       include: {
-        apartment: true,
+        apartment: {
+          include: {
+            floorPlan: true,
+          },
+        },
         punchListItems: true,
         activityLogs: true,
         costBreakdown: true,
