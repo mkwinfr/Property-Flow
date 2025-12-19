@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
 import { OccupancyStatus } from '@prisma/client';
+import { getPunchListItems } from '../utils/punchListTemplate';
 
 const router = Router();
 
@@ -68,6 +69,9 @@ router.post('/make-ready-turns', async (req, res) => {
       data: { status: newStatus },
     });
 
+    // Get punch list items based on apartment bed/bath configuration
+    const punchListItems = getPunchListItems(apartment.beds || undefined, apartment.baths || undefined);
+
     // Create turn with all data
     const turn = await prisma.turn.create({
       data: {
@@ -112,6 +116,16 @@ router.post('/make-ready-turns', async (req, res) => {
           create: selectedCategories.map((cat: string) => ({ category: cat as any })),
         },
 
+        // Create punch list items based on bed/bath configuration
+        punchListItems: {
+          create: punchListItems.map((item, idx) => ({
+            label: item.label,
+            area: item.area,
+            category: item.category,
+            status: 'OPEN',
+          })),
+        },
+
         // Create tasks
         tasks: {
           create: tasks.map((task: any, idx: number) => ({
@@ -153,6 +167,7 @@ router.post('/make-ready-turns', async (req, res) => {
         materials: true,
         conditionTags: true,
         workCategories: true,
+        punchListItems: true,
       },
     });
 
@@ -179,6 +194,7 @@ router.get('/make-ready-turns/:id', async (req, res) => {
         materials: true,
         conditionTags: true,
         workCategories: true,
+        punchListItems: true,
       },
     });
 
@@ -230,6 +246,9 @@ router.get('/:id', async (req, res) => {
       where: { id },
       include: {
         apartment: true,
+        punchListItems: true,
+        activityLogs: true,
+        costBreakdown: true,
       },
     });
 
@@ -265,6 +284,9 @@ router.post('/open', async (req, res) => {
       return res.status(404).json({ error: 'Apartment not found' });
     }
 
+    // Get punch list items based on apartment bed/bath configuration
+    const punchListItems = getPunchListItems(apartment.beds || undefined, apartment.baths || undefined);
+
     const turn = await prisma.turn.create({
       data: {
         apartmentId,
@@ -273,6 +295,18 @@ router.post('/open', async (req, res) => {
         status: 'PENDING',
         moveOutDate: moveOutDate ? new Date(moveOutDate) : undefined,
         targetReadyDate: targetReadyDate ? new Date(targetReadyDate) : undefined,
+        // Create punch list items based on bed/bath configuration
+        punchListItems: {
+          create: punchListItems.map((item) => ({
+            label: item.label,
+            area: item.area,
+            category: item.category,
+            status: 'OPEN',
+          })),
+        },
+      },
+      include: {
+        punchListItems: true,
       },
     });
 
