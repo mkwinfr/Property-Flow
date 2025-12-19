@@ -19,7 +19,23 @@ import propertyRoutes from "./routes/properties";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+
+// CORS configuration for production and development
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',           // Local Tech app
+    'http://localhost:5174',           // Local Desktop app
+    'https://tech.propertysuite.net',  // Production Tech app
+    'https://desktop.propertysuite.net', // Production Desktop app (if exists)
+    'https://app.propertysuite.net',   // Any other production domains
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 
 // ----------------------

@@ -1,6 +1,8 @@
 // prisma/seed.ts
 import { PrismaClient, OccupancyStatus, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { seedFloorPlans } from './seeds/seedFloorPlans';
+import { seedWaterfordApartments } from './seeds/seedWaterfordApartments';
 
 const prisma = new PrismaClient();
 
@@ -507,6 +509,12 @@ async function main() {
     notes: 'Resident transferring; schedule carpet clean.',
   });
 
+  // Seed floor plans
+  await seedFloorPlans();
+// Seed Waterford apartments from CSV
+  await seedWaterfordApartments();
+
+  
   console.log('Seeding complete - Created 17 buildings, 384 apartments, and sample turns');
 }
 

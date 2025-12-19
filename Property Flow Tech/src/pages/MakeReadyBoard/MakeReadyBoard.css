@@ -5,7 +5,7 @@
   flex-direction: column;
   height: 100%;
   padding: var(--spacing-lg);
-  background: var(--pf-navy-900);
+  background: #1a1b20;
   color: var(--pf-cream);
   gap: var(--spacing-md);
   overflow: hidden;
@@ -102,8 +102,8 @@
 .make-ready-card {
   padding: var(--spacing-md);
   background: var(--pf-navy-800);
-  border: 1px solid var(--pf-navy-700);
-  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: grid;
@@ -113,15 +113,15 @@
 }
 
 .make-ready-card:hover {
-  border-color: var(--pf-coral);
-  background: var(--pf-navy-750);
+  border-color: rgba(154, 181, 255, 0.5);
+  background: #2d2e36;
   transform: translateX(2px);
 }
 
 .make-ready-card--selected {
-  border-color: var(--pf-coral);
-  background: rgba(206, 102, 65, 0.1);
-  box-shadow: 0 0 0 2px rgba(206, 102, 65, 0.2);
+  border-color: rgba(154, 181, 255, 0.7);
+  background: rgba(154, 181, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(154, 181, 255, 0.2);
 }
 
 .make-ready-card-content {

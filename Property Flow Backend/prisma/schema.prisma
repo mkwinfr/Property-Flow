@@ -290,6 +290,23 @@ model Building {
   @@index([propertyId])
 }
 
+/// Floor plan definition (e.g., A1, B1, C1)
+model FloorPlan {
+  id              Int        @id @default(autoincrement())
+  name            String     @unique  // Floor plan code: A1, A1.2, A1-P, B1, etc.
+  type            String     // Tree/type name: Aspen, Hickory, Magnolia, etc.
+  bedrooms        Int
+  bathrooms       Float      // Allow decimal for half baths (e.g., 1.0, 2.0)
+  marketRent      Float
+  requiredDeposit Float
+  sqFt            Int
+  maxOccupancy    Int
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  apartments      Apartment[]
+}
+
 /// A specific apartment / unit
 model Apartment {
   id           Int              @id @default(autoincrement())
@@ -303,11 +320,19 @@ model Apartment {
   sqFt         Int?
   status       OccupancyStatus  @default(OCCUPIED)
   inlineNote   String?
+  
+  // New fields for floor plan and rent
+  floorPlanId  Int?             // Foreign key to FloorPlan
+  property     String?          // Property name (from CSV)
+  minRent      Float?           // Minimum rent for this unit
+  maxRent      Float?           // Maximum rent for this unit
+  
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
-  property     Property         @relation(fields: [propertyId], references: [id])
+  propertyRel  Property         @relation(fields: [propertyId], references: [id])
   buildingRel  Building         @relation(fields: [buildingId], references: [id])
+  floorPlan    FloorPlan?       @relation(fields: [floorPlanId], references: [id])
 
   workOrders   WorkOrder[]
   turns        Turn[]
@@ -317,6 +342,7 @@ model Apartment {
   activityLogs ActivityLog[]
 
   @@index([propertyId, unitNumber])
+  @@index([floorPlanId])
 }
 
 /// Work order

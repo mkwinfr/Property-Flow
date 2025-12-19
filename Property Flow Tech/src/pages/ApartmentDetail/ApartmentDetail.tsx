@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { MemoryRouter, useInRouterContext } from "react-router-dom";
+import { X } from "lucide-react";
 import { apiUrl } from "@/config/api";
 
 type Apartment = {
@@ -9,6 +10,14 @@ type Apartment = {
   beds?: number | null;
   baths?: number | null;
   status?: string | null;
+  property?: string | null;
+  minRent?: number | null;
+  maxRent?: number | null;
+  floorPlan?: {
+    name?: string;
+    sqFt?: number;
+    marketRent?: number;
+  } | null;
 };
 
 type ApartmentsResponse =
@@ -35,6 +44,7 @@ function ApartmentDetailPageContent() {
   const [turnQuery, setTurnQuery] = useState("");
   const [workOrderQuery, setWorkOrderQuery] = useState("");
   const [vendorQuery, setVendorQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<'overview' | 'turns' | 'workOrders' | 'appliances'>('overview');
 
   useEffect(() => {
     let cancelled = false;
@@ -272,50 +282,35 @@ function ApartmentDetailPageContent() {
                       >
                         <div className="card-top">
                           <div>
-                            <p className="card-kicker">Apartment</p>
                             <h2 className="card-title">
-                              {apartment.unitNumber ? `Apartment ${apartment.unitNumber}` : "Unit"}
+                              Unit {apartment.unitNumber ?? "N/A"}
                             </h2>
-                            <p className="card-subtitle">
-                              Building: {apartment.building ?? "N/A"}
+                            <p className="card-kicker">
+                              {apartment.floorPlan?.name ?? "Floor Plan N/A"}
                             </p>
                           </div>
-                          {apartment.status && (
-                            <span className="status-pill pf-pill pf-pill-success">
-                              {apartment.status}
-                            </span>
-                          )}
                         </div>
 
                         <div className="card-grid">
                           <div>
-                            <p className="meta-label pf-meta-label">Layout</p>
+                            <p className="meta-label pf-meta-label">Beds</p>
                             <p className="meta-value pf-meta-value">
-                              {apartment.beds ?? "N/A"} BD {apartment.baths ?? "N/A"} BA
+                              {apartment.beds ?? "N/A"}
                             </p>
                           </div>
                           <div>
-                            <p className="meta-label pf-meta-label">Building</p>
-                            <p className="meta-value pf-meta-value">{apartment.building ?? "N/A"}</p>
-                          </div>
-                          <div>
-                            <p className="meta-label pf-meta-label">Status</p>
+                            <p className="meta-label pf-meta-label">Bath</p>
                             <p className="meta-value pf-meta-value">
-                              {apartment.status ?? "Pending"}
+                              {apartment.baths ?? "N/A"}
                             </p>
                           </div>
                         </div>
 
-                        <button
-                          className="card-action"
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleOpenDetail(apartment.id);
-                          }}
-                        >
-                          View details
-                        </button>
+                        {apartment.status && (
+                          <span className="status-pill pf-pill pf-pill-success">
+                            {apartment.status}
+                          </span>
+                        )}
                       </article>
                     ))}
                   </div>
@@ -326,160 +321,246 @@ function ApartmentDetailPageContent() {
         )}
 
         {selectedApartmentId && (
-          <section className="apartment-profile">
-            <div className="apartment-group-header">
-              <h3>Apartment Profile</h3>
-              <span>Unit {apartmentDetail?.unitNumber ?? selectedApartmentId}</span>
-            </div>
-
-            {detailLoading && <div className="apartments-state">Loading apartment profile…</div>}
-            {detailError && !detailLoading && (
-              <div className="apartments-state error">{detailError}</div>
-            )}
-
-            {apartmentDetail && !detailLoading && !detailError && (
-              <div className="profile-grid">
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Overview</h4>
-                  <div className="card-grid">
-                    <div>
-                      <p className="meta-label pf-meta-label">Unit</p>
-                      <p className="meta-value pf-meta-value">
-                        {apartmentDetail.unitNumber ?? "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="meta-label pf-meta-label">Building</p>
-                      <p className="meta-value pf-meta-value">
-                        {apartmentDetail.building ?? "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="meta-label pf-meta-label">Status</p>
-                      <p className="meta-value pf-meta-value">
-                        {apartmentDetail.status ?? "Pending"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="meta-label pf-meta-label">Layout</p>
-                      <p className="meta-value pf-meta-value">
-                        {apartmentDetail.beds ?? "N/A"} BD {apartmentDetail.baths ?? "N/A"} BA
-                      </p>
-                    </div>
-                  </div>
-                </article>
-
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Turns / Make Ready</h4>
-                  <div className="control-group">
-                    <label className="pf-meta-label">Filter</label>
-                    <input
-                      type="search"
-                      placeholder="Search turn status or notes"
-                      value={turnQuery}
-                      onChange={(e) => setTurnQuery(e.target.value)}
-                    />
-                  </div>
-                  {filteredTurns.length === 0 ? (
-                    <p className="pf-meta-label">No turns yet.</p>
-                  ) : (
-                    <div className="profile-list">
-                      {filteredTurns.map((turn: any) => (
-                        <div key={turn.id} className="profile-list-row">
-                          <div>
-                            <p className="meta-label pf-meta-label">Turn #{turn.id}</p>
-                            <p className="meta-value pf-meta-value">{turn.status}</p>
-                            {turn.turnNotes && <p className="pf-muted">{turn.turnNotes}</p>}
-                          </div>
-                          <button
-                            className="card-action"
-                            type="button"
-                            onClick={() =>
-                              window.dispatchEvent(
-                                new CustomEvent("navigate-to-board", {
-                                  detail: { turnId: turn.id },
-                                }),
-                              )
-                            }
-                          >
-                            Open in Make Ready Board
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </article>
-
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Work Orders</h4>
-                  <div className="control-group">
-                    <label className="pf-meta-label">Filter</label>
-                    <input
-                      type="search"
-                      placeholder="Search summary or status"
-                      value={workOrderQuery}
-                      onChange={(e) => setWorkOrderQuery(e.target.value)}
-                    />
-                  </div>
-                  {filteredWorkOrders.length === 0 ? (
-                    <p className="pf-meta-label">No work orders.</p>
-                  ) : (
-                    <div className="profile-list">
-                      {filteredWorkOrders.map((wo: any) => (
-                        <div key={wo.id} className="profile-list-row">
-                          <div>
-                            <p className="meta-label pf-meta-label">WO #{wo.id}</p>
-                            <p className="meta-value pf-meta-value">{wo.summary}</p>
-                            <p className="pf-muted">Status: {wo.status}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </article>
-
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Vendor Work</h4>
-                  <div className="control-group">
-                    <label className="pf-meta-label">Filter</label>
-                    <input
-                      type="search"
-                      placeholder="Search vendor jobs"
-                      value={vendorQuery}
-                      onChange={(e) => setVendorQuery(e.target.value)}
-                    />
-                  </div>
-                  {filteredVendors.length === 0 ? (
-                    <p className="pf-meta-label">No vendor work yet.</p>
-                  ) : (
-                    <div className="profile-list">
-                      {filteredVendors.map((job: any) => (
-                        <div key={job.id} className="profile-list-row">
-                          <div>
-                            <p className="meta-label pf-meta-label">Job #{job.id}</p>
-                            <p className="meta-value pf-meta-value">{job.summary}</p>
-                            <p className="pf-muted">Status: {job.status}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </article>
-
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Materials</h4>
-                  <p className="pf-meta-label">
-                    Materials tracking placeholder — will sync with inventory soon.
-                  </p>
-                </article>
-
-                <article className="pf-card">
-                  <h4 className="pf-card-title">Resident Information</h4>
-                  <p className="pf-meta-label">Resident profile placeholder.</p>
-                </article>
+          <div className="apartment-detail-modal-overlay" onClick={() => setSelectedApartmentId(null)}>
+            <div className="apartment-detail-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="apartment-detail-modal-header">
+                <div className="apartment-detail-modal-title">
+                  <h3>Apartment Profile</h3>
+                  <span>Unit {apartmentDetail?.unitNumber ?? selectedApartmentId}</span>
+                </div>
+                <button 
+                  className="apartment-detail-modal-close"
+                  onClick={() => setSelectedApartmentId(null)}
+                  aria-label="Close"
+                >
+                  <X size={24} />
+                </button>
               </div>
-            )}
-          </section>
+
+              <div className="apartment-detail-tabs">
+                <button
+                  className={`apartment-detail-tab ${activeTab === 'overview' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('overview')}
+                >
+                  Overview
+                </button>
+                <button
+                  className={`apartment-detail-tab ${activeTab === 'turns' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('turns')}
+                >
+                  Turns
+                </button>
+                <button
+                  className={`apartment-detail-tab ${activeTab === 'workOrders' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('workOrders')}
+                >
+                  Work Orders
+                </button>
+                <button
+                  className={`apartment-detail-tab ${activeTab === 'appliances' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('appliances')}
+                >
+                  Appliances
+                </button>
+              </div>
+
+              {activeTab === 'overview' && (
+                <div className="apartment-detail-content">
+                  <div className="apartment-detail-two-column">
+                    <article className="pf-card">
+                      <h4 className="pf-card-title">Apartment Details</h4>
+                      <div className="card-grid">
+                        <div>
+                          <p className="meta-label pf-meta-label">Unit</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.unitNumber ?? "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Building</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.building ?? "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Status</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.status ?? "Pending"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Layout</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.beds ?? "N/A"} BD {apartmentDetail?.baths ?? "N/A"} BA
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Floor Plan</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.floorPlan?.name ?? "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Square Feet</p>
+                          <p className="meta-value pf-meta-value">
+                            {apartmentDetail?.floorPlan?.sqFt ?? apartmentDetail?.sqFt ?? "N/A"} sq ft
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Rent Range</p>
+                          <p className="meta-value pf-meta-value">
+                            ${apartmentDetail?.minRent ?? apartmentDetail?.floorPlan?.marketRent ?? "N/A"}
+                            {apartmentDetail?.maxRent && apartmentDetail.minRent !== apartmentDetail.maxRent 
+                              ? ` - $${apartmentDetail.maxRent}` 
+                              : ''}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="meta-label pf-meta-label">Deposit</p>
+                          <p className="meta-value pf-meta-value">
+                            ${apartmentDetail?.floorPlan?.requiredDeposit ?? "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article className="pf-card">
+                      <h4 className="pf-card-title">Resident Information</h4>
+                      <p className="pf-meta-label">No current resident data available.</p>
+                      <p className="pf-muted" style={{ fontSize: '12px', marginTop: '8px' }}>
+                        Resident profiles will be integrated in a future update.
+                      </p>
+                    </article>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'turns' && (
+                <div className="apartment-detail-content">
+                  <article className="pf-card">
+                    <h4 className="pf-card-title">Make Ready Turns</h4>
+                    <div className="control-group">
+                      <label className="pf-meta-label">Filter</label>
+                      <input
+                        type="search"
+                        placeholder="Search turn status or notes"
+                        value={turnQuery}
+                        onChange={(e) => setTurnQuery(e.target.value)}
+                      />
+                    </div>
+                    {filteredTurns.length === 0 ? (
+                      <p className="pf-meta-label">No turns yet.</p>
+                    ) : (
+                      <div className="profile-list">
+                        {filteredTurns.map((turn: any) => (
+                          <div key={turn.id} className="profile-list-row">
+                            <div>
+                              <p className="meta-label pf-meta-label">Turn #{turn.id}</p>
+                              <p className="meta-value pf-meta-value">{turn.status}</p>
+                              {turn.turnNotes && <p className="pf-muted">{turn.turnNotes}</p>}
+                            </div>
+                            <button
+                              className="card-action"
+                              type="button"
+                              onClick={() =>
+                                window.dispatchEvent(
+                                  new CustomEvent("navigate-to-board", {
+                                    detail: { turnId: turn.id },
+                                  }),
+                                )
+                              }
+                            >
+                              Open in Make Ready Board
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+                </div>
+              )}
+
+              {activeTab === 'workOrders' && (
+                <div className="apartment-detail-content">
+                  <article className="pf-card">
+                    <h4 className="pf-card-title">Work Orders</h4>
+                    <div className="control-group">
+                      <label className="pf-meta-label">Filter</label>
+                      <input
+                        type="search"
+                        placeholder="Search summary or status"
+                        value={workOrderQuery}
+                        onChange={(e) => setWorkOrderQuery(e.target.value)}
+                      />
+                    </div>
+                    {filteredWorkOrders.length === 0 ? (
+                      <p className="pf-meta-label">No work orders.</p>
+                    ) : (
+                      <div className="profile-list">
+                        {filteredWorkOrders.map((wo: any) => (
+                          <div key={wo.id} className="profile-list-row">
+                            <div>
+                              <p className="meta-label pf-meta-label">WO #{wo.id}</p>
+                              <p className="meta-value pf-meta-value">{wo.summary}</p>
+                              <p className="pf-muted">Status: {wo.status}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+
+                  <article className="pf-card" style={{ marginTop: '20px' }}>
+                    <h4 className="pf-card-title">Vendor Work</h4>
+                    <div className="control-group">
+                      <label className="pf-meta-label">Filter</label>
+                      <input
+                        type="search"
+                        placeholder="Search vendor jobs"
+                        value={vendorQuery}
+                        onChange={(e) => setVendorQuery(e.target.value)}
+                      />
+                    </div>
+                    {filteredVendors.length === 0 ? (
+                      <p className="pf-meta-label">No vendor work yet.</p>
+                    ) : (
+                      <div className="profile-list">
+                        {filteredVendors.map((job: any) => (
+                          <div key={job.id} className="profile-list-row">
+                            <div>
+                              <p className="meta-label pf-meta-label">Job #{job.id}</p>
+                              <p className="meta-value pf-meta-value">{job.summary}</p>
+                              <p className="pf-muted">Status: {job.status}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+                </div>
+              )}
+
+              {activeTab === 'appliances' && (
+                <div className="apartment-detail-content">
+                  <article className="pf-card">
+                    <h4 className="pf-card-title">Appliance Inventory</h4>
+                    <p className="pf-meta-label">No appliances tracked yet.</p>
+                    <p className="pf-muted" style={{ fontSize: '12px', marginTop: '8px' }}>
+                      Appliance tracking will allow you to monitor:
+                    </p>
+                    <ul className="pf-muted" style={{ fontSize: '12px', marginTop: '8px', paddingLeft: '20px' }}>
+                      <li>Refrigerator (model, install date, warranty)</li>
+                      <li>Stove/Oven (model, install date, warranty)</li>
+                      <li>Dishwasher (model, install date, warranty)</li>
+                      <li>Microwave (model, install date, warranty)</li>
+                      <li>Washer/Dryer (model, install date, warranty)</li>
+                      <li>HVAC Unit (model, install date, last service)</li>
+                    </ul>
+                  </article>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "A1",
+    "type": "Aspen",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1000.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 537,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A1.2",
+    "type": "Hickory",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1015.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 567,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A1.2-P",
+    "type": "Hickory-Platinum",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1146.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 567,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A1-P",
+    "type": "Aspen-Platinum",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1100.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 537,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A2",
+    "type": "Cypress",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1086.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 693,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A2.2",
+    "type": "Dogwood",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1136.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 693,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A2.2 P",
+    "type": "Dogwood-Platinum",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1237.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 693,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A2-P",
+    "type": "Cypress-Platinum",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1187.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 693,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A3",
+    "type": "Maple",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1232.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 815,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "A3-P",
+    "type": "Maple-Platinum",
+    "bedrooms": 1,
+    "bathrooms": 1.0,
+    "marketRent": 1332.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 815,
+    "maxOccupancy": 2
+  },
+  {
+    "name": "B1",
+    "type": "Magnolia",
+    "bedrooms": 2,
+    "bathrooms": 2.0,
+    "marketRent": 1305.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 990,
+    "maxOccupancy": 4
+  },
+  {
+    "name": "B1.2",
+    "type": "Poplar",
+    "bedrooms": 2,
+    "bathrooms": 2.0,
+    "marketRent": 1350.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 986,
+    "maxOccupancy": 4
+  },
+  {
+    "name": "B1.2-P",
+    "type": "Poplar-Platinum",
+    "bedrooms": 2,
+    "bathrooms": 2.0,
+    "marketRent": 1505.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 986,
+    "maxOccupancy": 4
+  },
+  {
+    "name": "B1-P",
+    "type": "Magnolia-Platinum",
+    "bedrooms": 2,
+    "bathrooms": 2.0,
+    "marketRent": 1450.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 990,
+    "maxOccupancy": 4
+  },
+  {
+    "name": "C1",
+    "type": "Sycamore",
+    "bedrooms": 3,
+    "bathrooms": 2.0,
+    "marketRent": 1405.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 1137,
+    "maxOccupancy": 6
+  },
+  {
+    "name": "C1.2",
+    "type": "Chestnut",
+    "bedrooms": 3,
+    "bathrooms": 2.0,
+    "marketRent": 1455.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 1132,
+    "maxOccupancy": 6
+  },
+  {
+    "name": "C1.2-P",
+    "type": "Chestnut-Platinum",
+    "bedrooms": 3,
+    "bathrooms": 2.0,
+    "marketRent": 1755.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 1132,
+    "maxOccupancy": 6
+  },
+  {
+    "name": "C1-P",
+    "type": "Sycamore-Platinum",
+    "bedrooms": 3,
+    "bathrooms": 2.0,
+    "marketRent": 1685.00,
+    "requiredDeposit": 300.00,
+    "sqFt": 1137,
+    "maxOccupancy": 6
+  }
+]

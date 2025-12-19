@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { X } from 'lucide-react';
-import { punchTemplate } from '@/data/punchTemplates';
-import type { PunchItem, PunchItemStatus, PunchTemplateItem, FilterState } from '@/types/punch-list';
-import '@/styles/punch-list-modal.css';
+import { punchTemplate } from '../../data/punchTemplates';
+import type { PunchItem, PunchItemStatus, PunchTemplateItem, FilterState } from '../../types/punch-list';
+import '../../styles/punch-list-modal.css';
 
 interface PunchListModalProps {
   isOpen: boolean;

@@ -1,26 +1,56 @@
 :root {
+  /* Navy Shades - Primary backgrounds */
   --pf-navy-950: #1e1f25;
   --pf-navy-900: #1e1f25;
   --pf-navy-800: #272830;
+  --pf-navy-750: #2d2e36;
   --pf-navy-700: #2f3037;
   --pf-navy-600: #3a3b44;
   --pf-ink: #0a0f24;
+
+  /* Text Colors */
   --pf-cream: #f6f7fb;
+  --pf-cream-light: #fafbfd;
   --pf-ivory: #eceff8;
   --pf-muted: #9fa8c6;
   --pf-muted-strong: #c9d1ea;
+
+  /* Accent Colors */
   --pf-coral: #e56c74;
+  --pf-coral-light: #ff9aa6;
   --pf-coral-bright: #ff9aa6;
   --pf-sky: #9ab5ff;
+  --pf-sky-light: #b5c9ff;
   --pf-purple: #9c86ff;
   --pf-purple-light: #b5a6ff;
   --pf-purple-dark: #7d69e0;
+  
+  /* Status Colors */
   --pf-green: #74bb43;
   --pf-green-light: #a4d966;
   --pf-red: #ff4c4c;
   --pf-red-light: #ff9999;
   --pf-gray-light: #717278;
 
-  --bg: #121416;
+  /* Semantic Aliases */
+  --bg: #1a1b20;
+  --bg-elevated: var(--pf-navy-800);
   --text: var(--pf-cream);
+  --text-muted: var(--pf-muted);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
+
+  /* Spacing System */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
+  /* Border Radius */
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, BarChart3, FileText, ClipboardList } from "lucide-react";
 import { apiUrl } from "@/config/api";
 import { PunchListModal } from "@/components/PunchList/PunchListModal";
+import { PunchListOverview } from "@/components/PunchList/PunchListOverview";
 import type { MakeReadyItem, MakeReadyStatus } from "./MakeReadyBoard";
 import MakeReadyTurnTechView from "./MakeReadyTurnTechView";
 
@@ -24,6 +25,8 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [localSelectedTurnId, setLocalSelectedTurnId] = useState<string | null>(null);
   const [showPunchList, setShowPunchList] = useState(false);
+  const [showPunchOverview, setShowPunchOverview] = useState<string | null>(null);
+  const [showTechView, setShowTechView] = useState<string | null>(null);
   const [selectedApartment, setSelectedApartment] = useState<{ id: string; number: string } | null>(null);
 
   const isControlled = typeof onSelectTurn === "function";
@@ -40,12 +43,25 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
     [onSelectTurn]
   );
 
-  const handleOpenPunchList = useCallback((item: MakeReadyItem) => {
+  const handleOpenPunchList = useCallback((item: MakeReadyItem, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedApartment({
       id: item.id,
       number: item.apartmentNumber,
     });
     setShowPunchList(true);
+  }, []);
+
+  const handleTogglePunchOverview = useCallback((turnId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPunchOverview(prev => prev === turnId ? null : turnId);
+    setShowTechView(null);
+  }, []);
+
+  const handleToggleTechView = useCallback((turnId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowTechView(prev => prev === turnId ? null : turnId);
+    setShowPunchOverview(null);
   }, []);
 
   useEffect(() => {
@@ -169,24 +185,38 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = ({
             <span className="make-ready-header-col">Target</span>
           </div>
           {sortedItems.map((item) => (
-            <MakeReadyCard 
-              key={item.id} 
-              item={item}
-              isSelected={activeSelection === item.id}
-              onSelect={() => handleSelect(item.id)}
-              onPunchList={() => handleOpenPunchList(item)}
-            />
+            <React.Fragment key={item.id}>
+              <MakeReadyCard 
+                item={item}
+                isSelected={activeSelection === item.id}
+                onSelect={() => handleSelect(item.id)}
+                onPunchList={(e) => handleOpenPunchList(item, e)}
+                onTogglePunchOverview={(e) => handleTogglePunchOverview(item.id, e)}
+                onToggleTechView={(e) => handleToggleTechView(item.id, e)}
+                showPunchOverview={showPunchOverview === item.id}
+                showTechView={showTechView === item.id}
+              />
+              {showPunchOverview === item.id && (
+                <div className="make-ready-inline-view">
+                  <PunchListOverview 
+                    turnId={item.id}
+                    onClose={() => setShowPunchOverview(null)}
+                  />
+                </div>
+              )}
+              {showTechView === item.id && (
+                <div className="make-ready-inline-view">
+                  <MakeReadyTurnTechView
+                    turnId={item.id}
+                    onClose={() => setShowTechView(null)}
+                  />
+                </div>
+              )}
+            </React.Fragment>
           ))}
         </div>
 
-        {activeSelection && (
-          <div className="make-ready-tech-view-container">
-            <MakeReadyTurnTechView
-              turnId={activeSelection}
-              onClose={() => handleSelect(null)}
-            />
-          </div>
-        )}
+
       </div>
 
       <PunchListModal
@@ -207,15 +237,31 @@ interface CardProps {
   item: MakeReadyItem;
   isSelected?: boolean;
   onSelect?: () => void;
-  onPunchList?: () => void;
+  onPunchList?: (e: React.MouseEvent) => void;
+  onTogglePunchOverview?: (e: React.MouseEvent) => void;
+  onToggleTechView?: (e: React.MouseEvent) => void;
+  showPunchOverview?: boolean;
+  showTechView?: boolean;
 }
 
-const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect, onPunchList }) => {
+const MakeReadyCard: React.FC<CardProps> = ({ 
+  item, 
+  isSelected, 
+  onPunchList, 
+  onTogglePunchOverview,
+  onToggleTechView,
+  showPunchOverview,
+  showTechView
+}) => {
   return (
     <div 
-      className={`make-ready-card ${isSelected ? 'make-ready-card--selected' : ''}`}
+      className={`make-ready-card ${
+        isSelected ? 'make-ready-card--selected' : ''
+      } ${
+        showPunchOverview || showTechView ? 'make-ready-card--expanded' : ''
+      }`}
     >
-      <div className="make-ready-card-content" onClick={onSelect} role="button" tabIndex={0}>
+      <div className="make-ready-card-content">
         <span className="make-ready-card-apt">{item.apartmentNumber}</span>
         <span className="make-ready-card-tech">{item.techName || "Unassigned"}</span>
         <span className="make-ready-card-date">
@@ -229,16 +275,29 @@ const MakeReadyCard: React.FC<CardProps> = ({ item, isSelected, onSelect, onPunc
             : "—"}
         </span>
       </div>
-      <button 
-        className="make-ready-card-punch-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          onPunchList?.();
-        }}
-        title="Open Punch List"
-      >
-        📋
-      </button>
+      <div className="make-ready-card-actions">
+        <button 
+          className={`make-ready-card-btn make-ready-card-btn--overview ${showPunchOverview ? 'active' : ''}`}
+          onClick={onTogglePunchOverview}
+          title="Toggle Punch List Overview"
+        >
+          <BarChart3 size={18} />
+        </button>
+        <button 
+          className={`make-ready-card-btn make-ready-card-btn--details ${showTechView ? 'active' : ''}`}
+          onClick={onToggleTechView}
+          title="Toggle Turn Details"
+        >
+          <FileText size={18} />
+        </button>
+        <button 
+          className="make-ready-card-btn make-ready-card-btn--punch"
+          onClick={onPunchList}
+          title="Open Full Punch List"
+        >
+          <ClipboardList size={18} />
+        </button>
+      </div>
     </div>
   );
 };
