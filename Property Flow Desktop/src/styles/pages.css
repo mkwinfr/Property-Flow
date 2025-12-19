@@ -486,7 +486,7 @@
 .apartments-list .card-grid {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 6px;
   align-items: center;
   flex-shrink: 0;
 }
