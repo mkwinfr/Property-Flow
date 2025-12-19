@@ -1,0 +1,245 @@
+/* Move Out Inspection Tab */
+
+.move-out-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Inspection Section */
+.inspection-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inspection-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pf-cream);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inspection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.inspection-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inspection-item label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pf-stone-300);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.inspection-item .value {
+  font-size: 12px;
+  color: var(--pf-cream);
+}
+
+.safety-alert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 12px;
+  color: #fca5a5;
+}
+
+.safety-alert strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.safety-alert p {
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Notes Section */
+.notes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notes-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pf-cream);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notes-section p {
+  font-size: 12px;
+  color: var(--pf-stone-300);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Appliances Section */
+.appliances-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.appliances-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pf-cream);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.appliances-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appliance-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.appliance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.appliance-header label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pf-cream);
+  flex: 1;
+}
+
+.status-select {
+  padding: 4px 6px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--pf-cream);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--pf-sky);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.appliance-notes {
+  padding: 6px 8px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--pf-cream);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.appliance-notes:focus {
+  outline: none;
+  border-color: var(--pf-sky);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.appliance-notes::placeholder {
+  color: var(--pf-stone-500);
+}
+
+.save-btn {
+  padding: 10px 14px;
+  background: var(--pf-sky);
+  color: var(--pf-navy-950);
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #60a5fa;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .move-out-tab {
+    gap: 16px;
+  }
+
+  .inspection-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .appliances-section {
+    padding: 12px;
+  }
+
+  .appliance-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-select {
+    width: 100%;
+    min-width: auto;
+  }
+}

@@ -45,10 +45,11 @@ enum WorkOrderType {
 
 /// Status of a make-ready turn or task
 enum TurnStatus {
-  NOT_STARTED
+  PENDING
+  VACANT
   IN_PROGRESS
-  READY
-  ON_HOLD
+  PENDING_REVIEW
+  VACANT_READY
 }
 
 /// Type of turn
@@ -109,6 +110,28 @@ enum TaskPriority {
   HIGH
   NORMAL
   LOW
+}
+
+/// Punch list item status
+enum PunchListItemStatus {
+  OPEN
+  COMPLETE
+}
+
+/// Activity log action types for Turn lifecycle
+enum TurnActivityType {
+  ITEM_OPENED
+  ITEM_COMPLETED
+  ITEM_ADDED
+  PUNCH_LIST_COMPLETED
+  MANAGER_REVIEW_STARTED
+  MANAGER_APPROVED
+  MANAGER_REQUESTED_REWORK
+  INVENTORY_USED
+  COST_OVERRIDDEN
+  APPLIANCE_UPDATED
+  VENDOR_SERVICE_ADDED
+  TURN_STATUS_CHANGED
 }
 
 /// Billable party
@@ -246,7 +269,11 @@ model User {
   maintenanceNotes     MaintenanceNote[]  @relation("MaintenanceNoteCreatedBy")
   activityLogs         ActivityLog[]
   auditLogs            AuditLog[]         @relation("AuditLogsCreatedBy")
-  turnsCreated         Turn[]
+  turnsCreated         Turn[]             @relation("TurnCreatedBy")
+  turnsReviewed        Turn[]             @relation("TurnReviewedBy")
+  punchListItemsAssigned    PunchListItem[] @relation("PunchListItemAssignedTo")
+  punchListItemsCompleted   PunchListItem[] @relation("PunchListItemCompletedBy")
+  turnActivityLogs     TurnActivityLog[]  @relation("TurnActivityCreatedBy")
   properties           UserProperty[]
   managedVendors       Vendor[]           @relation("VendorManagedBy")
 
@@ -390,7 +417,7 @@ model Turn {
   createdByUserId Int
 
   type            TurnType   @default(STANDARD_MOVE_OUT)
-  status          TurnStatus @default(NOT_STARTED)
+  status          TurnStatus @default(PENDING)
   priority        PriorityLevel @default(NORMAL)
 
   moveOutDate     DateTime?
@@ -425,6 +452,11 @@ model Turn {
   chargebackAmount Float?
   chargebackReason String?
 
+  // Manager review fields
+  managerReviewNotes String?
+  reviewedByUserId Int?
+  reviewedAt      DateTime?
+
   // General notes
   notes           String?
   turnNotes       String?
@@ -433,7 +465,8 @@ model Turn {
   updatedAt       DateTime   @updatedAt
 
   apartment       Apartment  @relation(fields: [apartmentId], references: [id])
-  createdBy       User       @relation(fields: [createdByUserId], references: [id])
+  createdBy       User       @relation("TurnCreatedBy", fields: [createdByUserId], references: [id])
+  reviewedBy      User?      @relation("TurnReviewedBy", fields: [reviewedByUserId], references: [id])
 
   tasks           TurnTask[]
   materials       TurnMaterial[]
@@ -441,6 +474,9 @@ model Turn {
   workCategories  TurnWorkCategory[]
   workOrders      WorkOrder[]
   attachments     Attachment[]
+  punchListItems  PunchListItem[]
+  activityLogs    TurnActivityLog[]
+  costBreakdown   TurnCostBreakdown?
 
   @@index([apartmentId])
   @@index([status])
@@ -530,6 +566,108 @@ model TurnMaterial {
   turn            Turn     @relation(fields: [turnId], references: [id], onDelete: Cascade)
 
   @@index([turnId])
+}
+
+/// Punch list item for a turn
+model PunchListItem {
+  id              Int        @id @default(autoincrement())
+  turnId          Int
+  label           String
+  area            String     @default("General")
+  category        String     @default("General")
+  status          PunchListItemStatus @default(OPEN)
+  notes           String?
+  assignedToUserId Int?
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  completedAt     DateTime?
+  completedByUserId Int?
+
+  turn            Turn       @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  assignedTo      User?      @relation("PunchListItemAssignedTo", fields: [assignedToUserId], references: [id])
+  completedBy     User?      @relation("PunchListItemCompletedBy", fields: [completedByUserId], references: [id])
+  inventoryUsages PunchItemInventoryUsage[]
+
+  @@index([turnId])
+  @@index([status])
+}
+
+/// Inventory item (parts tracking)
+model InventoryItem {
+  id              Int        @id @default(autoincrement())
+  name            String
+  sku             String     @unique
+  tags            String[]   // ["Plumbing", "Faucets", "Kitchen"]
+  category        WorkCategory
+  quantity        Int
+  unitCost        Float
+  supplier        String?
+  lastRestocked   DateTime?
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  punchItemUsages PunchItemInventoryUsage[]
+
+  @@index([category])
+}
+
+/// Junction table: Punch List Item uses multiple Inventory Items
+model PunchItemInventoryUsage {
+  id                Int        @id @default(autoincrement())
+  punchListItemId   Int
+  inventoryItemId   Int
+  quantityUsed      Int
+  unitCost          Float      // Snapshot of cost at time of usage
+  costOverride      Float?     // Manager can override cost
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  punchListItem     PunchListItem  @relation(fields: [punchListItemId], references: [id], onDelete: Cascade)
+  inventoryItem     InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+
+  @@unique([punchListItemId, inventoryItemId])
+  @@index([punchListItemId])
+  @@index([inventoryItemId])
+}
+
+/// Cost breakdown for a turn
+model TurnCostBreakdown {
+  id                Int        @id @default(autoincrement())
+  turnId            Int        @unique
+  laborCost         Float      @default(0)
+  materialsCost     Float      @default(0)
+  vendorServicesCost Float     @default(0)
+  totalCost         Float      @default(0)
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  turn              Turn       @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@index([turnId])
+}
+
+/// Activity log for turn lifecycle
+model TurnActivityLog {
+  id                Int        @id @default(autoincrement())
+  turnId            Int
+  userId            Int?
+  activityType      TurnActivityType
+  punchListItemId   Int?
+  inventoryItemId   Int?
+  details           Json?      // Can store additional data like quantities, costs, etc.
+  
+  createdAt         DateTime   @default(now())
+
+  turn              Turn       @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  user              User?      @relation("TurnActivityCreatedBy", fields: [userId], references: [id])
+
+  @@index([turnId])
+  @@index([activityType])
+  @@index([createdAt])
 }
 
 /// Vendors

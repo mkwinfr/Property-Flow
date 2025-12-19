@@ -39,8 +39,6 @@ function ApartmentDetailPageContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedApartmentId, setSelectedApartmentId] = useState<number | string | null>(null);
   const [apartmentDetail, setApartmentDetail] = useState<any | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
   const [turnQuery, setTurnQuery] = useState("");
   const [workOrderQuery, setWorkOrderQuery] = useState("");
   const [vendorQuery, setVendorQuery] = useState("");
@@ -144,17 +142,12 @@ function ApartmentDetailPageContent() {
     const fetchDetail = async () => {
       if (!selectedApartmentId) return;
       try {
-        setDetailLoading(true);
-        setDetailError(null);
         const res = await fetch(apiUrl(`/api/apartments/${selectedApartmentId}/detail`));
         if (!res.ok) throw new Error(`Failed to load apartment ${selectedApartmentId}`);
         const data = await res.json();
         setApartmentDetail(data);
-      } catch (err) {
-        setDetailError(err instanceof Error ? err.message : "Failed to load apartment detail.");
+      } catch {
         setApartmentDetail(null);
-      } finally {
-        setDetailLoading(false);
       }
     };
 

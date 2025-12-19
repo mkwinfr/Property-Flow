@@ -74,7 +74,7 @@ router.post('/make-ready-turns', async (req, res) => {
         apartmentId: apartment.id,
         createdByUserId: 1, // Default user ID (should come from auth)
         type: (turnType || 'STANDARD_MOVE_OUT') as any,
-        status: 'NOT_STARTED',
+        status: 'PENDING',
         priority: (priority || 'NORMAL') as any,
         moveOutDate: parsedMoveOut,
         targetReadyDate: parsedTargetReady,
@@ -270,7 +270,7 @@ router.post('/open', async (req, res) => {
         apartmentId,
         createdByUserId,
         type,
-        status: 'NOT_STARTED',
+        status: 'PENDING',
         moveOutDate: moveOutDate ? new Date(moveOutDate) : undefined,
         targetReadyDate: targetReadyDate ? new Date(targetReadyDate) : undefined,
       },

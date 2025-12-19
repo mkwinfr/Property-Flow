@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import SplashScreen from "./components/Splash Screen/SplashScreen";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
+import NotificationContainer from "./components/NotificationContainer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
 
 
 ///
@@ -19,6 +21,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="app-root">
+      <NotificationContainer />
       {showSplash ? (
         <SplashScreen />
       ) : (
@@ -31,9 +34,11 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <AuthProvider>
-    <AppContent />
-  </AuthProvider>
+  <NotificationProvider>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  </NotificationProvider>
 );
 
 export default App;

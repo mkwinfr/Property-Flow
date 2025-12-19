@@ -7,7 +7,9 @@ const prisma = new client_1.PrismaClient();
 const router = (0, express_1.Router)();
 const buildApartmentQuery = () => ({
     include: {
-        property: true,
+        propertyRel: true,
+        buildingRel: true,
+        floorPlan: true,
         workOrders: {
             orderBy: { createdAt: "desc" },
             take: 20,
@@ -34,6 +36,10 @@ router.get("/", async (_req, res) => {
                 beds: true,
                 baths: true,
                 status: true,
+                property: true,
+                minRent: true,
+                maxRent: true,
+                floorPlan: true,
             },
             orderBy: { id: "asc" },
         });
@@ -65,6 +71,10 @@ router.get("/:id", async (req, res) => {
                 beds: true,
                 baths: true,
                 status: true,
+                property: true,
+                minRent: true,
+                maxRent: true,
+                floorPlan: true,
             },
         });
         if (!apartment) {

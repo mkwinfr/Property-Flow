@@ -19,13 +19,13 @@ router.get('/', async (_req, res) => {
     const turns = await prisma.turn.findMany({
       where: {
         status: {
-          in: ['NOT_STARTED', 'IN_PROGRESS', 'READY', 'ON_HOLD'],
+          in: ['PENDING', 'VACANT', 'IN_PROGRESS', 'PENDING_REVIEW'],
         },
       },
       include: {
         apartment: true,
-        tasks: {
-          orderBy: { sortOrder: 'asc' },
+        punchListItems: {
+          orderBy: { createdAt: 'asc' },
         },
       },
       orderBy: {
@@ -42,8 +42,8 @@ router.get('/', async (_req, res) => {
       technician: turn.turnOwnerId,
       dueDate: turn.targetReadyDate?.toISOString(),
       notes: turn.turnNotes,
-      taskCount: turn.tasks.length,
-      completedCount: turn.tasks.filter((t) => t.status === 'DONE').length,
+      punchListItemCount: turn.punchListItems.length,
+      completedCount: turn.punchListItems.filter((item) => item.status === 'COMPLETE').length,
     }));
 
     res.json({ units, turns });

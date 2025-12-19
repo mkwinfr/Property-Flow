@@ -13,6 +13,7 @@ import permissionRoutes from "./routes/admin/permissions";
 import apartmentRoutes from "./routes/apartments";
 import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 import turnRoutes from "./routes/turns";
+import turnWorkflowRoutes from "./routes/turnWorkflow";
 import buildingRoutes from "./routes/buildings";
 import propertyRoutes from "./routes/properties";
 
@@ -62,6 +63,7 @@ app.use("/api/make-ready-board", makeReadyBoardRoutes);
 
 // Turns (make-ready, tasks, etc.)
 app.use("/api", turnRoutes);
+app.use("/api", turnWorkflowRoutes);
 
 // Vendors
 //app.use("/api/vendors", vendorRoutes);

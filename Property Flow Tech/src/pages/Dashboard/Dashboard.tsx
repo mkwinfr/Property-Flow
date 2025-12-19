@@ -12,16 +12,10 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DockTabId>("home");
   const [showAppDrawer, setShowAppDrawer] = useState(false);
   const [isClosingDrawer, setIsClosingDrawer] = useState(false);
-  const [selectedTurnId, setSelectedTurnId] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleNavigateToBoard = (event: Event) => {
-      const custom = event as CustomEvent;
-      const turnId = custom.detail?.turnId as string | undefined;
+    const handleNavigateToBoard = () => {
       setActiveTab("makeReady");
-      if (turnId) {
-        setSelectedTurnId(String(turnId));
-      }
     };
 
     window.addEventListener("navigate-to-board", handleNavigateToBoard);
@@ -52,12 +46,7 @@ const Dashboard: React.FC = () => {
   const renderTab = () => {
   switch (activeTab) {
     case "makeReady":
-      return (
-        <MakeReadyBoard
-          selectedTurnId={selectedTurnId}
-          onSelectTurn={setSelectedTurnId}
-        />
-      );
+      return <MakeReadyBoard />;
 
     case "wizard":
       return <MakeReadyWizard />;
