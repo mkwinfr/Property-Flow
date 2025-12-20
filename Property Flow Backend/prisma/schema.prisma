@@ -115,6 +115,7 @@ enum TaskPriority {
 /// Punch list item status
 enum PunchListItemStatus {
   OPEN
+  IN_PROGRESS
   COMPLETE
 }
 

@@ -18,13 +18,16 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTurnData, setSelectedTurnData] = useState<any>(null);
+  const [allTurns, setAllTurns] = useState<any[]>([]);
   const [showTurnModal, setShowTurnModal] = useState(false);
 
   const handleOpenTurnModal = useCallback((item: MakeReadyItem, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedTurnData(item);
+    // Find the full turn object with apartment data
+    const fullTurn = allTurns.find((t) => t.id.toString() === item.id);
+    setSelectedTurnData(fullTurn || item);
     setShowTurnModal(true);
-  }, []);
+  }, [allTurns]);
 
   const handleCloseTurnModal = useCallback(() => {
     setShowTurnModal(false);
@@ -48,6 +51,11 @@ const MakeReadyBoard: React.FC<MakeReadyBoardProps> = () => {
         : Array.isArray((data as any).units)
         ? (data as any).units
         : [];
+
+      // Store full turn objects if available
+      if ((data as any).turns && Array.isArray((data as any).turns)) {
+        setAllTurns((data as any).turns);
+      }
 
       const mapped: MakeReadyItem[] = rows.map((row: any) => {
         const rawStatus = (row.status as string | undefined) ?? "";
