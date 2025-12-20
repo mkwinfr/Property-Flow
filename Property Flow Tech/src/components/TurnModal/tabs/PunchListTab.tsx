@@ -6,6 +6,8 @@ import type {
 } from '@/types/turn-management';
 import { PunchListItemStatus, WorkCategory } from '@/types/turn-management';
 import { punchTemplate } from '@/data/punchTemplates';
+import { apiUrl } from '@/config/api';
+import { useNotifications } from '@/context/NotificationContext';
 import './PunchListTab.css';
 
 interface PunchListTabProps {
@@ -16,6 +18,7 @@ interface PunchListTabProps {
 function generatePunchListFromTemplate(turn: Turn): PunchListItem[] {
   const beds = turn.apartment?.beds || turn.apartment?.floorPlan?.bedrooms || 1;
   const baths = turn.apartment?.baths || turn.apartment?.floorPlan?.bathrooms || 1;
+  console.log(`[PunchListTab] Generating template for ${turn.apartment?.unitNumber}: ${beds}B/${baths}B`);
   
   // Filter areas based on bed/bath count
   const filteredTemplate = punchTemplate.filter((area) => {
@@ -53,11 +56,16 @@ function generatePunchListFromTemplate(turn: Turn): PunchListItem[] {
 }
 
 const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
+  const { addNotification } = useNotifications();
+  const [saving, setSaving] = useState(false);
+  
   // Use saved items if they exist, otherwise generate from template
   const initialItems = useMemo(() => {
     if (turn.punchListItems && turn.punchListItems.length > 0) {
+      console.log(`[PunchListTab] Using ${turn.punchListItems.length} items from database`);
       return turn.punchListItems;
     }
+    console.log(`[PunchListTab] Generating items from template (no DB items found)`);
     return generatePunchListFromTemplate(turn);
   }, [turn]);
 
@@ -113,11 +121,44 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
   };
 
   // Handle save edited item
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingItem) return;
+    
+    // Update local state first
     setItems((prev) =>
       prev.map((item) => (item.id === editingItem.id ? editingItem : item))
     );
+    
+    // Save to backend
+    setSaving(true);
+    try {
+      const res = await fetch(apiUrl(`/api/turns/${turn.id}/punch-items/${editingItem.id}`), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: editingItem.status,
+          notes: editingItem.notes,
+          inventoryUsages: editingItem.inventoryUsages,
+        }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to save punch item');
+      
+      addNotification({
+        type: 'success',
+        title: 'Saved',
+        message: 'Punch item updated',
+      });
+    } catch (err) {
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to save punch item',
+      });
+    } finally {
+      setSaving(false);
+    }
+    
     setEditingItem(null);
   };
 
@@ -496,11 +537,11 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
             </div>
 
             <div className="edit-modal-footer">
-              <button className="btn-cancel" onClick={() => setEditingItem(null)}>
+              <button className="btn-cancel" onClick={() => setEditingItem(null)} disabled={saving}>
                 Cancel
               </button>
-              <button className="btn-save" onClick={handleSaveEdit}>
-                Save
+              <button className="btn-save" onClick={handleSaveEdit} disabled={saving}>
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>

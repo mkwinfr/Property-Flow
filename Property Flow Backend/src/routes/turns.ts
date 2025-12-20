@@ -321,4 +321,30 @@ router.post('/open', async (req, res) => {
   }
 });
 
+// PATCH /api/turns/:turnId/punch-items/:itemId -> Update punch list item
+router.patch('/:turnId/punch-items/:itemId', async (req, res) => {
+  const turnId = Number(req.params.turnId);
+  const itemId = Number(req.params.itemId);
+  const { status, notes, inventoryUsages } = req.body;
+
+  if (Number.isNaN(turnId) || Number.isNaN(itemId)) {
+    return res.status(400).json({ error: 'Invalid turn or item id' });
+  }
+
+  try {
+    const item = await prisma.punchListItem.update({
+      where: { id: itemId },
+      data: {
+        status: status || undefined,
+        notes: notes || undefined,
+      },
+    });
+
+    res.json(item);
+  } catch (err) {
+    console.error('Error updating punch list item', err);
+    res.status(500).json({ error: 'Server error updating punch list item' });
+  }
+});
+
 export default router;
