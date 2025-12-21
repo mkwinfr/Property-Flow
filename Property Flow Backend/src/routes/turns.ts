@@ -5,8 +5,8 @@ import { getPunchListItems } from '../utils/punchListTemplate';
 
 const router = Router();
 
-// POST /api/make-ready-turns -> Create from wizard
-router.post('/make-ready-turns', async (req, res) => {
+// POST /api/turns/make-ready-turns -> Create from wizard
+router.post('/turns/make-ready-turns', async (req, res) => {
   const {
     propertyId,
     unitId,
@@ -207,8 +207,8 @@ router.get('/make-ready-turns/:id', async (req, res) => {
   }
 });
 
-// PATCH /api/make-ready-turns/:id/tasks/:taskId -> Update task status
-router.patch('/make-ready-turns/:id/tasks/:taskId', async (req, res) => {
+// PATCH /api/turns/make-ready-turns/:id/tasks/:taskId -> Update task status
+router.patch('/turns/make-ready-turns/:id/tasks/:taskId', async (req, res) => {
   const turnId = Number(req.params.id);
   const taskId = Number(req.params.taskId);
   const { status } = req.body;
@@ -237,7 +237,7 @@ router.patch('/make-ready-turns/:id/tasks/:taskId', async (req, res) => {
 });
 
 // GET /api/turns/:id -> single turn with apartment
-router.get('/:id', async (req, res) => {
+router.get('/turns/:id', async (req, res) => {
   const id = Number(req.params.id);
   if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid turn id' });
 
@@ -266,7 +266,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/turns/open -> basic "punch wizard" that opens a new turn
-router.post('/open', async (req, res) => {
+router.post('/turns/open', async (req, res) => {
   const {
     apartmentId,
     type,              // e.g. "FULL_TURN"
@@ -322,7 +322,7 @@ router.post('/open', async (req, res) => {
 });
 
 // PATCH /api/turns/:turnId/punch-items/:itemId -> Update punch list item
-router.patch('/:turnId/punch-items/:itemId', async (req, res) => {
+router.patch('/turns/:turnId/punch-items/:itemId', async (req, res) => {
   const turnId = Number(req.params.turnId);
   const itemId = Number(req.params.itemId);
   const { status, notes, inventoryUsages } = req.body;
