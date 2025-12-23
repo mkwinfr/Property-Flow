@@ -4,7 +4,7 @@ import Dock, { type DockTabId } from "../../components/Dock/Dock";
 import AppDrawer from "../../components/AppDrawer/AppDrawer";
 import MakeReadyBoard from "../MakeReadyBoard/MakeReadyBoard.tsx";
 import ApartmentDetailPage from "../../pages/ApartmentDetail/ApartmentDetail";
-import MakeReadyWizard from "../MakeReadyWizard/MakeReadyWizard";
+import MoveoutInspectionWizard from "../MoveoutInspectionWizard/MoveoutInspectionWizard";
 import { MakeReadyBoardProvider } from "../../hooks/useMakeReadyBoard";
 import StartPunch from "../StartPunch/StartPunch";
 
@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
       return <MakeReadyBoard />;
 
     case "wizard":
-      return <MakeReadyWizard />;
+      return <MoveoutInspectionWizard />;
 
     case "startPunch":
       return <StartPunch />;

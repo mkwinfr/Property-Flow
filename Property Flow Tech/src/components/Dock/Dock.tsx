@@ -42,7 +42,7 @@ const rightTabs: {
 }[] = [
   {
     id: "wizard",
-    label: "Wizard",
+    label: "Moveout Inspection",
     icon: <Wand2 size={26} />,
   },
   {

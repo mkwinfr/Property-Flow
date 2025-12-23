@@ -799,3 +799,145 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
 }
+/// Moveout Inspection Types & Enums
+
+/// Inspection type
+enum MoveoutInspectionType {
+  PRE_MOVEOUT
+  FINAL
+  OTHER
+}
+
+/// Inspection status
+enum MoveoutInspectionStatus {
+  DRAFT
+  COMPLETED
+  LOCKED
+}
+
+/// Item condition assessment
+enum MoveoutConditionStatus {
+  OK
+  WEAR
+  DAMAGE
+  MISSING
+  NOT_INSPECTED
+}
+
+/// Responsibility for damage
+enum MoveoutResponsibility {
+  OWNER
+  TENANT
+  UNSURE
+}
+
+/// Charge line item status
+enum MoveoutChargeStatus {
+  PROPOSED
+  APPROVED
+  REMOVED
+}
+
+/// Media type
+enum MoveoutMediaType {
+  PHOTO
+  VIDEO
+  OTHER
+}
+
+/// Moveout Inspection
+model MoveoutInspection {
+  id                Int                          @id @default(autoincrement())
+  propertyId        Int
+  unitId            Int?
+  apartmentId       Int?
+  
+  inspectionType    MoveoutInspectionType        @default(FINAL)
+  status            MoveoutInspectionStatus      @default(DRAFT)
+  
+  inspectorUserId   Int?
+  inspectionDate    DateTime                     @default(now())
+  notes             String?
+  
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+
+  items             MoveoutInspectionItem[]
+  charges           MoveoutChargeLineItem[]
+  media             MoveoutInspectionMedia[]
+
+  @@index([propertyId])
+  @@index([apartmentId])
+  @@index([status])
+  @@index([inspectionDate])
+}
+
+/// Individual inspected item
+model MoveoutInspectionItem {
+  id                Int                        @id @default(autoincrement())
+  inspectionId      Int
+  
+  // Template reference
+  templateKey       String?                    // e.g., "master-bed-carpet"
+  roomKey           String                     // e.g., "master-bedroom"
+  categoryKey       String                     // e.g., "flooring"
+  itemKey           String                     // e.g., "carpet"
+  itemLabel         String                     // Display name: "Carpet"
+  
+  // Assessment
+  conditionStatus   MoveoutConditionStatus     @default(NOT_INSPECTED)
+  responsibility    MoveoutResponsibility      @default(UNSURE)
+  notes             String?
+  costEstimate      Float?
+  severity          Int?                       // 1-5 scale if damaged
+  
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+
+  inspection        MoveoutInspection          @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  media             MoveoutInspectionMedia[]
+  charges           MoveoutChargeLineItem[]
+
+  @@unique([inspectionId, templateKey])
+  @@index([inspectionId])
+  @@index([conditionStatus])
+}
+
+/// Media attachments for inspection items
+model MoveoutInspectionMedia {
+  id                Int                     @id @default(autoincrement())
+  itemId            Int
+  inspectionId      Int?
+  
+  mediaType         MoveoutMediaType        @default(PHOTO)
+  uri               String
+  caption           String?
+  
+  createdAt         DateTime                @default(now())
+
+  item              MoveoutInspectionItem   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  inspection        MoveoutInspection?      @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+/// Proposed charge line items
+model MoveoutChargeLineItem {
+  id                Int                     @id @default(autoincrement())
+  inspectionId      Int
+  itemId            Int?
+  
+  description       String
+  amount            Float
+  status            MoveoutChargeStatus     @default(PROPOSED)
+  
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  inspection        MoveoutInspection       @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  item              MoveoutInspectionItem?  @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([inspectionId])
+  @@index([itemId])
+  @@index([status])
+}
