@@ -74,10 +74,11 @@ router.post('/turns/:turnId/punch-items', async (req: Request, res: Response) =>
 });
 
 // PATCH /api/turns/:turnId/punch-items/:itemId - Update punch item status & add inventory usage
+// Also handles creating new items from template if they don't exist yet (upsert behavior)
 router.patch('/turns/:turnId/punch-items/:itemId', async (req: Request, res: Response) => {
   try {
     const { turnId, itemId } = req.params;
-    const { status, notes, assignedToUserId, inventoryUsages = [] } = req.body;
+    const { status, notes, assignedToUserId, inventoryUsages = [], templateKey, label, area, category } = req.body;
 
     const turnIdNum = parseInt(turnId);
     const itemIdNum = parseInt(itemId);
@@ -88,22 +89,51 @@ router.patch('/turns/:turnId/punch-items/:itemId', async (req: Request, res: Res
       return res.status(404).json({ error: 'Turn not found' });
     }
 
-    // Update item
-    const item = await prisma.punchListItem.update({
-      where: { id: itemIdNum },
-      data: {
-        status: status || undefined,
-        notes: notes || undefined,
-        assignedToUserId: assignedToUserId ? parseInt(assignedToUserId) : undefined,
-        completedAt: status === PunchListItemStatus.COMPLETE ? new Date() : undefined,
-        completedByUserId: status === PunchListItemStatus.COMPLETE ? req.body.userId : undefined,
-      },
-      include: {
-        assignedTo: true,
-        completedBy: true,
-        inventoryUsages: { include: { inventoryItem: true } },
-      },
-    });
+    // Check if item exists, if not create it (template-based items are created on first update)
+    let existingItem = await prisma.punchListItem.findUnique({ where: { id: itemIdNum } });
+    
+    let item;
+    if (!existingItem && templateKey) {
+      // Create new item from template
+      item = await prisma.punchListItem.create({
+        data: {
+          turnId: turnIdNum,
+          templateKey: templateKey,
+          label: label || 'Punch Item',
+          area: area || 'General',
+          category: category || 'General',
+          status: status || PunchListItemStatus.OPEN,
+          notes: notes || undefined,
+          assignedToUserId: assignedToUserId ? parseInt(assignedToUserId) : undefined,
+          completedAt: status === PunchListItemStatus.COMPLETE ? new Date() : undefined,
+          completedByUserId: status === PunchListItemStatus.COMPLETE ? req.body.userId : undefined,
+        },
+        include: {
+          assignedTo: true,
+          completedBy: true,
+          inventoryUsages: { include: { inventoryItem: true } },
+        },
+      });
+    } else if (!existingItem) {
+      return res.status(404).json({ error: 'Punch item not found. Provide templateKey to create new item.' });
+    } else {
+      // Update existing item
+      item = await prisma.punchListItem.update({
+        where: { id: itemIdNum },
+        data: {
+          status: status || undefined,
+          notes: notes || undefined,
+          assignedToUserId: assignedToUserId ? parseInt(assignedToUserId) : undefined,
+          completedAt: status === PunchListItemStatus.COMPLETE ? new Date() : undefined,
+          completedByUserId: status === PunchListItemStatus.COMPLETE ? req.body.userId : undefined,
+        },
+        include: {
+          assignedTo: true,
+          completedBy: true,
+          inventoryUsages: { include: { inventoryItem: true } },
+        },
+      });
+    }
 
     // Handle inventory usage updates
     if (inventoryUsages.length > 0 && status === PunchListItemStatus.COMPLETE) {

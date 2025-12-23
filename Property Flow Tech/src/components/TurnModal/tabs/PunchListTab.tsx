@@ -58,6 +58,8 @@ function generatePunchListFromTemplate(turn: Turn): PunchListItem[] {
 const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
   const { addNotification } = useNotifications();
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshStats, setLastRefreshStats] = useState<{ expectedCount: number; actualCount: number; createdCount: number } | null>(null);
   
   // Use saved items if they exist, otherwise generate from template
   const initialItems = useMemo(() => {
@@ -72,6 +74,37 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
   const [items, setItems] = useState<PunchListItem[]>(initialItems);
   const [editingItem, setEditingItem] = useState<PunchListItem | null>(null);
   const [showInventoryPicker, setShowInventoryPicker] = useState<number | null>(null);
+  
+  // Bulk-create punch items to DB if they don't exist yet
+  React.useEffect(() => {
+    const bulkCreateItems = async () => {
+      // Only create if we're using template items (not from DB)
+      if (!turn.punchListItems || turn.punchListItems.length === 0) {
+        try {
+          const res = await fetch(apiUrl(`/api/turns/${turn.id}/generate-punch-list`), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          
+          if (!res.ok) {
+            console.error('Failed to generate punch list in DB');
+            return;
+          }
+
+          const data = await res.json();
+          console.log(`[PunchListTab] Created ${data.message}. Updating local state with DB items.`);
+          
+          // Update items with DB versions that have real database IDs
+          setItems(data.items);
+        } catch (err) {
+          console.error('Error bulk-creating punch items:', err);
+        }
+      }
+    };
+
+    bulkCreateItems();
+  }, [turn.id, turn.punchListItems]);
+
   const [inventoryItems] = useState<InventoryItem[]>([
     // Mock data for now - will be fetched from API later
     { id: 1, name: 'Paint - Interior', sku: 'PAINT-INT', category: 'PAINT', unitCost: 45, tags: ['paint', 'interior'], quantity: 10, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
@@ -120,6 +153,49 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
     setEditingItem({ ...item });
   };
 
+  // Handle refresh punch list - recover any missing items without overwriting edited ones
+  const handleRefreshPunchList = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch(apiUrl(`/api/turns/${turn.id}/generate-punch-list`), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to refresh punch list');
+      }
+
+      const data = await res.json();
+      console.log('[PunchListTab] Refresh stats:', data.stats);
+      setLastRefreshStats(data.stats);
+
+      // Update items with any newly created ones
+      if (data.items && data.items.length > items.length) {
+        setItems(data.items);
+        addNotification({
+          type: 'success',
+          title: 'Punch List Updated',
+          message: `Recovered ${data.stats.createdCount} missing items. Your edits are preserved.`,
+        });
+      } else if (data.stats.createdCount === 0) {
+        addNotification({
+          type: 'info',
+          title: 'Already Complete',
+          message: `All ${data.stats.expectedCount} items are present.`,
+        });
+      }
+    } catch (err) {
+      addNotification({
+        type: 'error',
+        title: 'Refresh Failed',
+        message: err instanceof Error ? err.message : 'Failed to refresh punch list',
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   // Handle save edited item
   const handleSaveEdit = async () => {
     if (!editingItem) return;
@@ -139,6 +215,11 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
           status: editingItem.status,
           notes: editingItem.notes,
           inventoryUsages: editingItem.inventoryUsages,
+          // Include template data for creating new items from template
+          templateKey: editingItem.templateKey,
+          label: editingItem.label,
+          area: editingItem.area,
+          category: editingItem.category,
         }),
       });
       
@@ -315,7 +396,24 @@ const PunchListTab: React.FC<PunchListTabProps> = ({ turn }) => {
             </option>
           ))}
         </select>
+
+        {/* Refresh Button */}
+        <button
+          className="refresh-button"
+          onClick={handleRefreshPunchList}
+          disabled={refreshing}
+          title="Recover any missing items from template. Your edits are preserved."
+        >
+          {refreshing ? '⟳ Checking...' : '⟳ Refresh'}
+        </button>
       </div>
+
+      {/* Refresh Status */}
+      {lastRefreshStats && (
+        <div className="refresh-status-message">
+          Expected: {lastRefreshStats.expectedCount} | Have: {lastRefreshStats.actualCount} | Recovered: {lastRefreshStats.createdCount}
+        </div>
+      )}
 
       {/* Items by Area */}
       <div className="punch-list-items">

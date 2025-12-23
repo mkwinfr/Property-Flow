@@ -207,6 +207,86 @@ router.get('/make-ready-turns/:id', async (req, res) => {
   }
 });
 
+// POST /api/turns/:id/generate-punch-list -> Generate all punch items from template (bulk create)
+router.post('/turns/:id/generate-punch-list', async (req, res) => {
+  const id = Number(req.params.id);
+  if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid turn id' });
+
+  try {
+    // Get turn with apartment details for bed/bath count
+    const turn = await prisma.turn.findUnique({
+      where: { id },
+      include: {
+        apartment: {
+          include: {
+            floorPlan: true,
+          },
+        },
+        punchListItems: true,
+      },
+    });
+
+    if (!turn) return res.status(404).json({ error: 'Turn not found' });
+
+    const beds = turn.apartment?.beds || turn.apartment?.floorPlan?.bedrooms || 1;
+    const baths = turn.apartment?.baths || turn.apartment?.floorPlan?.bathrooms || 1;
+
+    // Get all template items that should exist
+    const templateItems = getPunchListItems(beds, baths);
+    const expectedCount = templateItems.length;
+    const actualCount = turn.punchListItems?.length || 0;
+
+    // If all items exist, return them
+    if (actualCount >= expectedCount) {
+      console.log(`[Generate Punch List] All ${actualCount} items already exist for ${beds}B/${baths}B`);
+      return res.json({ 
+        message: 'Punch items already complete', 
+        items: turn.punchListItems,
+        stats: { expectedCount, actualCount, createdCount: 0 },
+      });
+    }
+
+    // Partial generation detected - create missing items
+    const existingKeys = new Set(turn.punchListItems?.map(item => item.templateKey) || []);
+    const missingItems = templateItems.filter(item => {
+      const templateKey = `${item.area}-${item.label}`.toLowerCase().replace(/\s+/g, '-');
+      return !existingKeys.has(templateKey);
+    });
+
+    console.log(`[Generate Punch List] Creating ${missingItems.length} missing items (had ${actualCount}/${expectedCount})`);
+
+    // Create missing items
+    if (missingItems.length > 0) {
+      await prisma.punchListItem.createMany({
+        data: missingItems.map((item) => ({
+          turnId: id,
+          templateKey: `${item.area}-${item.label}`.toLowerCase().replace(/\s+/g, '-'),
+          label: item.label,
+          area: item.area,
+          category: item.category,
+          status: 'OPEN' as any,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    // Fetch all items to return
+    const allItems = await prisma.punchListItem.findMany({
+      where: { turnId: id },
+      orderBy: [{ area: 'asc' }, { label: 'asc' }],
+    });
+
+    res.json({ 
+      message: `Completed punch list generation`, 
+      items: allItems,
+      stats: { expectedCount, actualCount, createdCount: missingItems.length },
+    });
+  } catch (err) {
+    console.error('Error generating punch list', err);
+    res.status(500).json({ error: 'Server error generating punch list' });
+  }
+});
+
 // PATCH /api/turns/make-ready-turns/:id/tasks/:taskId -> Update task status
 router.patch('/turns/make-ready-turns/:id/tasks/:taskId', async (req, res) => {
   const turnId = Number(req.params.id);
@@ -321,24 +401,54 @@ router.post('/turns/open', async (req, res) => {
   }
 });
 
-// PATCH /api/turns/:turnId/punch-items/:itemId -> Update punch list item
+// PATCH /api/turns/:turnId/punch-items/:itemId -> Update punch list item (with upsert for template items)
 router.patch('/turns/:turnId/punch-items/:itemId', async (req, res) => {
   const turnId = Number(req.params.turnId);
   const itemId = Number(req.params.itemId);
-  const { status, notes, inventoryUsages } = req.body;
+  const { status, notes, inventoryUsages, templateKey, label, area, category } = req.body;
 
   if (Number.isNaN(turnId) || Number.isNaN(itemId)) {
     return res.status(400).json({ error: 'Invalid turn or item id' });
   }
 
   try {
-    const item = await prisma.punchListItem.update({
-      where: { id: itemId },
-      data: {
-        status: status || undefined,
-        notes: notes || undefined,
-      },
-    });
+    // Check if turn exists
+    const turn = await prisma.turn.findUnique({ where: { id: turnId } });
+    if (!turn) {
+      return res.status(404).json({ error: 'Turn not found' });
+    }
+
+    // Check if item exists - template items won't exist until first save
+    let existingItem = await prisma.punchListItem.findUnique({ where: { id: itemId } });
+    
+    let item;
+    if (!existingItem && templateKey) {
+      // Create new item from template data
+      item = await prisma.punchListItem.create({
+        data: {
+          turnId: turnId,
+          templateKey: templateKey,
+          label: label || 'Punch Item',
+          area: area || 'General',
+          category: category || 'General',
+          status: status || 'OPEN',
+          notes: notes || undefined,
+          completedAt: status === 'COMPLETE' ? new Date() : undefined,
+        },
+      });
+    } else if (!existingItem) {
+      return res.status(404).json({ error: 'Punch item not found. Provide templateKey to create new item.' });
+    } else {
+      // Update existing item
+      item = await prisma.punchListItem.update({
+        where: { id: itemId },
+        data: {
+          status: status || undefined,
+          notes: notes || undefined,
+          completedAt: status === 'COMPLETE' ? new Date() : undefined,
+        },
+      });
+    }
 
     res.json(item);
   } catch (err) {

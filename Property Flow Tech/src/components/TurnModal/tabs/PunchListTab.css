@@ -39,6 +39,42 @@
   border-color: rgba(156, 134, 255, 0.6);
 }
 
+.refresh-button {
+  padding: 0.6rem 1.2rem;
+  background: rgba(156, 134, 255, 0.15);
+  border: 1px solid rgba(156, 134, 255, 0.4);
+  border-radius: 8px;
+  color: var(--pf-purple);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: rgba(156, 134, 255, 0.25);
+  border-color: rgba(156, 134, 255, 0.6);
+  transform: scale(1.02);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Refresh Status Message */
+
+.refresh-status-message {
+  padding: 0.75rem 1rem;
+  background: rgba(156, 134, 255, 0.1);
+  border-left: 3px solid var(--pf-purple);
+  border-radius: 6px;
+  color: rgba(156, 134, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
 /* Punch List Items */
 
 .punch-list-items {
