@@ -4,7 +4,6 @@ import Dock, { type DockTabId } from "../../components/Dock/Dock";
 import AppDrawer from "../../components/AppDrawer/AppDrawer";
 import MakeReadyBoard from "../MakeReadyBoard/MakeReadyBoard.tsx";
 import ApartmentDetailPage from "../../pages/ApartmentDetail/ApartmentDetail";
-import MoveoutInspectionWizard from "../MoveoutInspectionWizard/MoveoutInspectionWizard";
 import StartPunch from "../StartPunch/StartPunch";
 
 const Dashboard: React.FC = () => {
@@ -46,9 +45,6 @@ const Dashboard: React.FC = () => {
     switch (activeTab) {
       case "makeReady":
         return <MakeReadyBoard />;
-
-      case "wizard":
-        return <MoveoutInspectionWizard />;
 
       case "startPunch":
         return <StartPunch />;
@@ -106,7 +102,6 @@ const Dashboard: React.FC = () => {
           onOpenAppDrawer={handleToggleAppDrawer}
           isDrawerOpen={showAppDrawer && !isClosingDrawer}
         />
-      </div>
     </div>
   );
 };
