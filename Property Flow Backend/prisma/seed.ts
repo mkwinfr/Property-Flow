@@ -490,25 +490,6 @@ async function main() {
     });
   }
 
-  // Sample turns: one already vacant, one pending
-  await seedTurnForUnit({
-    unitNumber: '101',
-    moveOutDate: '2025-11-13',
-    targetReadyDate: '2025-11-20',
-    priority: 'HIGH',
-    turnOwnerId: 'Alex Tech',
-    notes: 'Quick turn with paint touch-ups.',
-  });
-
-  await seedTurnForUnit({
-    unitNumber: '205',
-    moveOutDate: '2026-01-12',
-    targetReadyDate: '2026-01-20',
-    priority: 'NORMAL',
-    turnOwnerId: 'Jamie Tech',
-    notes: 'Resident transferring; schedule carpet clean.',
-  });
-
   // Seed floor plans
   await seedFloorPlans();
 // Seed Waterford apartments from CSV
