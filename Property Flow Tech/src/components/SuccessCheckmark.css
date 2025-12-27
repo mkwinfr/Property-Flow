@@ -1,0 +1,83 @@
+.success-checkmark-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1900;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.success-checkmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.success-checkmark-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(76, 175, 80, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  color: white;
+  animation: zoomIn 0.5s var(--easing-spring);
+  box-shadow: 0 20px 60px rgba(76, 175, 80, 0.3);
+}
+
+.success-checkmark-circle svg {
+  width: 44px;
+  height: 44px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: checkmark 0.5s var(--easing-spring) 0.2s both;
+}
+
+.success-checkmark-message {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--pf-cream);
+  animation: slideUp 0.4s var(--easing-spring) 0.3s both;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmark {
+  from {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+  }
+  to {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

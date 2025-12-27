@@ -1,0 +1,71 @@
+.connection-status {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(229, 57, 53, 0.95);
+  color: white;
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  backdrop-filter: blur(8px);
+  animation: slideIn 0.3s var(--easing-spring);
+}
+
+.connection-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e53935;
+  animation: pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.connection-status-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.connection-status-button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.connection-status-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 540px) {
+  .connection-status {
+    left: 12px;
+    right: 12px;
+    bottom: auto;
+    top: 60px;
+  }
+
+  .connection-status-button {
+    margin-left: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}

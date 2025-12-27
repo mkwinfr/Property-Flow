@@ -1,0 +1,71 @@
+.auto-save-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1500;
+}
+
+.auto-save-indicator--saving {
+  opacity: 1;
+  background: rgba(33, 150, 243, 0.95);
+  color: white;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+.auto-save-indicator--saved {
+  opacity: 1;
+  background: rgba(76, 175, 80, 0.95);
+  color: white;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  animation: slideInUp 0.3s var(--easing-spring);
+}
+
+.auto-save-indicator--error {
+  opacity: 1;
+  background: rgba(229, 57, 53, 0.95);
+  color: white;
+  border: 1px solid rgba(229, 57, 53, 0.3);
+}
+
+.auto-save-icon {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.auto-save-indicator--saving .auto-save-icon {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 540px) {
+  .auto-save-indicator {
+    bottom: 12px;
+    right: 12px;
+    font-size: 12px;
+  }
+}

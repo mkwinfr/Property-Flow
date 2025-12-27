@@ -1884,4 +1884,22 @@ textarea:valid:not(:placeholder-shown) {
   transform: translateY(-1px);
 }
 
+/* === Input Shake Animation === */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+input:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+  animation: shake 0.3s ease-in-out;
+}
+
 
