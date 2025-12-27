@@ -63,27 +63,10 @@ function parseCSV(filePath: string): CSVRow[] {
 export async function seedWaterfordApartments() {
   console.log('🏘️  Seeding Waterford Landings apartments from CSV...');
 
-  // Try multiple possible paths for the CSV
-  const possiblePaths = [
-    path.join(process.env.USERPROFILE || '', 'Downloads', 'Units1765757963.csv'),
-    path.join(process.env.USERPROFILE || '', 'Downloads', 'Units*.csv'),
-    'Units1765757963.csv',
-  ];
+  const csvPath = 'C:\\Users\\mkwin\\Desktop\\Property Flow\\References\\Property-Flow-Backend\\Seed CSV\\Units1765757963.csv';
 
-  let csvPath: string | null = null;
-  for (const p of possiblePaths) {
-    if (p.includes('*')) {
-      // Skip glob patterns for now
-      continue;
-    }
-    if (fs.existsSync(p)) {
-      csvPath = p;
-      break;
-    }
-  }
-
-  if (!csvPath) {
-    console.warn('⚠️  CSV file not found, skipping Waterford apartments');
+  if (!fs.existsSync(csvPath)) {
+    console.warn(`⚠️  CSV file not found at: ${csvPath}`);
     return;
   }
 
