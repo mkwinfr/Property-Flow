@@ -42,7 +42,7 @@ function ApartmentDetailPageContent() {
   const [turnQuery, setTurnQuery] = useState("");
   const [workOrderQuery, setWorkOrderQuery] = useState("");
   const [vendorQuery, setVendorQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'turns' | 'workOrders' | 'appliances'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'turns' | 'workOrders' | 'vendor' | 'appliances'>('overview');
 
   useEffect(() => {
     let cancelled = false;
@@ -350,6 +350,12 @@ function ApartmentDetailPageContent() {
                   Work Orders
                 </button>
                 <button
+                  className={`apartment-detail-tab ${activeTab === 'vendor' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('vendor')}
+                >
+                  Vendor Work
+                </button>
+                <button
                   className={`apartment-detail-tab ${activeTab === 'appliances' ? 'active' : ''}`}
                   onClick={() => setActiveTab('appliances')}
                 >
@@ -358,7 +364,7 @@ function ApartmentDetailPageContent() {
               </div>
 
               {activeTab === 'overview' && (
-                <div className="apartment-detail-content">
+                <div className="apartment-detail-content apartment-detail-content-fade">
                   <div className="apartment-detail-two-column">
                     <article className="pf-card">
                       <h4 className="pf-card-title">Apartment Details</h4>
@@ -429,7 +435,7 @@ function ApartmentDetailPageContent() {
               )}
 
               {activeTab === 'turns' && (
-                <div className="apartment-detail-content">
+                <div className="apartment-detail-content apartment-detail-content-fade">
                   <article className="pf-card">
                     <h4 className="pf-card-title">Make Ready Turns</h4>
                     <div className="control-group">
@@ -474,7 +480,7 @@ function ApartmentDetailPageContent() {
               )}
 
               {activeTab === 'workOrders' && (
-                <div className="apartment-detail-content">
+                <div className="apartment-detail-content apartment-detail-content-fade">
                   <article className="pf-card">
                     <h4 className="pf-card-title">Work Orders</h4>
                     <div className="control-group">
@@ -502,8 +508,12 @@ function ApartmentDetailPageContent() {
                       </div>
                     )}
                   </article>
+                </div>
+              )}
 
-                  <article className="pf-card" style={{ marginTop: '20px' }}>
+              {activeTab === 'vendor' && (
+                <div className="apartment-detail-content apartment-detail-content-fade">
+                  <article className="pf-card">
                     <h4 className="pf-card-title">Vendor Work</h4>
                     <div className="control-group">
                       <label className="pf-meta-label">Filter</label>
@@ -534,7 +544,7 @@ function ApartmentDetailPageContent() {
               )}
 
               {activeTab === 'appliances' && (
-                <div className="apartment-detail-content">
+                <div className="apartment-detail-content apartment-detail-content-fade">
                   <article className="pf-card">
                     <h4 className="pf-card-title">Appliance Inventory</h4>
                     <p className="pf-meta-label">No appliances tracked yet.</p>
