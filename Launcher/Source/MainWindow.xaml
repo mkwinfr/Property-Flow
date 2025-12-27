@@ -680,7 +680,7 @@
                 </Grid>
 
                 <!-- Command output console - Two columns -->
-                <Grid Margin="0 0 0 16">
+                <Grid Margin="0 0 0 16" HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
