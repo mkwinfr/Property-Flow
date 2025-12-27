@@ -4,8 +4,10 @@ import SplashScreen from "./components/Splash Screen/SplashScreen";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
 import NotificationContainer from "./components/NotificationContainer";
+import { ToastContainer } from "./components/Toast";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
+import { ToastProvider } from "./contexts/ToastContext";
 
 
 ///
@@ -22,6 +24,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="app-root">
       <NotificationContainer />
+      <ToastContainer />
       {showSplash ? (
         <SplashScreen />
       ) : (
@@ -34,11 +37,13 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <NotificationProvider>
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  </NotificationProvider>
+  <ToastProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </NotificationProvider>
+  </ToastProvider>
 );
 
 export default App;
