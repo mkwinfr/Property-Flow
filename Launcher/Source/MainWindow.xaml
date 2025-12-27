@@ -47,9 +47,6 @@
         <util:AheadBehindVisibilityConverter x:Key="AheadBehindVisibilityConverter"/>
         <util:BoolInverter x:Key="BoolInverter"/>
 
-        <!-- ViewModels -->
-        <vm:SourceViewModel x:Key="SourceViewModel"/>
-
         <!-- Card Style -->
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource CardBrush}"/>
@@ -682,26 +679,94 @@
                             IsEnabled="{Binding IsLoading, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
                 </Grid>
 
-                <!-- Command output console -->
-                <Border Style="{StaticResource CardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Command Output" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
-                        <ListBox ItemsSource="{Binding CommandLog}"
-                                 Background="#120C1220"
-                                 Foreground="#CDE8FF"
-                                 FontFamily="Consolas"
-                                 FontSize="10"
-                                 BorderThickness="1"
-                                 BorderBrush="{StaticResource BorderBrush}"
-                                 MaxHeight="200">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                </Border>
+                <!-- Command output console - Two columns -->
+                <Grid Margin="0 0 0 16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Git Pull Output (Left) -->
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="Git Command Output" FontSize="12" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                            <ListBox ItemsSource="{Binding CommandLog}"
+                                     Background="#120C1220"
+                                     Foreground="#CDE8FF"
+                                     FontFamily="Consolas"
+                                     FontSize="10"
+                                     BorderThickness="1"
+                                     BorderBrush="{StaticResource BorderBrush}"
+                                     MaxHeight="300">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Webhook Receiver Output (Right) -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8 0 0 0">
+                        <StackPanel>
+                            <Grid Margin="0 0 0 8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Webhook Receiver" FontSize="12" FontWeight="SemiBold"/>
+                                <Border Grid.Column="1"
+                                        Background="{Binding WebhookRunning, Converter={StaticResource StatusBrushConverter}}"
+                                        CornerRadius="6"
+                                        Padding="8 2"
+                                        Margin="8 0 0 0">
+                                    <TextBlock Text="{Binding WebhookRunning, StringFormat='Status: {0}'}"
+                                               FontSize="10"
+                                               Foreground="#FFFFFF"
+                                               FontWeight="SemiBold"/>
+                                </Border>
+                            </Grid>
+                            <ListBox ItemsSource="{Binding WebhookLog}"
+                                     Background="#120C1220"
+                                     Foreground="#CDE8FF"
+                                     FontFamily="Consolas"
+                                     FontSize="10"
+                                     BorderThickness="1"
+                                     BorderBrush="{StaticResource BorderBrush}"
+                                     MaxHeight="300"
+                                     Margin="0 0 0 8">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0"
+                                        Content="Start"
+                                        Command="{Binding StartWebhookCommand}"
+                                        Style="{StaticResource PillButtonStyle}"
+                                        Background="#1F3A63"
+                                        BorderBrush="#4E8CFF"
+                                        Margin="0 0 4 0"
+                                        IsEnabled="{Binding WebhookRunning, Converter={StaticResource BoolInverter}, ConverterParameter=True}"/>
+                                <Button Grid.Column="1"
+                                        Content="Stop"
+                                        Command="{Binding StopWebhookCommand}"
+                                        Style="{StaticResource PillButtonStyle}"
+                                        Background="#27121C"
+                                        BorderBrush="#F14B6E"
+                                        Margin="4 0 0 0"
+                                        IsEnabled="{Binding WebhookRunning}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
 

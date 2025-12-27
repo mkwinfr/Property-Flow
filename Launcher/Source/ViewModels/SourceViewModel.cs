@@ -9,15 +9,18 @@ namespace PropertyFlow.Launcher.ViewModels;
 public class SourceViewModel : System.ComponentModel.INotifyPropertyChanged
 {
     private GitService _gitService = new();
+    private WebhookReceiverService _webhookService = new();
     private List<RepositoryInfo> _repositories = new();
     private RepositoryInfo _selectedRepository = new();
     private GitStatus _repoStatus = new();
     private bool _isLoading;
+    private bool _webhookRunning;
     private string _commandOutput = string.Empty;
     private const int MaxLogLines = 500;
 
     public ObservableCollection<RepositoryInfo> Repositories { get; } = new();
     public ObservableCollection<string> CommandLog { get; } = new();
+    public ObservableCollection<string> WebhookLog { get; } = new();
 
     public RepositoryInfo SelectedRepository
     {
@@ -53,10 +56,25 @@ public class SourceViewModel : System.ComponentModel.INotifyPropertyChanged
         }
     }
 
+    public bool WebhookRunning
+    {
+        get => _webhookRunning;
+        set
+        {
+            if (_webhookRunning != value)
+            {
+                _webhookRunning = value;
+                OnPropertyChanged(nameof(WebhookRunning));
+            }
+        }
+    }
+
     public ICommand RefreshStatusCommand { get; private set; }
     public ICommand FetchCommand { get; private set; }
     public ICommand PullCommand { get; private set; }
     public ICommand ResetLocalCommand { get; private set; }
+    public ICommand StartWebhookCommand { get; private set; }
+    public ICommand StopWebhookCommand { get; private set; }
 
     public SourceViewModel()
     {
@@ -64,6 +82,8 @@ public class SourceViewModel : System.ComponentModel.INotifyPropertyChanged
         FetchCommand = new AsyncRelayCommand(async () => await FetchAsync());
         PullCommand = new AsyncRelayCommand(async () => await PullAsync(), CanPull);
         ResetLocalCommand = new AsyncRelayCommand(async () => await ResetLocalAsync());
+        StartWebhookCommand = new RelayCommand(() => StartWebhook());
+        StopWebhookCommand = new RelayCommand(() => StopWebhook());
 
         InitializeRepositories();
         
@@ -71,6 +91,16 @@ public class SourceViewModel : System.ComponentModel.INotifyPropertyChanged
         {
             SelectedRepository = Repositories[0];
         }
+
+        // Setup webhook logging
+        _webhookService.LogReceived += (message) =>
+        {
+            AppendWebhookLog(message);
+            WebhookRunning = _webhookService.IsRunning;
+        };
+
+        // Auto-start webhook
+        StartWebhook();
     }
 
     private void InitializeRepositories()
@@ -251,6 +281,47 @@ public class SourceViewModel : System.ComponentModel.INotifyPropertyChanged
         {
             Add();
         }
+    }
+
+    private void AppendWebhookLog(string message)
+    {
+        void Add()
+        {
+            WebhookLog.Add(message);
+            if (WebhookLog.Count > MaxLogLines)
+            {
+                WebhookLog.RemoveAt(0);
+            }
+        }
+
+        if (Application.Current?.Dispatcher != null)
+        {
+            _ = Application.Current.Dispatcher.InvokeAsync(Add);
+        }
+        else
+        {
+            Add();
+        }
+    }
+
+    public void StartWebhook()
+    {
+        AppendWebhookLog("Starting webhook receiver...");
+        var workspaceRoot = @"C:\Users\mkwin\Desktop\Property Flow";
+        _webhookService.Start(workspaceRoot);
+        WebhookRunning = _webhookService.IsRunning;
+    }
+
+    public void StopWebhook()
+    {
+        AppendWebhookLog("Stopping webhook receiver...");
+        _webhookService.Stop();
+        WebhookRunning = _webhookService.IsRunning;
+    }
+
+    public void Cleanup()
+    {
+        _webhookService.Dispose();
     }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
