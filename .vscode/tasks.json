@@ -4,8 +4,7 @@
     {
       "label": "Git Push (with webhook)",
       "type": "shell",
-      "command": "git",
-      "args": ["push"],
+      "command": "${workspaceFolder}\\push-with-webhook.ps1",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -13,10 +12,8 @@
         "panel": "shared",
         "showReuseMessage": false
       },
-      "problemMatcher": [],
-      "runOptions": {
-        "runOn": "folderOpen": false
-      }
+      "problemMatcher": []
     }
   ]
 }
+

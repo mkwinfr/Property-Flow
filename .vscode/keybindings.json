@@ -1,0 +1,7 @@
+[
+  {
+    "key": "end",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Git Push (with webhook)"
+  }
+]
