@@ -125,6 +125,32 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 1023px) {
+  .apartment-detail-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .apartment-detail-tabs::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .apartment-detail-tabs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .apartment-detail-tabs::-webkit-scrollbar-thumb {
+    background: rgba(156, 134, 255, 0.25);
+    border-radius: 2px;
+  }
+
+  .apartment-detail-tabs::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 134, 255, 0.5);
+  }
+}
+
 .apartment-detail-tab {
   padding: 9px 14px;
   background: transparent;
