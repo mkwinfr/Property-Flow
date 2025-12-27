@@ -1,5 +1,3 @@
-import React from "react";
-
 const Inventory: React.FC = () => {
   return (
     <div className="page-root pf-page">

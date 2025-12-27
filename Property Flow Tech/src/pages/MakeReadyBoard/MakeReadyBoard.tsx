@@ -1,5 +1,3 @@
-import React from "react";
-
 const MakeReadyBoard: React.FC = () => {
   return (
     <div className="page-root pf-page">
