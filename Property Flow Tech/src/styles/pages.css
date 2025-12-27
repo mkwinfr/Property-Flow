@@ -59,7 +59,7 @@
   border-radius: 12px;
   width: 90vw;
   max-width: 900px;
-  height: 80vh;
+  height: 68vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -70,7 +70,7 @@
   position: relative;
   background: var(--pf-navy-800);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 20px 24px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -125,17 +125,18 @@
 }
 
 .apartment-detail-tab {
-  padding: 12px 20px;
+  padding: 10px 16px;
   background: transparent;
   border: none;
   color: var(--pf-muted);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
   position: relative;
   bottom: -1px;
+  white-space: nowrap;
 }
 
 .apartment-detail-tab:hover {
@@ -149,7 +150,7 @@
 }
 
 .apartment-detail-content {
-  padding: 24px;
+  padding: 20px;
   flex: 1;
   overflow-y: auto;
 }
