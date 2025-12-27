@@ -15,8 +15,8 @@
   --pf-muted: #9fa8c6;
   --pf-muted-strong: #c9d1ea;
 
-  /* Accent Colors */
-  --pf-coral: #e56c74;
+  /* Accent Colors - Refined */
+  --pf-coral: #df7d84;
   --pf-coral-light: #ff9aa6;
   --pf-coral-bright: #ff9aa6;
   --pf-sky: #9ab5ff;
@@ -40,6 +40,8 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-default: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.15);
+  --border-focus: rgba(156, 134, 255, 0.4);
+  --border-hover: rgba(255, 255, 255, 0.12);
 
   /* Spacing System */
   --spacing-xs: 4px;
@@ -53,4 +55,18 @@
   --border-radius: 8px;
   --border-radius-lg: 12px;
   --border-radius-xl: 16px;
+
+  /* Elevation System - Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 18px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 18px 48px rgba(0, 0, 0, 0.65);
+
+  /* Transition Timing - Enhanced */
+  --transition-fast: 0.12s;
+  --transition-base: 0.16s;
+  --transition-slow: 0.24s;
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
 }
