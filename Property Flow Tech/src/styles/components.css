@@ -65,7 +65,7 @@
 .dock-item__label {
   position: absolute;
   left: 50%;
-  top: calc(100% + 6px);
+  top: calc(100% - 2px);
   transform: translateX(-50%);
   display: block;
   font-family: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
