@@ -278,20 +278,20 @@ function ApartmentDetailPageContent() {
                             <h2 className="card-title">
                               Unit {apartment.unitNumber ?? "N/A"}
                             </h2>
-                            <p className="card-kicker">
+                            <p className="card-kicker card-field-plan">
                               {apartment.floorPlan?.name ?? "Floor Plan N/A"}
                             </p>
                           </div>
                         </div>
 
                         <div className="card-grid">
-                          <div>
+                          <div className="card-field-beds">
                             <p className="meta-label pf-meta-label">Beds</p>
                             <p className="meta-value pf-meta-value">
                               {apartment.beds ?? "N/A"}
                             </p>
                           </div>
-                          <div>
+                          <div className="card-field-baths">
                             <p className="meta-label pf-meta-label">Bath</p>
                             <p className="meta-value pf-meta-value">
                               {apartment.baths ?? "N/A"}
@@ -300,7 +300,7 @@ function ApartmentDetailPageContent() {
                         </div>
 
                         {apartment.status && (
-                          <span className="status-pill pf-pill pf-pill-success">
+                          <span className="status-pill pf-pill pf-pill-success card-field-status">
                             {apartment.status}
                           </span>
                         )}

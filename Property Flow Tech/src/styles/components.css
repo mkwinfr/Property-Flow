@@ -1495,6 +1495,45 @@ input:invalid:focus {
   gap: clamp(6px, 1vw, 10px);
 }
 
+/* === Responsive Field Visibility === */
+/* Desktop (1024px+): Show all fields */
+@media (min-width: 1024px) {
+  .card-field-plan,
+  .card-field-beds,
+  .card-field-baths,
+  .card-field-status {
+    display: block;
+  }
+}
+
+/* Tablet/Landscape (480px - 1023px): Show Unit # + Status only */
+@media (min-width: 480px) and (max-width: 1023px) {
+  .card-field-plan {
+    display: none;
+  }
+  .card-field-beds,
+  .card-field-baths {
+    display: none;
+  }
+  .card-field-status {
+    display: block;
+  }
+}
+
+/* Mobile (<480px): Show Unit # only */
+@media (max-width: 479px) {
+  .card-field-plan {
+    display: none;
+  }
+  .card-field-beds,
+  .card-field-baths {
+    display: none;
+  }
+  .card-field-status {
+    display: none;
+  }
+}
+
 .meta-label {
   margin: 0;
   color: var(--pf-muted);
