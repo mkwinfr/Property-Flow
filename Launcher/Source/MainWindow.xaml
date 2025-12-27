@@ -7,7 +7,8 @@
         xmlns:vm="clr-namespace:PropertyFlow.Launcher.ViewModels"
         Title="PS Launcher" Height="900" Width="1200"
         Background="#1a1a1a" Foreground="#ffffff"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Icon="app.ico">
     <Window.Resources>
         <!-- Theme Tokens -->
         <SolidColorBrush x:Key="AppBackgroundBrush">

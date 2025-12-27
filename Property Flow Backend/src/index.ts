@@ -11,10 +11,8 @@ import permissionRoutes from "./routes/admin/permissions";
 //import workOrderRoutes from "./routes/workorders";
 //import vendorRoutes from "./routes/vendors";
 import apartmentRoutes from "./routes/apartments";
-import makeReadyBoardRoutes from "./routes/makeReadyBoard";
 import turnRoutes from "./routes/turns";
 import turnWorkflowRoutes from "./routes/turnWorkflow";
-import moveoutInspectionRoutes from "./routes/moveoutInspection";
 import buildingRoutes from "./routes/buildings";
 import propertyRoutes from "./routes/properties";
 
@@ -60,14 +58,10 @@ app.use("/api/admin/permissions", permissionRoutes);
 app.use("/api/apartments", apartmentRoutes);
 app.use("/api/buildings", buildingRoutes);
 app.use("/api/properties", propertyRoutes);
-app.use("/api/make-ready-board", makeReadyBoardRoutes);
 
-// Turns (make-ready, tasks, etc.)
+// Turns (tasks, etc.)
 app.use("/api", turnRoutes);
 app.use("/api", turnWorkflowRoutes);
-
-// Moveout Inspections
-app.use("/api/moveout-inspections", moveoutInspectionRoutes);
 
 // Vendors
 //app.use("/api/vendors", vendorRoutes);

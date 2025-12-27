@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { MakeReadyBoardProvider } from './hooks/useMakeReadyBoard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import Login from './pages/Login/Login';
@@ -19,8 +18,6 @@ import ManagementVendors from './pages/Management/Vendors';
 import ManagementPortfolios from './pages/Management/Portfolios';
 
 // Maintenance pages
-import MaintenanceMakeReady from './pages/Maintenance/MakeReady';
-import MaintenanceMakeReadyWizard from './pages/Maintenance/MakeReadyWizard';
 import MaintenanceWorkOrders from './pages/Maintenance/WorkOrders';
 import MaintenanceTasks from './pages/Maintenance/Tasks';
 import MaintenanceInspections from './pages/Maintenance/Inspections';
@@ -48,7 +45,6 @@ import AdminSettings from './pages/Admin/Settings';
 function App() {
   return (
     <AuthProvider>
-      <MakeReadyBoardProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
         
@@ -71,8 +67,6 @@ function App() {
             <Route path="/management/portfolios" element={<ManagementPortfolios />} />
             
             {/* Maintenance routes */}
-            <Route path="/maintenance/make-ready" element={<MaintenanceMakeReady />} />
-            <Route path="/maintenance/make-ready-wizard" element={<MaintenanceMakeReadyWizard />} />
             <Route path="/maintenance/work-orders" element={<MaintenanceWorkOrders />} />
             <Route path="/maintenance/tasks" element={<MaintenanceTasks />} />
             <Route path="/maintenance/inspections" element={<MaintenanceInspections />} />
@@ -99,7 +93,6 @@ function App() {
           </Route>
         </Route>
         </Routes>
-      </MakeReadyBoardProvider>
     </AuthProvider>
   );
 }

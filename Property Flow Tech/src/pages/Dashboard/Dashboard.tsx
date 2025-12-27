@@ -5,7 +5,6 @@ import AppDrawer from "../../components/AppDrawer/AppDrawer";
 import MakeReadyBoard from "../MakeReadyBoard/MakeReadyBoard.tsx";
 import ApartmentDetailPage from "../../pages/ApartmentDetail/ApartmentDetail";
 import MoveoutInspectionWizard from "../MoveoutInspectionWizard/MoveoutInspectionWizard";
-import { MakeReadyBoardProvider } from "../../hooks/useMakeReadyBoard";
 import StartPunch from "../StartPunch/StartPunch";
 
 const Dashboard: React.FC = () => {
@@ -90,8 +89,7 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    <MakeReadyBoardProvider>
-      <div className="dashboard-root pf-page">
+    <div className="dashboard-root pf-page">
         <div key={activeTab} className="dashboard-content tab-transition">
           {renderTab()}
         </div>
@@ -109,7 +107,7 @@ const Dashboard: React.FC = () => {
           isDrawerOpen={showAppDrawer && !isClosingDrawer}
         />
       </div>
-    </MakeReadyBoardProvider>
+    </div>
   );
 };
 
