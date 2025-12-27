@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
-// Vite config with path alias support so imports like "@/hooks/..." work.
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -11,6 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['tech.propertysuite.net'],
+    port: 5173,
+    allowedHosts: ['.propertysuite.net'],
   },
 });
