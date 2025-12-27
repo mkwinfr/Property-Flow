@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Launcher", "Launcher", "{74
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{E28A9411-DB0C-FAD7-4D26-95072B81CCCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyFlow.Launcher", "Launcher\Source\PropertyFlow.Launcher.csproj", "{DC12D2C8-106E-37DF-4121-04D541D4E5AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyFlow.Launcher", "Source\PropertyFlow.Launcher.csproj", "{DC12D2C8-106E-37DF-4121-04D541D4E5AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
