@@ -1,0 +1,9 @@
+tunnel: 8b00c20f-378d-4315-bd89-cf747dd97eb0
+credentials-file: C:\PropertySuite\config\cloudflared\8b00c20f-378d-4315-bd89-cf747dd97eb0.json
+
+ingress:
+  - hostname: app.propertysuite.net
+    service: http://127.0.0.1:4100
+  - hostname: api.propertysuite.net
+    service: http://127.0.0.1:4000
+  - service: http_status:404

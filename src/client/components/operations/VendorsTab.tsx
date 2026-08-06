@@ -1,0 +1,24 @@
+import { useState, type FormEvent } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Mail, Phone, Plus, Star, Store, X } from "lucide-react";
+import type { VendorRecord } from "../../../shared/contracts";
+import { useAuth } from "../../contexts/AuthContext";
+import { useProperty } from "../../contexts/PropertyContext";
+import { api } from "../../lib/api";
+
+export function VendorsTab() {
+  const { propertyId } = useProperty(); const { can } = useAuth(); const [open, setOpen] = useState(false);
+  const query = useQuery({ queryKey: ["vendors", propertyId], queryFn: () => api<{ vendors: VendorRecord[] }>(`/api/properties/${propertyId}/vendors`), enabled: Boolean(propertyId) });
+  return <section className="ops-section"><header className="ops-section__header"><div><p className="eyebrow">External partners</p><h2>Vendors</h2><p>Keep contacts, specialties, ratings, and active workload together.</p></div>{can("vendors:manage") && <button className="button button--primary" onClick={() => setOpen(true)}><Plus size={16} />Add vendor</button>}</header>
+    <div className="vendor-grid">{query.data?.vendors.map((vendor) => <article className="vendor-card" key={vendor.id}><header><span className="vendor-card__mark"><Store /></span><span className={`vendor-status vendor-status--${vendor.status}`}>{vendor.status}</span></header><h3>{vendor.name}</h3><p>{vendor.contactName ?? "No primary contact"}</p><div className="specialty-list">{vendor.specialties.map((value) => <span key={value}>{value}</span>)}</div><dl><div><dt>Open jobs</dt><dd>{vendor.openJobs}</dd></div><div><dt>Rating</dt><dd>{vendor.rating ? <><Star size={13} fill="currentColor" />{vendor.rating.toFixed(1)}</> : "—"}</dd></div></dl><footer>{vendor.phone && <a href={`tel:${vendor.phone}`}><Phone size={14} />{vendor.phone}</a>}{vendor.email && <a href={`mailto:${vendor.email}`}><Mail size={14} />{vendor.email}</a>}</footer></article>)}</div>
+    <CreateVendorDialog open={open} onClose={() => setOpen(false)} />
+  </section>;
+}
+
+function CreateVendorDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { propertyId } = useProperty(); const queryClient = useQueryClient();
+  const [form, setForm] = useState({ name: "", contactName: "", phone: "", email: "", specialties: "", rating: "" }); const [error, setError] = useState("");
+  const mutation = useMutation({ mutationFn: () => api(`/api/properties/${propertyId}/vendors`, { method: "POST", body: JSON.stringify({ name: form.name, contactName: form.contactName || null, phone: form.phone || null, email: form.email || null, specialties: form.specialties.split(",").map((value) => value.trim()).filter(Boolean), rating: form.rating ? Number(form.rating) : null }) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["vendors", propertyId] }); onClose(); } });
+  if (!open) return null; const submit = async (event: FormEvent) => { event.preventDefault(); setError(""); try { await mutation.mutateAsync(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not add vendor"); } };
+  return <div className="modal-layer"><section className="dialog"><header className="dialog__header"><span className="dialog__icon"><Store /></span><div><p className="eyebrow">Vendor directory</p><h2>Add vendor</h2></div><button className="icon-button" onClick={onClose}><X /></button></header><form onSubmit={submit}><div className="form-grid"><label className="field field--full"><span>Company name</span><input required minLength={2} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label><label className="field"><span>Contact name</span><input value={form.contactName} onChange={(event) => setForm({ ...form, contactName: event.target.value })} /></label><label className="field"><span>Phone</span><input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} /></label><label className="field"><span>Email</span><input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></label><label className="field"><span>Rating</span><input type="number" min="1" max="5" step="0.1" value={form.rating} onChange={(event) => setForm({ ...form, rating: event.target.value })} /></label><label className="field field--full"><span>Specialties</span><input required value={form.specialties} onChange={(event) => setForm({ ...form, specialties: event.target.value })} placeholder="HVAC, Plumbing, Electrical" /></label></div>{error && <p className="form-error">{error}</p>}<footer className="dialog__footer"><button type="button" className="button button--ghost" onClick={onClose}>Cancel</button><button className="button button--primary" disabled={mutation.isPending}>Add vendor</button></footer></form></section></div>;
+}

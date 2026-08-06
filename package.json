@@ -1,0 +1,48 @@
+{
+  "name": "property-suite",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A locally hosted, multi-user-ready property operations platform.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "tsx watch src/server/index.ts",
+    "dev:web": "vite",
+    "build": "node scripts/clean.mjs && npm run typecheck && vite build && tsc -p tsconfig.server.json",
+    "typecheck": "tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "import:property-flow-templates": "node scripts/import-property-flow-templates.mjs",
+    "admin:configure": "node scripts/configure-admin.mjs",
+    "test-tech:configure": "node scripts/configure-test-technician.mjs",
+    "start": "node dist-server/server/index.js"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "better-sqlite3": "^12.4.1",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "lucide-react": "^0.555.0",
+    "pdfkit": "^0.19.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "@types/pdfkit": "^0.17.6",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.5",
+    "vitest": "^4.0.15"
+  }
+}

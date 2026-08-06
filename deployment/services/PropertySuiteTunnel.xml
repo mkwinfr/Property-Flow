@@ -1,0 +1,17 @@
+<service>
+  <id>PropertySuiteTunnel</id>
+  <name>Property Suite Cloudflare Tunnel</name>
+  <description>Cloudflare Tunnel connector for app.propertysuite.net.</description>
+  <executable>C:\PropertySuite\runtime\cloudflared.exe</executable>
+  <arguments>--config C:\PropertySuite\config\cloudflared\config.yml tunnel run property-suite-desktop</arguments>
+  <workingdirectory>C:\PropertySuite</workingdirectory>
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <stoptimeout>15sec</stoptimeout>
+  <onfailure action="restart" delay="10 sec" />
+  <onfailure action="restart" delay="30 sec" />
+  <onfailure action="restart" delay="60 sec" />
+  <resetfailure>1 hour</resetfailure>
+  <logpath>C:\PropertySuite\logs\tunnel</logpath>
+  <log mode="roll" />
+</service>

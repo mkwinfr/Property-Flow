@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-server/
+.data/
+.env
+.env.local
+coverage/
+*.log
+
+# Local QA and migration scratch databases
+*.db
+*.db-shm
+*.db-wal
+tmp/
+
+# Launcher build/runtime output
+launcher/dist/

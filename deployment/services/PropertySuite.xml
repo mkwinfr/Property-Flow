@@ -1,0 +1,22 @@
+<service>
+  <id>PropertySuite</id>
+  <name>Property Suite Application</name>
+  <description>Property Suite web application and API on local port 4100.</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>C:\PropertySuite\app\dist-server\server\index.js</arguments>
+  <workingdirectory>C:\PropertySuite\app</workingdirectory>
+  <env name="NODE_ENV" value="production" />
+  <env name="PORT" value="4100" />
+  <env name="PROPERTY_SUITE_DATABASE_PATH" value="C:\PropertySuite\data\property-suite.db" />
+  <env name="PROPERTY_SUITE_ATTACHMENTS_PATH" value="C:\PropertySuite\data\attachments" />
+  <env name="PROPERTY_SUITE_SESSION_DAYS" value="7" />
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>false</delayedAutoStart>
+  <stoptimeout>15sec</stoptimeout>
+  <onfailure action="restart" delay="10 sec" />
+  <onfailure action="restart" delay="30 sec" />
+  <onfailure action="restart" delay="60 sec" />
+  <resetfailure>1 hour</resetfailure>
+  <logpath>C:\PropertySuite\logs\application</logpath>
+  <log mode="roll" />
+</service>

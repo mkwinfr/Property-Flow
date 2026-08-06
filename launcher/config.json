@@ -1,0 +1,41 @@
+{
+  "services": [
+    {
+      "name": "application",
+      "label": "Property Suite",
+      "serviceName": "PropertySuite",
+      "port": 4100,
+      "openUrl": "http://127.0.0.1:4100",
+      "healthUrl": "http://127.0.0.1:4100/api/health",
+      "logFiles": [
+        "C:\\PropertySuite\\logs\\application\\PropertySuite.out.log",
+        "C:\\PropertySuite\\logs\\application\\PropertySuite.err.log",
+        "C:\\PropertySuite\\logs\\application\\PropertySuite.wrapper.log"
+      ]
+    },
+    {
+      "name": "cloudflare",
+      "label": "Cloudflare Tunnel",
+      "serviceName": "PropertySuiteTunnel",
+      "processName": "cloudflared",
+      "openUrl": "https://app.propertysuite.net",
+      "logFiles": [
+        "C:\\PropertySuite\\logs\\tunnel\\PropertySuiteTunnel.out.log",
+        "C:\\PropertySuite\\logs\\tunnel\\PropertySuiteTunnel.err.log",
+        "C:\\PropertySuite\\logs\\tunnel\\PropertySuiteTunnel.wrapper.log"
+      ]
+    },
+    {
+      "name": "ollama",
+      "label": "Ollama Local AI",
+      "serviceName": "PropertySuiteOllama",
+      "processName": "ollama",
+      "port": 11434,
+      "healthUrl": "http://127.0.0.1:11434/api/tags",
+      "logFiles": [
+        "C:\\PropertySuite\\logs\\ollama\\PropertySuiteOllama.out.log",
+        "C:\\PropertySuite\\logs\\ollama\\PropertySuiteOllama.err.log"
+      ]
+    }
+  ]
+}
