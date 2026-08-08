@@ -23,7 +23,10 @@ const conditions: Array<{ value: InspectionCondition; label: string }> = [
   { value: "missing", label: "Missing" },
 ];
 
-export function InspectionsTab() {
+const maintenanceTypes = new Set(["pre_move_out", "final", "other"]);
+const leasingTypes = new Set(["move_in", "move_in_final"]);
+
+export function InspectionsTab({ context = "maintenance" }: { context?: "maintenance" | "leasing" }) {
   const { propertyId } = useProperty();
   const { can } = useAuth();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -33,11 +36,16 @@ export function InspectionsTab() {
     queryFn: () => api<{ inspections: InspectionSummary[] }>(`/api/properties/${propertyId}/inspections`),
     enabled: Boolean(propertyId),
   });
+  const allowedTypes = context === "leasing" ? leasingTypes : maintenanceTypes;
+  const inspections = (query.data?.inspections ?? []).filter((item) => allowedTypes.has(item.type));
+  const sectionCopy = context === "leasing"
+    ? { eyebrow: "Leasing workflow", description: "Move-in inspections and final walkthroughs for incoming residents." }
+    : { eyebrow: "Move-out workflow", description: "Inspect the property scope once, preserve the findings, and carry it into Make Ready." };
   return <section className="ops-section">
-    <header className="ops-section__header"><div><p className="eyebrow">Move-out workflow</p><h2>Inspections</h2><p>Inspect the property scope once, preserve the findings, and carry it into Make Ready.</p></div>{can("inspections:manage") && <button className="button button--primary" onClick={() => setCreateOpen(true)}><Plus size={16} />New inspection</button>}</header>
-    <div className="inspection-grid">{query.data?.inspections.map((item) => <button className="inspection-card" key={item.id} onClick={() => setSelectedId(item.id)}><header><span className="unit-number">{item.unitNumber}</span><span className={`inspection-status inspection-status--${item.status}`}>{item.status}</span></header><strong>{item.type.replaceAll("_", " ")} inspection</strong><small>{formatDate(item.inspectionDate)} · {item.inspectorName ?? "Unassigned"}</small><div className="inspection-card__metrics"><span><b>{item.assessedItems}/{item.totalItems}</b><small>assessed</small></span><span><b className={item.damageItems ? "text-danger" : ""}>{item.damageItems}</b><small>findings</small></span><span><b>${item.estimatedCharges.toFixed(0)}</b><small>resident</small></span></div><div className="inspection-card__footer"><span>{item.generatedTurnId ? "Make Ready generated" : item.status === "complete" ? "Ready to generate work" : item.templateName ?? "Assessment in progress"}</span><ArrowRight size={15} /></div></button>)}</div>
+    <header className="ops-section__header"><div><p className="eyebrow">{sectionCopy.eyebrow}</p><h2>Inspections</h2><p>{sectionCopy.description}</p></div>{can("inspections:manage") && <button className="button button--primary" onClick={() => setCreateOpen(true)}><Plus size={16} />New inspection</button>}</header>
+    <div className="inspection-grid">{inspections.map((item) => <button className="inspection-card" key={item.id} onClick={() => setSelectedId(item.id)}><header><span className="unit-number">{item.unitNumber}</span><span className={`inspection-status inspection-status--${item.status}`}>{item.status}</span></header><strong>{item.type.replaceAll("_", " ")} inspection</strong><small>{formatDate(item.inspectionDate)} · {item.inspectorName ?? "Unassigned"}</small><div className="inspection-card__metrics"><span><b>{item.assessedItems}/{item.totalItems}</b><small>assessed</small></span><span><b className={item.damageItems ? "text-danger" : ""}>{item.damageItems}</b><small>findings</small></span><span><b>${item.estimatedCharges.toFixed(0)}</b><small>resident</small></span></div><div className="inspection-card__footer"><span>{item.generatedTurnId ? "Make Ready generated" : item.status === "complete" ? "Ready to generate work" : item.templateName ?? "Assessment in progress"}</span><ArrowRight size={15} /></div></button>)}</div>
     <InspectionDetailModal inspectionId={selectedId} onClose={() => setSelectedId(null)} />
-    <CreateInspectionDialog open={createOpen} onClose={() => setCreateOpen(false)} onCreated={(id) => { setCreateOpen(false); setSelectedId(id); }} />
+    <CreateInspectionDialog open={createOpen} context={context} onClose={() => setCreateOpen(false)} onCreated={(id) => { setCreateOpen(false); setSelectedId(id); }} />
   </section>;
 }
 
@@ -131,24 +139,28 @@ function InspectionDetailModal({ inspectionId, onClose }: { inspectionId: string
   </>;
 }
 
-function CreateInspectionDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (id: string) => void }) {
+function CreateInspectionDialog({ open, context, onClose, onCreated }: { open: boolean; context: "maintenance" | "leasing"; onClose: () => void; onCreated: (id: string) => void }) {
   const { propertyId } = useProperty();
   const queryClient = useQueryClient();
   const units = useQuery({ queryKey: ["units", propertyId], queryFn: () => api<{ units: UnitSummary[] }>(`/api/properties/${propertyId}/units`), enabled: open });
-  const [form, setForm] = useState({ unitId: "", type: "final", inspectionDate: new Date().toISOString().slice(0, 10), notes: "" });
+  const defaultType = context === "leasing" ? "move_in" : "final";
+  const [form, setForm] = useState({ unitId: "", type: defaultType, inspectionDate: new Date().toISOString().slice(0, 10), notes: "" });
   const [error, setError] = useState("");
   const mutation = useMutation({
     mutationFn: () => api<{ inspection: InspectionDetail }>("/api/inspections", { method: "POST", body: JSON.stringify({ ...form, propertyId, notes: form.notes || null }) }),
     onSuccess: async ({ inspection }) => { await queryClient.invalidateQueries({ queryKey: ["inspections", propertyId] }); onCreated(inspection.id); },
   });
   if (!open) return null;
+  const typeOptions = context === "leasing"
+    ? [{ value: "move_in", label: "Move-in" }, { value: "move_in_final", label: "Move-in final" }]
+    : [{ value: "pre_move_out", label: "Pre-move-out" }, { value: "final", label: "Final move-out" }, { value: "other", label: "Other" }];
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setError("");
     try { await mutation.mutateAsync(); }
     catch (reason) { setError(reason instanceof Error ? reason.message : "Could not create inspection"); }
   };
-  return <div className="modal-layer"><section className="dialog"><header className="dialog__header"><span className="dialog__icon"><ClipboardPen /></span><div><p className="eyebrow">Shared scope assessment</p><h2>New inspection</h2></div><button className="icon-button" onClick={onClose}><X /></button></header><form onSubmit={submit}><div className="form-grid"><label className="field field--full"><span>Unit</span><AppSelect required searchable ariaLabel="Unit" value={form.unitId} onChange={(value) => setForm({ ...form, unitId: value })} options={[{ value: "", label: "Select unit" }, ...(units.data?.units.map((unit) => ({ value: unit.id, label: `Unit ${unit.unitNumber} · ${unit.floorPlanName} · ${unit.occupancyStatus}` })) ?? [])]} /></label><label className="field"><span>Inspection type</span><AppSelect ariaLabel="Inspection type" value={form.type} onChange={(value) => setForm({ ...form, type: value })} options={[{ value: "pre_move_out", label: "Pre-move-out" }, { value: "final", label: "Final move-out" }, { value: "move_in", label: "Move-in" }, { value: "move_in_final", label: "Move-in final" }, { value: "other", label: "Other" }]} /></label><label className="field"><span>Inspection date</span><input type="date" required value={form.inspectionDate} onChange={(event) => setForm({ ...form, inspectionDate: event.target.value })} /></label><label className="field field--full"><span>Notes</span><textarea rows={3} value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label></div>{error && <p className="form-error">{error}</p>}<footer className="dialog__footer"><button type="button" className="button button--ghost" onClick={onClose}>Cancel</button><button className="button button--primary" disabled={mutation.isPending}>Create inspection</button></footer></form></section></div>;
+  return <div className="modal-layer"><section className="dialog"><header className="dialog__header"><span className="dialog__icon"><ClipboardPen /></span><div><p className="eyebrow">Shared scope assessment</p><h2>New inspection</h2></div><button className="icon-button" onClick={onClose}><X /></button></header><form onSubmit={submit}><div className="form-grid"><label className="field field--full"><span>Unit</span><AppSelect required searchable ariaLabel="Unit" value={form.unitId} onChange={(value) => setForm({ ...form, unitId: value })} options={[{ value: "", label: "Select unit" }, ...(units.data?.units.map((unit) => ({ value: unit.id, label: `Unit ${unit.unitNumber} · ${unit.floorPlanName} · ${unit.occupancyStatus}` })) ?? [])]} /></label><label className="field"><span>Inspection type</span><AppSelect ariaLabel="Inspection type" value={form.type} onChange={(value) => setForm({ ...form, type: value })} options={typeOptions} /></label><label className="field"><span>Inspection date</span><input type="date" required value={form.inspectionDate} onChange={(event) => setForm({ ...form, inspectionDate: event.target.value })} /></label><label className="field field--full"><span>Notes</span><textarea rows={3} value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label></div>{error && <p className="form-error">{error}</p>}<footer className="dialog__footer"><button type="button" className="button button--ghost" onClick={onClose}>Cancel</button><button className="button button--primary" disabled={mutation.isPending}>Create inspection</button></footer></form></section></div>;
 }
 
 const formatDate = (value: string) => new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${value}T12:00:00`));

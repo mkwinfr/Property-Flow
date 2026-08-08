@@ -25,6 +25,7 @@ import { NotificationPreferencesDialog } from "../components/NotificationPrefere
 import { AppSelect } from "../components/AppSelect";
 import { GlobalSearch } from "../components/GlobalSearch";
 import { AssistantPanel } from "../components/AssistantPanel";
+import { isInspectionsNavActive } from "../lib/staffRoutes";
 
 interface NavChild {
   to: string;
@@ -55,11 +56,6 @@ interface NavLinkItem {
 type NavEntry = NavLinkItem | ({ type: "group" } & NavGroup);
 type VisibleNavEntry = NavLinkItem | ({ type: "group" } & NavGroup);
 
-function operationsTab(path: string, search: string, tab: string) {
-  if (path !== "/operations") return false;
-  return (new URLSearchParams(search).get("tab") ?? "overview") === tab;
-}
-
 const navigation: NavEntry[] = [
   {
     type: "link",
@@ -84,10 +80,11 @@ const navigation: NavEntry[] = [
     label: "Maintenance",
     icon: Wrench,
     children: [
-      { to: "/operations?tab=work-orders", label: "Work orders", permission: "workorders:view", module: "operations", isActive: (path, search) => operationsTab(path, search, "work-orders") },
+      { to: "/work-orders", label: "Work orders", permission: "workorders:view", module: "operations", isActive: (path) => path === "/work-orders" },
       { to: "/turns", label: "Make Ready", permission: "turns:view", module: "make_ready", isActive: (path) => path === "/turns" || path.startsWith("/turns/") },
-      { to: "/operations?tab=inspections", label: "Inspections", permission: "inspections:view", module: "operations", isActive: (path, search) => operationsTab(path, search, "inspections") },
-      { to: "/operations?tab=recurring", label: "Recurring jobs", permission: "workorders:view", module: "operations", isActive: (path, search) => operationsTab(path, search, "recurring") },
+      { to: "/inspections?context=maintenance", label: "Inspections", permission: "inspections:view", module: "operations", isActive: (path, search) => isInspectionsNavActive(path, search, "maintenance") },
+      { to: "/inventory", label: "Inventory", permission: "inventory:view", module: "operations", isActive: (path) => path === "/inventory" },
+      { to: "/recurring-jobs", label: "Recurring jobs", permission: "workorders:view", module: "operations", isActive: (path) => path === "/recurring-jobs" },
       { to: "/pool-logs", label: "Pool Log", permission: "pool:view", module: "pool", technicianShortcut: true, isActive: (path) => path === "/pool-logs" },
     ],
   },
@@ -99,6 +96,7 @@ const navigation: NavEntry[] = [
     children: [
       { to: "/leasing", label: "Pipeline", permission: "leasing:view", module: "leasing", isActive: (path) => path === "/leasing" },
       { to: "/residents", label: "Residents & leases", permission: "residents:view", module: "residents", isActive: (path) => path === "/residents" },
+      { to: "/inspections?context=leasing", label: "Inspections", permission: "inspections:view", module: "operations", isActive: (path, search) => isInspectionsNavActive(path, search, "leasing") },
     ],
   },
   {
@@ -107,11 +105,12 @@ const navigation: NavEntry[] = [
     label: "Operations",
     icon: Boxes,
     children: [
-      { to: "/operations", label: "Control center", permission: "turns:review", module: "operations", isActive: (path, search) => path === "/operations" && (new URLSearchParams(search).get("tab") ?? "overview") === "overview" },
+      { to: "/operations", label: "Control center", permission: "turns:review", module: "operations", isActive: (path, search) => path === "/operations" && !new URLSearchParams(search).get("tab") },
       { to: "/units", label: "Units", permission: "units:view", isActive: (path) => path === "/units" },
-      { to: "/operations?tab=inventory", label: "Inventory", permission: "inventory:view", module: "operations", isActive: (path, search) => operationsTab(path, search, "inventory") },
-      { to: "/operations?tab=vendors", label: "Vendors", permission: "vendors:view", module: "operations", isActive: (path, search) => operationsTab(path, search, "vendors") },
       { to: "/templates", label: "Template center", permission: "templates:view", isActive: (path) => path === "/templates" },
+      { to: "/communications", label: "Communications", permission: "communications:view", module: "communications", isActive: (path) => path === "/communications" },
+      { to: "/financial", label: "Financial", permission: "financial:view", module: "financial", isActive: (path) => path === "/financial" },
+      { to: "/vendors", label: "Vendors", permission: "vendors:view", module: "operations", isActive: (path) => path === "/vendors" },
     ],
   },
   {
@@ -121,8 +120,6 @@ const navigation: NavEntry[] = [
     icon: Settings,
     children: [
       { to: "/administration", label: "Users & properties", permission: "users:view", isActive: (path) => path === "/administration" },
-      { to: "/communications", label: "Communications", permission: "communications:view", module: "communications", isActive: (path) => path === "/communications" },
-      { to: "/financial", label: "Financial", permission: "financial:view", module: "financial", isActive: (path) => path === "/financial" },
       { to: "/audit", label: "Audit Log", permission: "audit:view", isActive: (path) => path === "/audit" },
       { to: "/platform-admin", label: "Platform", permission: "platform:manage", isActive: (path) => path === "/platform-admin" },
     ],

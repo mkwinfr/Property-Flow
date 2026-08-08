@@ -6,8 +6,10 @@ import { useProperty } from "../contexts/PropertyContext";
 import { api } from "../lib/api";
 import { useRouter } from "../lib/router";
 
+import { staffDestinationForSearch } from "../lib/staffRoutes";
+
 interface Message { role: "assistant" | "user"; content: string; sources?: GlobalSearchResult[] }
-const sourceDestination = (source: GlobalSearchResult) => { if (source.type === "turn") return `/turns/${source.id}`; if (source.type === "unit") return "/units"; if (source.type === "template") return "/templates"; return `/operations?tab=${({ work_order: "work-orders", inspection: "inspections", vendor: "vendors", inventory: "inventory" } as Record<string, string>)[source.type]}`; };
+const sourceDestination = staffDestinationForSearch;
 
 export function AssistantPanel() {
   const { propertyId } = useProperty(); const { navigate } = useRouter(); const [open, setOpen] = useState(false); const [question, setQuestion] = useState(""); const [messages, setMessages] = useState<Message[]>([{ role: "assistant", content: "I can help you find and summarize operational information in this property. I only use records you are allowed to see." }]); const input = useRef<HTMLInputElement>(null);

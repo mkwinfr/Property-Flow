@@ -6,15 +6,11 @@ import { useProperty } from "../contexts/PropertyContext";
 import { api } from "../lib/api";
 import { useRouter } from "../lib/router";
 
+import { staffDestinationForSearch } from "../lib/staffRoutes";
+
 const resultIcon = { unit: Boxes, turn: ClipboardCheck, work_order: Wrench, inspection: ClipboardPen, vendor: Store, inventory: PackageSearch, template: ClipboardCheck };
 const resultLabel = { unit: "Unit", turn: "Make Ready", work_order: "Work order", inspection: "Inspection", vendor: "Vendor", inventory: "Inventory", template: "Template" };
-const destination = (result: GlobalSearchResult) => {
-  if (result.type === "turn") return `/turns/${result.id}`;
-  if (result.type === "unit") return "/units";
-  if (result.type === "template") return "/templates";
-  const tab = { work_order: "work-orders", inspection: "inspections", vendor: "vendors", inventory: "inventory" }[result.type];
-  return `/operations?tab=${tab}`;
-};
+const destination = staffDestinationForSearch;
 
 export function GlobalSearch() {
   const { propertyId } = useProperty(); const { navigate, path } = useRouter(); const [open, setOpen] = useState(false); const [query, setQuery] = useState(""); const [debounced, setDebounced] = useState(""); const input = useRef<HTMLInputElement>(null);
