@@ -35,6 +35,8 @@ export function seedOperationsData(db: Database.Database): void {
     }
     addPermission.run("role-leasing", "inspections:view");
     addPermission.run("role-leasing", "inspections:manage");
+    addPermission.run("role-leasing", "workorders:view");
+    addPermission.run("role-leasing", "workorders:manage");
 
     const existing = db.prepare("SELECT COUNT(*) AS count FROM work_orders").get() as { count: number };
     if (existing.count > 0) return;

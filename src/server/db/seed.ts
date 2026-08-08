@@ -37,7 +37,7 @@ const technicianPermissions = [
   "pool:view",
   "pool:manage",
 ];
-const leasingPermissions = ["dashboard:view", "units:view", "turns:view", "turns:create"];
+const leasingPermissions = ["dashboard:view", "units:view", "turns:view", "turns:create", "workorders:view", "workorders:manage"];
 
 export function seedDevelopmentData(db: Database.Database): void {
   const existing = db.prepare("SELECT COUNT(*) AS count FROM users").get() as { count: number };

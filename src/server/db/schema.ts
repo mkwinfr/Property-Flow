@@ -1138,4 +1138,14 @@ export const migrations = [
         ON message_deliveries(recipient_type, recipient_id, sent_at DESC);
     `,
   },
+  {
+    version: 26,
+    name: "leasing_work_order_permissions",
+    sql: `
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-leasing', key FROM permissions
+      WHERE key IN ('workorders:view', 'workorders:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-leasing');
+    `,
+  },
 ] as const;
