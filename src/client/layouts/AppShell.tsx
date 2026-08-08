@@ -26,7 +26,7 @@ import { AppSelect } from "../components/AppSelect";
 import { GlobalSearch } from "../components/GlobalSearch";
 import { AssistantPanel } from "../components/AssistantPanel";
 import { ViewAsControl } from "../components/ViewAsControl";
-import { isInspectionsNavActive } from "../lib/staffRoutes";
+import { isInspectionsNavActive, isNavGroupHiddenForPreview, isNavLinkHiddenForPreview } from "../lib/staffRoutes";
 
 interface NavChild {
   to: string;
@@ -136,20 +136,25 @@ function ShellContent({ children }: { children: ReactNode }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const { path, search } = useRouter();
 
+  const previewRoleId = viewAsRole?.id ?? null;
+
   const canSeeChild = (item: NavChild) =>
-    can(item.permission)
+    !isNavLinkHiddenForPreview(previewRoleId, item.to)
+    && can(item.permission)
     && (!item.module || isModuleEnabled(item.module))
     && (!item.technicianShortcut || !can("turns:review"));
 
   const visibleNavigation = useMemo((): VisibleNavEntry[] => navigation.flatMap((entry): VisibleNavEntry[] => {
     if (entry.type === "link") {
+      if (isNavLinkHiddenForPreview(previewRoleId, entry.to)) return [];
       if (!can(entry.permission)) return [];
       if (entry.module && !isModuleEnabled(entry.module)) return [];
       return [entry];
     }
+    if (isNavGroupHiddenForPreview(previewRoleId, entry.id)) return [];
     const children = entry.children.filter(canSeeChild);
     return children.length ? [{ ...entry, children }] : [];
-  }), [can, isModuleEnabled, propertyId]);
+  }), [can, isModuleEnabled, propertyId, previewRoleId]);
 
   useEffect(() => {
     setExpanded((current) => {
@@ -214,16 +219,11 @@ function ShellContent({ children }: { children: ReactNode }) {
                 >
                   <span>{child.label}</span>
                 </Link>)}
-                {entry.id === "administration" && canUseViewAs && <ViewAsControl />}
               </div>}
             </section>;
           })}
-          {canUseViewAs && !visibleNavigation.some((entry) => entry.type === "group" && entry.id === "administration") && (
-            <section className="nav-group nav-group--view-as">
-              <ViewAsControl />
-            </section>
-          )}
         </nav>
+        {canUseViewAs && <ViewAsControl />}
         <div className="sidebar__footer">
           <div className="user-block">
             <span className="avatar">{user?.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</span>

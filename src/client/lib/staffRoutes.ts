@@ -52,3 +52,16 @@ export function isInspectionsNavActive(path: string, search: string, context: "m
   if (path !== "/inspections") return false;
   return inspectionsContextFromSearch(search) === context;
 }
+
+export function isNavLinkHiddenForPreview(roleId: string | null | undefined, to: string) {
+  if (!roleId) return false;
+  if (roleId === "role-leasing" && to === "/my-work") return true;
+  if (roleId === "role-tech" && to === "/recurring-jobs") return true;
+  return false;
+}
+
+export function isNavGroupHiddenForPreview(roleId: string | null | undefined, groupId: string) {
+  if (!roleId) return false;
+  if (roleId === "role-tech" && (groupId === "operations" || groupId === "leasing")) return true;
+  return false;
+}

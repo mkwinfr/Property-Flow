@@ -1298,7 +1298,7 @@ body:has(.staff-app-loading) {
 .staff-app .view-as-control {
   display: grid;
   gap: 8px;
-  margin: 10px 12px 4px;
+  margin: 0 12px 12px;
   padding: 12px;
   border-radius: 14px;
   background: rgba(255, 253, 247, .06);
@@ -1314,10 +1314,6 @@ body:has(.staff-app-loading) {
   font-weight: 600;
   letter-spacing: .04em;
   text-transform: uppercase;
-}
-
-.staff-app .nav-group--view-as {
-  margin-top: 8px;
 }
 
 .staff-app .view-as-banner {
