@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import { authenticate, requirePermission, userCan, type AuthenticatedRequest } from "../auth/session.js";
-import { db } from "../db/index.js";
 import { forbidden, unauthorized } from "../lib/errors.js";
+import { propertyIdFromTurn } from "../lib/propertyScope.js";
 import {
   addTurnItem,
   addTurnVendorJob,
@@ -27,14 +27,14 @@ import { loadMakeReadyPdfRecord, makeReadyPdfFilename, renderMakeReadyPdf } from
 const router = Router();
 router.use(authenticate);
 
-const propertyFromTurn = (turnId: string): string | null => {
-  const row = db.prepare("SELECT property_id FROM turns WHERE id = ?").get(turnId) as
-    | { property_id: string }
-    | undefined;
-  return row?.property_id ?? null;
-};
+const propertyFromTurn = (turnId: string) => propertyIdFromTurn(turnId);
+
+function canViewFinancials(userId: string, propertyId: string): boolean {
+  return userCan(userId, "financial:view", propertyId) || userCan(userId, "turns:review", propertyId);
+}
+
 const visibleTurn = (turn: ReturnType<typeof getTurn>, userId: string) =>
-  userCan(userId, "turns:review", turn.propertyId) ? turn : hideTurnFinancials(turn);
+  canViewFinancials(userId, turn.propertyId) ? turn : hideTurnFinancials(turn);
 
 router.get(
   "/properties/:propertyId/turn-templates",

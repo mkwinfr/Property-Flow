@@ -3,6 +3,14 @@ import { db } from "../db/index.js";
 import { notFound } from "../lib/errors.js";
 import { listWorkOrders } from "./service.js";
 
+const PDF_COLORS = {
+  evergreen: "#173e31",
+  ink: "#18342b",
+  muted: "#52675f",
+  brass: "#b58b48",
+  line: "#d9e1da",
+};
+
 export async function renderWorkOrderPdf(id: string): Promise<{ buffer: Buffer; filename: string }> {
   const header = db.prepare(
     `SELECT wo.property_id AS propertyId, p.name AS propertyName, p.code AS propertyCode,
@@ -17,10 +25,11 @@ export async function renderWorkOrderPdf(id: string): Promise<{ buffer: Buffer; 
   const chunks: Buffer[] = [];
   document.on("data", (chunk: Buffer) => chunks.push(chunk));
   const completed = new Promise<Buffer>((resolve, reject) => { document.on("end", () => resolve(Buffer.concat(chunks))); document.on("error", reject); });
-  document.fillColor("#285746").font("Helvetica-Bold").fontSize(10).text("PROPERTY SUITE", { characterSpacing: 1.4 });
-  document.fillColor("#20332b").fontSize(22).text(`Work Order · Apartment ${item.unitNumber}`, { characterSpacing: 0 });
-  document.moveDown(.25).fillColor("#66736d").font("Helvetica").fontSize(9).text(`${header.propertyName} · ${header.propertyAddress}`);
-  document.moveDown(1).strokeColor("#dce3df").moveTo(46, document.y).lineTo(566, document.y).stroke();
+  document.rect(0, 0, document.page.width, 9).fill(PDF_COLORS.evergreen);
+  document.fillColor(PDF_COLORS.brass).font("Helvetica-Bold").fontSize(10).text("PROPERTY SUITE", { characterSpacing: 1.4 });
+  document.fillColor(PDF_COLORS.ink).fontSize(22).text(`Work Order · Apartment ${item.unitNumber}`, { characterSpacing: 0 });
+  document.moveDown(.25).fillColor(PDF_COLORS.muted).font("Helvetica").fontSize(9).text(`${header.propertyName} · ${header.propertyAddress}`);
+  document.moveDown(1).strokeColor(PDF_COLORS.line).moveTo(46, document.y).lineTo(566, document.y).stroke();
   section(document, "Request", [
     ["Status", item.status.replaceAll("_", " ")], ["Priority", item.priority === "normal" ? "Medium" : item.priority],
     ["Category", item.category], ["Areas", item.areas.join(", ") || "Not recorded"], ["Reported by", item.requestedBy ?? "Not recorded"],
@@ -37,24 +46,24 @@ export async function renderWorkOrderPdf(id: string): Promise<{ buffer: Buffer; 
   if (item.residentResponsible) section(document, "Resident charges", [["Reason", item.residentChargeReason ?? "Not recorded"], ["Estimate", money(item.residentChargeEstimate)], ["Final", money(item.residentChargeFinal)], ["Status", item.residentChargeStatus ?? "Pending"]]);
   section(document, "Completion", [["Completed by", item.completedByName ?? "Not completed"], ["Completed", item.status === "complete" ? item.updatedAt : "Not completed"], ["Work performed", item.workPerformed ?? "Not recorded"], ["Completion notes", item.completionNotes ?? "Not recorded"], ["Resident notified", item.residentNotified ? `Yes${item.notificationMethod ? ` · ${item.notificationMethod}` : ""}` : "No"], ["Follow-up", item.followUpRequired ? item.followUpDate ?? "Required, date not set" : "Not required"]]);
   section(document, "Attachments", attachments.length ? attachments.map((file) => [file.name, `${file.mimeType} · ${new Date(file.createdAt).toLocaleDateString()}`]) : [["Files", "No photos or documents attached"]]);
-  document.moveDown(1).fillColor("#8a948f").fontSize(7.5).text(`Generated ${new Date().toLocaleString()} · Work order ${item.id}`, { align: "center" });
+  document.moveDown(1).fillColor(PDF_COLORS.muted).fontSize(7.5).text(`Generated ${new Date().toLocaleString()} · Work order ${item.id}`, { align: "center" });
   document.end();
   return { buffer: await completed, filename: `work-order-${header.propertyCode.toLowerCase()}-unit-${item.unitNumber}.pdf` };
 }
 
 function section(document: PDFKit.PDFDocument, title: string, rows: string[][]) {
   if (document.y > 670) document.addPage();
-  document.moveDown(1.1).fillColor("#285746").font("Helvetica-Bold").fontSize(11).text(title);
+  document.moveDown(1.1).fillColor(PDF_COLORS.evergreen).font("Helvetica-Bold").fontSize(11).text(title);
   document.moveDown(.35);
   for (const [label, value] of rows) {
-    document.fillColor("#66736d").font("Helvetica-Bold").fontSize(8).text(label ?? "", { continued: true, width: 115 });
-    document.fillColor("#20332b").font("Helvetica").text(value || "—", { width: 395 });
+    document.fillColor(PDF_COLORS.muted).font("Helvetica-Bold").fontSize(8).text(label ?? "", { continued: true, width: 115 });
+    document.fillColor(PDF_COLORS.ink).font("Helvetica").text(value || "—", { width: 395 });
     document.moveDown(.25);
   }
 }
 
 function paragraph(document: PDFKit.PDFDocument, title: string, body: string) {
-  document.moveDown(.7).fillColor("#20332b").font("Helvetica-Bold").fontSize(13).text(title);
-  document.moveDown(.25).fillColor("#4f5f57").font("Helvetica").fontSize(9).text(body, { lineGap: 2 });
+  document.moveDown(.7).fillColor(PDF_COLORS.ink).font("Helvetica-Bold").fontSize(13).text(title);
+  document.moveDown(.25).fillColor(PDF_COLORS.muted).font("Helvetica").fontSize(9).text(body, { lineGap: 2 });
 }
 const money = (value: number | null) => value === null ? "Not recorded" : `$${value.toFixed(2)}`;

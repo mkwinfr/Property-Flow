@@ -60,10 +60,10 @@ try {
       const versionId = randomUUID();
       const items = punchItems.filter((item) => item.templateKey === source.templateKey);
       if (!items.length) throw new Error(`Source template ${source.name} has no punch items`);
-      insertTemplate.run(templateId, property.id, source.name, source.description ?? "Imported Property Flow scope", source.beds, source.baths, timestamp, timestamp);
+      insertTemplate.run(templateId, property.id, source.name, source.description ?? "Imported legacy scope template", source.beds, source.baths, timestamp, timestamp);
       insertVersion.run(versionId, templateId, timestamp);
       items.forEach((item, index) => insertItem.run(
-        randomUUID(), versionId, `property-flow-${source.templateKey}-${item.id}`,
+        randomUUID(), versionId, `legacy-${source.templateKey}-${item.id}`,
         item.area, item.category, item.title, index,
       ));
       imported.push({ name: source.name, templateKey: source.templateKey, itemCount: items.length });
@@ -75,4 +75,3 @@ try {
   await prisma.$disconnect();
   target.close();
 }
-

@@ -21,6 +21,9 @@ const permissionCatalog = [
   ["workorders:manage", "Manage work orders", "Create and update maintenance work orders"],
   ["pool:view", "View pool logs", "View pool compliance records"],
   ["pool:manage", "Manage pool logs", "Record and correct pool readings"],
+  ["financial:view", "View financials", "View costs, invoices, resident charges, and vendor billing"],
+  ["financial:edit", "Edit financials", "Update vendor billing, resident charges, and purchasing approvals"],
+  ["purchasing:manage", "Manage purchasing", "Request, approve, and receive inventory reorders"],
 ] as const;
 
 const managerPermissions = permissionCatalog.map(([key]) => key);

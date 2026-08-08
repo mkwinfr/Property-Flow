@@ -22,7 +22,7 @@ function cleanupExpiredSessions(): void {
   lastSessionCleanupAt = now;
 }
 
-function readCookie(req: Request, name: string): string | undefined {
+export function readCookie(req: Request, name: string): string | undefined {
   const header = req.headers.cookie;
   if (!header) return undefined;
   for (const part of header.split(";")) {

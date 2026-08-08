@@ -12,6 +12,13 @@ import attachmentRoutes from "./attachments/routes.js";
 import adminRoutes from "./admin/routes.js";
 import searchRoutes from "./search/routes.js";
 import assistantRoutes from "./assistant/routes.js";
+import platformRoutes from "./platform/routes.js";
+import residentsRoutes from "./residents/routes.js";
+import leasingRoutes from "./leasing/routes.js";
+import communicationsRoutes from "./communications/routes.js";
+import financialRoutes from "./financial/routes.js";
+import platformAdminRoutes from "./platform-admin/routes.js";
+import portalRoutes from "./portal/routes.js";
 import { AppError } from "./lib/errors.js";
 
 export function createApp() {
@@ -23,6 +30,9 @@ export function createApp() {
 
   app.get("/api/health", (_req, res) => res.json({ status: "ok", service: "property-suite" }));
   app.use("/api/auth", authRoutes);
+  // Portal routes must register before staff routers that call router.use(authenticate),
+  // otherwise residents cannot sign in unless they also have a staff session cookie.
+  app.use("/api", portalRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api", portfolioRoutes);
   app.use("/api", turnRoutes);
@@ -31,6 +41,12 @@ export function createApp() {
   app.use("/api", attachmentRoutes);
   app.use("/api", searchRoutes);
   app.use("/api", assistantRoutes);
+  app.use("/api", platformRoutes);
+  app.use("/api", residentsRoutes);
+  app.use("/api", leasingRoutes);
+  app.use("/api", communicationsRoutes);
+  app.use("/api", financialRoutes);
+  app.use("/api", platformAdminRoutes);
 
   app.use("/api", (_req, res) => res.status(404).json({ error: { code: "NOT_FOUND", message: "Route not found" } }));
 

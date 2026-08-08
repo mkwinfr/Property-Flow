@@ -7,6 +7,7 @@ import { EmptyState } from "../components/EmptyState";
 import { ProgressBar } from "../components/ProgressBar";
 import { PriorityBadge } from "../components/StatusBadge";
 import { TurnDetailPanel } from "../components/TurnDetailPanel";
+import { SavedViewsBar } from "../components/SavedViewsBar";
 import { useAuth } from "../contexts/AuthContext";
 import { useProperty } from "../contexts/PropertyContext";
 import { api } from "../lib/api";
@@ -46,8 +47,9 @@ export function TurnsPage() {
   }, [query.data, search, showCompleted, attentionOnly, onlyMine, user?.id]);
 
   return <div className="page-stack page-stack--board">
-    <section className="page-heading"><div><p className="eyebrow">{property?.name}</p><h1>Make-ready board</h1><p>Move units through a consistent, accountable readiness workflow.</p></div>{can("turns:create") && <button className="button button--primary" onClick={() => setCreateOpen(true)}><Plus size={17} />Create turn</button>}</section>
+    <section className="page-heading"><div><p className="eyebrow">{property?.name}</p><h1>Make Ready Board</h1><p>Move units through a consistent, accountable readiness workflow.</p></div>{can("turns:create") && <button className="button button--primary" onClick={() => setCreateOpen(true)}><Plus size={17} />Create turn</button>}</section>
     <section className="board-toolbar"><label className="search-field"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Find a unit, floor plan, or technician" /></label><button className={`filter-button ${attentionOnly ? "filter-button--active" : ""}`} onClick={() => setAttentionOnly((value) => !value)}><AlertTriangle size={16} />Attention</button><button className={`filter-button ${onlyMine ? "filter-button--active" : ""}`} onClick={() => setOnlyMine((value) => !value)}><UserRoundCheck size={16} />My assignments</button><button className={`filter-button ${showCompleted ? "filter-button--active" : ""}`} onClick={() => setShowCompleted((value) => !value)}><Filter size={16} />Completed</button><span className="board-count">{visibleTurns.filter((turn) => turn.status !== "complete").length} active turns</span></section>
+    <SavedViewsBar propertyId={propertyId} module="turns" filters={{ showCompleted, attentionOnly, onlyMine, search }} onApply={(saved) => { setShowCompleted(Boolean(saved.showCompleted)); setAttentionOnly(Boolean(saved.attentionOnly)); setOnlyMine(Boolean(saved.onlyMine)); setSearch(String(saved.search ?? "")); }} />
     <section className="kanban-board">
       {columns.filter((column) => showCompleted || column.status !== "complete").map((column) => {
         const turns = visibleTurns.filter((turn) => turn.status === column.status);

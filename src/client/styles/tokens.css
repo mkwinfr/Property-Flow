@@ -1,0 +1,32 @@
+:root {
+  --brand-evergreen-950: #10271f;
+  --brand-evergreen-900: #173e31;
+  --brand-evergreen-800: #245443;
+  --brand-evergreen-700: #315f4d;
+  --brand-evergreen-500: #6f9987;
+  --brand-sage: #dfe9df;
+  --brand-sage-soft: #edf3ec;
+  --brand-ivory: #f7f3eb;
+  --brand-cream: #fffdf8;
+  --brand-brass: #b58b48;
+  --brand-brass-strong: #977038;
+  --brand-brass-soft: #f1e6d2;
+  --brand-ink: #18342b;
+  --brand-ink-soft: #52675f;
+  --brand-border: rgba(39, 70, 58, .13);
+  --brand-focus: rgba(181, 139, 72, .36);
+  --brand-shadow-soft: 0 7px 22px rgba(33, 55, 45, .06);
+  --brand-shadow: 0 18px 50px rgba(33, 55, 45, .09);
+  --brand-shadow-hover: 0 22px 55px rgba(26, 54, 43, .14);
+  --brand-success: #2d7149;
+  --brand-success-soft: #e9f6ed;
+  --brand-warning: #94681f;
+  --brand-warning-soft: #fff7e7;
+  --brand-danger: #994b43;
+  --brand-danger-soft: #faeeee;
+  --brand-info: #3e6d91;
+  --brand-info-soft: #edf5fb;
+  --font-body: "Segoe UI Variable Text", "Aptos", "Segoe UI", system-ui, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+}

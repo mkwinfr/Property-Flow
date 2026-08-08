@@ -4,7 +4,7 @@ import { FileText, Image, Paperclip, Upload, X } from "lucide-react";
 import { api } from "../lib/api";
 
 interface Attachment { id: string; originalName: string; mimeType: string; sizeBytes: number; caption: string | null; createdAt: string }
-type EntityType = "turn" | "turn_item" | "work_order" | "inspection" | "inspection_item" | "appliance";
+type EntityType = "turn" | "turn_item" | "work_order" | "inspection" | "inspection_item" | "appliance" | "lease" | "household";
 
 export function AttachmentPanel({ propertyId, entityType, entityId, canUpload, onChanged }: { propertyId: string; entityType: EntityType; entityId: string; canUpload: boolean; onChanged?: () => void | Promise<void> }) {
   const input = useRef<HTMLInputElement>(null); const queryClient = useQueryClient(); const [error, setError] = useState(""); const [preview, setPreview] = useState<Attachment | null>(null);

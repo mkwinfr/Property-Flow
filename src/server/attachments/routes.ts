@@ -7,35 +7,37 @@ import { authenticate, userCan, type AuthenticatedRequest } from "../auth/sessio
 import { config } from "../config.js";
 import { db } from "../db/index.js";
 import { badRequest, forbidden, notFound } from "../lib/errors.js";
+import { attachmentMimeExtensions, type AttachmentEntityType } from "./shared.js";
 
 const router = Router();
 router.use(authenticate);
 
-const entityTypes = ["turn", "turn_item", "work_order", "inspection", "inspection_item", "appliance"] as const;
-const mimeExtensions: Record<string, string> = {
-  "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "application/pdf": ".pdf",
-};
+const entityTypes = ["turn", "turn_item", "work_order", "inspection", "inspection_item", "appliance", "lease", "household"] as const;
 
-function entityPermission(entityType: typeof entityTypes[number], write: boolean): string {
+function entityPermission(entityType: AttachmentEntityType, write: boolean): string {
   if (entityType === "turn") return "turns:review";
   if (entityType === "turn_item") return write ? "turns:update" : "turns:view";
   if (entityType === "work_order") return write ? "workorders:manage" : "workorders:view";
+  if (entityType === "lease") return write ? "leases:manage" : "leases:view";
+  if (entityType === "household") return write ? "residents:manage" : "residents:view";
   if (entityType.startsWith("inspection")) return write ? "inspections:manage" : "inspections:view";
   return write ? "units:update" : "units:view";
 }
 
-function validateAccess(req: AuthenticatedRequest, propertyId: string, entityType: typeof entityTypes[number], write: boolean) {
+function validateAccess(req: AuthenticatedRequest, propertyId: string, entityType: AttachmentEntityType, write: boolean) {
   if (!userCan(req.auth!.id, entityPermission(entityType, write), propertyId)) throw forbidden();
 }
 
-function entityProperty(entityType: typeof entityTypes[number], entityId: string): string {
-  const queries: Record<typeof entityTypes[number], string> = {
+function entityProperty(entityType: AttachmentEntityType, entityId: string): string {
+  const queries: Record<AttachmentEntityType, string> = {
     turn: "SELECT property_id AS propertyId FROM turns WHERE id = ?",
     turn_item: "SELECT t.property_id AS propertyId FROM turn_items ti JOIN turns t ON t.id = ti.turn_id WHERE ti.id = ?",
     work_order: "SELECT property_id AS propertyId FROM work_orders WHERE id = ?",
     inspection: "SELECT property_id AS propertyId FROM move_out_inspections WHERE id = ?",
     inspection_item: "SELECT mi.property_id AS propertyId FROM inspection_items ii JOIN move_out_inspections mi ON mi.id = ii.inspection_id WHERE ii.id = ?",
     appliance: "SELECT u.property_id AS propertyId FROM appliances a JOIN units u ON u.id = a.unit_id WHERE a.id = ?",
+    lease: "SELECT property_id AS propertyId FROM leases WHERE id = ?",
+    household: "SELECT property_id AS propertyId FROM households WHERE id = ?",
   };
   const row = db.prepare(queries[entityType]).get(entityId) as { propertyId: string } | undefined;
   if (!row) throw notFound("Attachment target not found");
@@ -44,7 +46,7 @@ function entityProperty(entityType: typeof entityTypes[number], entityId: string
 
 const uploadSchema = z.object({
   propertyId: z.string().min(1), entityType: z.enum(entityTypes), entityId: z.string().min(1),
-  originalName: z.string().trim().min(1).max(240), mimeType: z.string().refine((value) => value in mimeExtensions, "Unsupported file type"),
+  originalName: z.string().trim().min(1).max(240), mimeType: z.string().refine((value) => value in attachmentMimeExtensions, "Unsupported file type"),
   dataBase64: z.string().min(1), caption: z.string().trim().max(500).nullable().optional(),
 });
 
@@ -58,7 +60,7 @@ router.post("/attachments", (req: AuthenticatedRequest, res, next) => {
     if (bytes.length > 5 * 1024 * 1024) throw badRequest("Attachments are limited to 5 MB");
     fs.mkdirSync(config.attachmentsPath, { recursive: true });
     const id = randomUUID();
-    const storedName = `${id}${mimeExtensions[input.mimeType]}`;
+    const storedName = `${id}${attachmentMimeExtensions[input.mimeType]}`;
     fs.writeFileSync(path.join(config.attachmentsPath, storedName), bytes, { flag: "wx" });
     db.prepare(
       `INSERT INTO attachments
@@ -88,7 +90,7 @@ router.get("/attachments", (req: AuthenticatedRequest, res, next) => {
 router.get("/attachments/:id/content", (req: AuthenticatedRequest, res, next) => {
   try {
     const row = db.prepare("SELECT * FROM attachments WHERE id = ?").get(String(req.params.id)) as
-      | { property_id: string; entity_type: typeof entityTypes[number]; stored_name: string; mime_type: string; original_name: string }
+      | { property_id: string; entity_type: AttachmentEntityType; stored_name: string; mime_type: string; original_name: string }
       | undefined;
     if (!row) throw notFound("Attachment not found");
     validateAccess(req, row.property_id, row.entity_type, false);

@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { ArrowRight, Building2, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { api } from "../lib/api";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -8,6 +9,13 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [ssoEnabled, setSsoEnabled] = useState(false);
+
+  useEffect(() => {
+    void api<{ sso: { enabled: boolean } }>("/api/auth/sso/config")
+      .then((result) => setSsoEnabled(result.sso.enabled))
+      .catch(() => setSsoEnabled(false));
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -23,7 +31,7 @@ export function LoginPage() {
   };
 
   return (
-    <main className="login-page">
+    <main className="login-page staff-login-page">
       <section className="login-story">
         <div className="login-brand"><span className="brand__mark">PS</span><strong>Property Suite</strong></div>
         <div className="login-story__content">
@@ -47,6 +55,7 @@ export function LoginPage() {
           <button className="button button--primary button--large" disabled={submitting}>
             {submitting ? "Signing in…" : "Sign in"}<ArrowRight size={18} />
           </button>
+          {ssoEnabled && <a className="button button--secondary button--large button--full" href="/api/auth/sso/login">Continue with SSO</a>}
           <p className="login-security-note"><ShieldCheck size={16} /> Access is protected by Cloudflare Access and Property Suite authentication.</p>
         </form>
       </section>

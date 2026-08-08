@@ -6,14 +6,14 @@ import { conflict, notFound } from "../lib/errors.js";
 import { getTurn } from "./service.js";
 
 const COLORS = {
-  ink: "#20332b",
-  green: "#285746",
-  greenSoft: "#e9f1ed",
-  gold: "#b98430",
-  coral: "#aa4f3f",
-  muted: "#66736d",
-  line: "#dce3df",
-  paper: "#f6f8f7",
+  ink: "#18342b",
+  green: "#173e31",
+  greenSoft: "#edf3ec",
+  gold: "#b58b48",
+  coral: "#994b43",
+  muted: "#52675f",
+  line: "#d9e1da",
+  paper: "#f7f3eb",
   white: "#ffffff",
 };
 

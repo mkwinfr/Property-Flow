@@ -27,8 +27,11 @@ npm run build
 
 ## Documentation
 
+- [UI theme guide](Reference%20Information/UI_THEME_GUIDE.md)
 - [Audit findings](docs/AUDIT.md)
 - [Architecture](docs/ARCHITECTURE.md)
-- [Delivery roadmap](docs/ROADMAP.md)
+- [Product roadmap](docs/PRODUCT_ROADMAP.md)
+- [Local assistant (Ollama)](docs/OLLAMA.md)
+- [Delivery history](docs/ROADMAP.md)
 - [Legacy data migration](docs/DATA_MIGRATION.md)
 - [Launcher and Cloudflare follow-up](docs/DEPLOYMENT_FOLLOW_UP.md)

@@ -715,4 +715,427 @@ export const migrations = [
       CREATE INDEX idx_work_order_details_deleted ON work_order_details(deleted_at);
     `,
   },
+  {
+    version: 14,
+    name: "financial_permissions",
+    sql: `
+      INSERT OR IGNORE INTO permissions (key, label, description)
+      VALUES
+        ('financial:view', 'View financials', 'View costs, invoices, resident charges, and vendor billing'),
+        ('financial:edit', 'Edit financials', 'Update vendor billing, resident charges, and purchasing approvals'),
+        ('purchasing:manage', 'Manage purchasing', 'Request, approve, and receive inventory reorders');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', key FROM permissions
+      WHERE key IN ('financial:view', 'financial:edit', 'purchasing:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+    `,
+  },
+  {
+    version: 15,
+    name: "phase_1_1_operational_core",
+    sql: `
+      CREATE TABLE IF NOT EXISTS saved_views (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        module TEXT NOT NULL CHECK (module IN ('work_orders', 'turns', 'inspections', 'units')),
+        name TEXT NOT NULL,
+        filters_json TEXT NOT NULL DEFAULT '{}',
+        sort_json TEXT NOT NULL DEFAULT '{}',
+        is_default INTEGER NOT NULL DEFAULT 0 CHECK (is_default IN (0, 1)),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_saved_views_user ON saved_views(user_id, property_id, module);
+
+      CREATE TABLE IF NOT EXISTS recurring_jobs (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        unit_id TEXT REFERENCES units(id) ON DELETE SET NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL,
+        frequency TEXT NOT NULL CHECK (frequency IN ('weekly', 'biweekly', 'monthly', 'quarterly', 'yearly')),
+        next_run_date TEXT NOT NULL,
+        priority TEXT NOT NULL DEFAULT 'normal' CHECK (priority IN ('low', 'normal', 'high', 'emergency')),
+        assigned_to_user_id TEXT REFERENCES users(id),
+        status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'archived')),
+        created_by_user_id TEXT NOT NULL REFERENCES users(id),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_recurring_jobs_property ON recurring_jobs(property_id, status, next_run_date);
+
+      CREATE TABLE IF NOT EXISTS recurring_job_runs (
+        id TEXT PRIMARY KEY,
+        recurring_job_id TEXT NOT NULL REFERENCES recurring_jobs(id) ON DELETE CASCADE,
+        work_order_id TEXT REFERENCES work_orders(id) ON DELETE SET NULL,
+        scheduled_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('pending', 'generated', 'skipped')),
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS notification_preferences (
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        notification_type TEXT NOT NULL,
+        channel TEXT NOT NULL CHECK (channel IN ('in_app', 'email', 'sms')),
+        enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1)),
+        PRIMARY KEY (user_id, notification_type, channel)
+      );
+
+      INSERT OR IGNORE INTO permissions (key, label, description) VALUES
+        ('audit:view', 'View audit log', 'Browse property activity and audit history');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', 'audit:view' WHERE EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+    `,
+  },
+  {
+    version: 16,
+    name: "phase_1_2_residents_leases",
+    sql: `
+      CREATE TABLE IF NOT EXISTS residents (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        email TEXT,
+        phone TEXT,
+        preferred_contact TEXT CHECK (preferred_contact IS NULL OR preferred_contact IN ('email', 'phone', 'sms')),
+        status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'former', 'applicant')),
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_residents_property ON residents(property_id, last_name, first_name);
+
+      CREATE TABLE IF NOT EXISTS households (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        primary_resident_id TEXT REFERENCES residents(id) ON DELETE SET NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS household_members (
+        household_id TEXT NOT NULL REFERENCES households(id) ON DELETE CASCADE,
+        resident_id TEXT NOT NULL REFERENCES residents(id) ON DELETE CASCADE,
+        relationship TEXT NOT NULL DEFAULT 'member',
+        is_leaseholder INTEGER NOT NULL DEFAULT 0 CHECK (is_leaseholder IN (0, 1)),
+        PRIMARY KEY (household_id, resident_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS leases (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        unit_id TEXT NOT NULL REFERENCES units(id),
+        household_id TEXT REFERENCES households(id) ON DELETE SET NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        monthly_rent REAL NOT NULL CHECK (monthly_rent >= 0),
+        status TEXT NOT NULL CHECK (status IN ('draft', 'active', 'notice', 'ended', 'cancelled')),
+        move_in_date TEXT,
+        move_out_date TEXT,
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_leases_property ON leases(property_id, status);
+      CREATE INDEX IF NOT EXISTS idx_leases_unit ON leases(unit_id, status);
+
+      INSERT OR IGNORE INTO permissions (key, label, description) VALUES
+        ('residents:view', 'View residents', 'View resident and household records'),
+        ('residents:manage', 'Manage residents', 'Create and update resident records'),
+        ('leases:view', 'View leases', 'View lease records and occupancy'),
+        ('leases:manage', 'Manage leases', 'Create and update lease records');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', key FROM permissions
+      WHERE key IN ('residents:view', 'residents:manage', 'leases:view', 'leases:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-leasing', key FROM permissions
+      WHERE key IN ('residents:view', 'residents:manage', 'leases:view', 'leases:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-leasing');
+    `,
+  },
+  {
+    version: 17,
+    name: "phase_1_3_leasing_crm",
+    sql: `
+      CREATE TABLE IF NOT EXISTS prospects (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        email TEXT,
+        phone TEXT,
+        source TEXT,
+        stage TEXT NOT NULL DEFAULT 'inquiry' CHECK (stage IN ('inquiry', 'contacted', 'tour_scheduled', 'tour_completed', 'application', 'approved', 'leased', 'lost')),
+        desired_move_in TEXT,
+        budget_max REAL,
+        notes TEXT,
+        assigned_to_user_id TEXT REFERENCES users(id),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_prospects_property ON prospects(property_id, stage);
+
+      CREATE TABLE IF NOT EXISTS prospect_activities (
+        id TEXT PRIMARY KEY,
+        prospect_id TEXT NOT NULL REFERENCES prospects(id) ON DELETE CASCADE,
+        activity_type TEXT NOT NULL CHECK (activity_type IN ('call', 'email', 'note', 'tour', 'application')),
+        notes TEXT,
+        scheduled_at TEXT,
+        completed_at TEXT,
+        actor_user_id TEXT REFERENCES users(id),
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS tours (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        prospect_id TEXT NOT NULL REFERENCES prospects(id) ON DELETE CASCADE,
+        unit_id TEXT REFERENCES units(id) ON DELETE SET NULL,
+        scheduled_at TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'no_show', 'cancelled')),
+        notes TEXT,
+        guide_user_id TEXT REFERENCES users(id),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS applications (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        prospect_id TEXT NOT NULL REFERENCES prospects(id) ON DELETE CASCADE,
+        unit_id TEXT REFERENCES units(id) ON DELETE SET NULL,
+        status TEXT NOT NULL DEFAULT 'submitted' CHECK (status IN ('submitted', 'screening', 'approved', 'denied', 'withdrawn', 'leased')),
+        submitted_at TEXT NOT NULL,
+        decision_at TEXT,
+        decision_notes TEXT,
+        monthly_income REAL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      INSERT OR IGNORE INTO permissions (key, label, description) VALUES
+        ('leasing:view', 'View leasing pipeline', 'View prospects, tours, and applications'),
+        ('leasing:manage', 'Manage leasing pipeline', 'Update prospects, schedule tours, and process applications');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', key FROM permissions
+      WHERE key IN ('leasing:view', 'leasing:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-leasing', key FROM permissions
+      WHERE key IN ('leasing:view', 'leasing:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-leasing');
+    `,
+  },
+  {
+    version: 18,
+    name: "phase_1_4_communications",
+    sql: `
+      CREATE TABLE IF NOT EXISTS message_templates (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+        subject TEXT,
+        body TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS message_campaigns (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        template_id TEXT REFERENCES message_templates(id) ON DELETE SET NULL,
+        audience_type TEXT NOT NULL CHECK (audience_type IN ('all_residents', 'active_leases', 'prospects', 'custom')),
+        audience_filter_json TEXT NOT NULL DEFAULT '{}',
+        status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'sending', 'sent', 'cancelled')),
+        scheduled_at TEXT,
+        sent_at TEXT,
+        created_by_user_id TEXT NOT NULL REFERENCES users(id),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS message_deliveries (
+        id TEXT PRIMARY KEY,
+        campaign_id TEXT NOT NULL REFERENCES message_campaigns(id) ON DELETE CASCADE,
+        recipient_type TEXT NOT NULL CHECK (recipient_type IN ('resident', 'prospect', 'user')),
+        recipient_id TEXT NOT NULL,
+        channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+        status TEXT NOT NULL CHECK (status IN ('pending', 'sent', 'failed', 'skipped')),
+        sent_at TEXT,
+        error_message TEXT,
+        created_at TEXT NOT NULL
+      );
+
+      INSERT OR IGNORE INTO permissions (key, label, description) VALUES
+        ('communications:view', 'View communications', 'View message templates, campaigns, and delivery logs'),
+        ('communications:manage', 'Manage communications', 'Create templates, campaigns, and send messages');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', key FROM permissions
+      WHERE key IN ('communications:view', 'communications:manage')
+        AND EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-leasing', 'communications:view'
+      WHERE EXISTS (SELECT 1 FROM roles WHERE id = 'role-leasing');
+    `,
+  },
+  {
+    version: 19,
+    name: "phase_1_5_financial",
+    sql: `
+      CREATE TABLE IF NOT EXISTS resident_charges (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        resident_id TEXT REFERENCES residents(id) ON DELETE SET NULL,
+        lease_id TEXT REFERENCES leases(id) ON DELETE SET NULL,
+        unit_id TEXT REFERENCES units(id) ON DELETE SET NULL,
+        description TEXT NOT NULL,
+        amount REAL NOT NULL CHECK (amount >= 0),
+        charge_type TEXT NOT NULL CHECK (charge_type IN ('rent', 'fee', 'damage', 'utility', 'other')),
+        status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'posted', 'paid', 'waived', 'void')),
+        due_date TEXT,
+        posted_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_resident_charges_property ON resident_charges(property_id, status, due_date);
+
+      CREATE TABLE IF NOT EXISTS accounting_exports (
+        id TEXT PRIMARY KEY,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        export_type TEXT NOT NULL CHECK (export_type IN ('rent_roll', 'charges', 'vendor_costs', 'full_period')),
+        period_start TEXT NOT NULL,
+        period_end TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'ready', 'failed')),
+        summary_json TEXT NOT NULL DEFAULT '{}',
+        row_count INTEGER NOT NULL DEFAULT 0,
+        created_by_user_id TEXT NOT NULL REFERENCES users(id),
+        created_at TEXT NOT NULL
+      );
+    `,
+  },
+  {
+    version: 20,
+    name: "phase_1_6_scale",
+    sql: `
+      CREATE TABLE IF NOT EXISTS organizations (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        slug TEXT NOT NULL UNIQUE,
+        status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'suspended')),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS property_modules (
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        module_key TEXT NOT NULL CHECK (module_key IN (
+          'make_ready', 'operations', 'pool', 'residents', 'leasing',
+          'communications', 'financial', 'portal'
+        )),
+        enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1)),
+        PRIMARY KEY (property_id, module_key)
+      );
+
+      INSERT OR IGNORE INTO permissions (key, label, description) VALUES
+        ('platform:manage', 'Manage platform', 'Manage users, organizations, and platform settings');
+
+      INSERT OR IGNORE INTO role_permissions (role_id, permission_key)
+      SELECT 'role-manager', 'platform:manage'
+      WHERE EXISTS (SELECT 1 FROM roles WHERE id = 'role-manager');
+    `,
+  },
+  {
+    version: 21,
+    name: "phase_2_resident_portal",
+    sql: `
+      CREATE TABLE IF NOT EXISTS resident_accounts (
+        id TEXT PRIMARY KEY,
+        resident_id TEXT NOT NULL UNIQUE REFERENCES residents(id) ON DELETE CASCADE,
+        email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        password_hash TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'disabled')),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS resident_sessions (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL REFERENCES resident_accounts(id) ON DELETE CASCADE,
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_resident_sessions_account ON resident_sessions(account_id);
+    `,
+  },
+  {
+    version: 22,
+    name: "phase_3_admin_ops",
+    sql: `
+      CREATE TABLE IF NOT EXISTS platform_audit_events (
+        id TEXT PRIMARY KEY,
+        actor_user_id TEXT REFERENCES users(id),
+        action TEXT NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT,
+        details_json TEXT NOT NULL DEFAULT '{}',
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_platform_audit_created ON platform_audit_events(created_at DESC);
+    `,
+  },
+  {
+    version: 23,
+    name: "phase_2_household_pets",
+    sql: `
+      CREATE TABLE IF NOT EXISTS household_pets (
+        id TEXT PRIMARY KEY,
+        household_id TEXT NOT NULL REFERENCES households(id) ON DELETE CASCADE,
+        property_id TEXT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        species TEXT NOT NULL,
+        breed TEXT,
+        color TEXT,
+        weight_lbs REAL,
+        is_service_animal INTEGER NOT NULL DEFAULT 0,
+        vaccination_expires TEXT,
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_household_pets_household ON household_pets(household_id);
+    `,
+  },
+  {
+    version: 24,
+    name: "work_order_submission_source",
+    sql: `
+      ALTER TABLE work_orders ADD COLUMN submission_source TEXT NOT NULL DEFAULT 'staff'
+        CHECK (submission_source IN ('staff', 'portal', 'recurring'));
+      UPDATE work_orders SET submission_source = 'portal' WHERE requested_by = 'Resident portal';
+      UPDATE work_orders SET submission_source = 'recurring' WHERE requested_by = 'Recurring maintenance';
+    `,
+  },
+  {
+    version: 25,
+    name: "phase_2_portal_attachments_messages",
+    sql: `
+      ALTER TABLE attachments ADD COLUMN uploaded_by_resident_id TEXT REFERENCES residents(id) ON DELETE SET NULL;
+      ALTER TABLE message_deliveries ADD COLUMN read_at TEXT;
+      CREATE INDEX IF NOT EXISTS idx_message_deliveries_resident
+        ON message_deliveries(recipient_type, recipient_id, sent_at DESC);
+    `,
+  },
 ] as const;

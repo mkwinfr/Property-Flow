@@ -13,10 +13,13 @@ import {
   clearSession,
   createSession,
   loadSessionUser,
+  readCookie,
   setSessionCookie,
   type AuthenticatedRequest,
 } from "./session.js";
 import { LoginThrottle } from "./loginThrottle.js";
+import { config } from "../config.js";
+import { buildSsoLoginRedirect, hashSsoState, resolveSsoUser, ssoStateCookieName } from "./sso.js";
 
 const router = Router();
 const loginSchema = z.object({ email: z.email(), password: z.string().min(1).max(200) });
@@ -92,6 +95,53 @@ router.post("/password", authenticate, (req: AuthenticatedRequest, res, next) =>
 
 router.get("/session", authenticate, (req: AuthenticatedRequest, res) => {
   res.json({ user: req.auth });
+});
+
+router.get("/sso/config", (_req, res) => {
+  res.json({
+    sso: {
+      enabled: config.ssoEnabled && Boolean(config.ssoIssuer && config.ssoClientId && config.ssoRedirectUri),
+      issuer: config.ssoIssuer || null,
+      clientId: config.ssoClientId || null,
+      loginPath: "/api/auth/sso/login",
+    },
+  });
+});
+
+router.get("/sso/login", (_req, res, next) => {
+  try {
+    const { url, state } = buildSsoLoginRedirect();
+    res.cookie(ssoStateCookieName(), hashSsoState(state), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: config.nodeEnv === "production",
+      maxAge: 10 * 60 * 1000,
+      path: "/api/auth/sso",
+    });
+    res.redirect(url);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/sso/callback", async (req, res, next) => {
+  try {
+    const code = String(req.query.code ?? "");
+    const state = String(req.query.state ?? "");
+    const expected = readCookie(req, ssoStateCookieName());
+    res.clearCookie(ssoStateCookieName(), { path: "/api/auth/sso" });
+    if (!code || !state || !expected || hashSsoState(state) !== expected) {
+      throw unauthorized("SSO sign-in could not be verified");
+    }
+    const profile = await resolveSsoUser(code);
+    const user = db.prepare("SELECT id, status FROM users WHERE email = ? COLLATE NOCASE").get(profile.email) as { id: string; status: string } | undefined;
+    if (!user || user.status !== "active") throw unauthorized("No active Property Suite account matches this SSO identity");
+    const session = createSession(user.id);
+    setSessionCookie(res, session.token, session.expiresAt);
+    res.redirect("/");
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/logout", authenticate, (req: AuthenticatedRequest, res) => {

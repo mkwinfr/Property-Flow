@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { PropertySummary } from "../../shared/contracts";
+import type { PropertyModuleKey, PropertyModuleSetting, PropertySummary } from "../../shared/contracts";
 import { api } from "../lib/api";
 
 interface PropertyContextValue {
@@ -9,6 +9,8 @@ interface PropertyContextValue {
   propertyId: string | null;
   setPropertyId: (id: string) => void;
   loading: boolean;
+  modules: PropertyModuleSetting[];
+  isModuleEnabled: (moduleKey: PropertyModuleKey) => boolean;
 }
 
 const PropertyContext = createContext<PropertyContextValue | null>(null);
@@ -30,11 +32,22 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     }
   }, [properties, propertyId]);
 
+  const modulesQuery = useQuery({
+    queryKey: ["property-modules", propertyId],
+    queryFn: () => api<{ modules: PropertyModuleSetting[] }>(`/api/properties/${propertyId}/modules`),
+    enabled: Boolean(propertyId),
+  });
+
   const setPropertyId = (id: string) => {
     window.localStorage.setItem("ps:selected-property", id);
     window.localStorage.removeItem("pf:selected-property");
     setPropertyIdState(id);
   };
+
+  const modules = modulesQuery.data?.modules ?? [];
+  const isModuleEnabled = (moduleKey: PropertyModuleKey) =>
+    modules.find((module) => module.moduleKey === moduleKey)?.enabled ?? true;
+
   const value = useMemo(
     () => ({
       properties,
@@ -42,8 +55,10 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       propertyId,
       setPropertyId,
       loading: query.isLoading,
+      modules,
+      isModuleEnabled,
     }),
-    [properties, propertyId, query.isLoading],
+    [properties, propertyId, query.isLoading, modules],
   );
   return <PropertyContext.Provider value={value}>{children}</PropertyContext.Provider>;
 }

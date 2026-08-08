@@ -2,26 +2,32 @@ import { createContext, useContext, useEffect, useMemo, useState, type MouseEven
 
 interface RouterValue {
   path: string;
+  search: string;
   navigate: (to: string, options?: { replace?: boolean }) => void;
 }
 
 const RouterContext = createContext<RouterValue | null>(null);
 
+function readLocation() {
+  return { path: window.location.pathname, search: window.location.search };
+}
+
 export function RouterProvider({ children }: { children: ReactNode }) {
-  const [path, setPath] = useState(window.location.pathname);
+  const [location, setLocation] = useState(readLocation);
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
+    const onPopState = () => setLocation(readLocation());
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
   const value = useMemo<RouterValue>(() => ({
-    path,
+    path: location.path,
+    search: location.search,
     navigate: (to, options) => {
       window.history[options?.replace ? "replaceState" : "pushState"]({}, "", to);
-      setPath(window.location.pathname);
+      setLocation(readLocation());
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-  }), [path]);
+  }), [location.path, location.search]);
   return <RouterContext.Provider value={value}>{children}</RouterContext.Provider>;
 }
 

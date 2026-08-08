@@ -2,6 +2,8 @@ import { Router } from "express";
 import { z } from "zod";
 import { authenticate, requirePermission, userCan, type AuthenticatedRequest } from "../auth/session.js";
 import { db } from "../db/index.js";
+import { forbidden } from "../lib/errors.js";
+import { propertyIdFromEntity, propertyIdFromUnit } from "../lib/propertyScope.js";
 import { renderWorkOrderPdf } from "./workOrderPdf.js";
 import {
   adjustInventory,
@@ -28,27 +30,26 @@ import {
   updateWorkOrder,
   updateWorkOrderFinancials,
   softDeleteWorkOrder,
+  listRecurringJobs,
+  createRecurringJob,
+  updateRecurringJob,
+  runDueRecurringJobs,
+  exportPoolLogsCsv,
 } from "./service.js";
 
 const router = Router();
 router.use(authenticate);
 
-const propertyFrom = (table: string, id: string): string | null => {
-  const allowed: Record<string, string> = {
-    work_orders: "property_id",
-    inventory_items: "property_id",
-    inventory_reorders: "property_id",
-    move_out_inspections: "property_id",
-  };
-  const column = allowed[table];
-  if (!column) return null;
-  const row = db.prepare(`SELECT ${column} AS property_id FROM ${table} WHERE id = ?`).get(id) as { property_id: string } | undefined;
-  return row?.property_id ?? null;
-};
-const propertyFromUnit = (unitId: string): string | null => {
-  const row = db.prepare("SELECT property_id FROM units WHERE id = ?").get(unitId) as { property_id: string } | undefined;
-  return row?.property_id ?? null;
-};
+const propertyFrom = (table: string, id: string) => propertyIdFromEntity(table, id);
+const propertyFromUnit = (unitId: string) => propertyIdFromUnit(unitId);
+
+function canViewFinancials(userId: string, propertyId: string): boolean {
+  return userCan(userId, "financial:view", propertyId) || userCan(userId, "turns:review", propertyId);
+}
+
+function canEditFinancials(userId: string, propertyId: string): boolean {
+  return userCan(userId, "financial:edit", propertyId) || userCan(userId, "turns:review", propertyId);
+}
 
 router.get("/properties/:propertyId/operations", requirePermission("dashboard:view", (req) => String(req.params.propertyId)),
   (req, res) => res.json({ operations: getOperationsSnapshot(String(req.params.propertyId)) }));
@@ -58,7 +59,7 @@ router.get("/properties/:propertyId/team", requirePermission("workorders:view", 
 router.get("/properties/:propertyId/work-orders", requirePermission("workorders:view", (req) => String(req.params.propertyId)),
   (req: AuthenticatedRequest, res) => {
     const propertyId = String(req.params.propertyId);
-    res.json({ workOrders: listWorkOrders(propertyId, userCan(req.auth!.id, "turns:review", propertyId)) });
+    res.json({ workOrders: listWorkOrders(propertyId, canViewFinancials(req.auth!.id, propertyId)) });
   });
 
 const workOrderCreateSchema = z.object({
@@ -93,9 +94,15 @@ router.patch("/work-orders/:id", requirePermission("workorders:manage", (req) =>
 const workOrderFinancialSchema = z.object({ vendorInvoiceNumber: z.string().trim().max(120).nullable().optional(), vendorCost: z.number().min(0).max(1000000).nullable().optional(),
   residentResponsible: z.boolean().optional(), residentChargeReason: z.string().trim().max(2000).nullable().optional(), residentChargeEstimate: z.number().min(0).max(1000000).nullable().optional(),
   residentChargeFinal: z.number().min(0).max(1000000).nullable().optional(), residentChargeStatus: z.enum(["pending", "approved", "posted", "waived"]).nullable().optional() });
-router.patch("/work-orders/:id/financials", requirePermission("turns:review", (req) => propertyFrom("work_orders", String(req.params.id))),
-  (req: AuthenticatedRequest, res, next) => { try { res.json({ workOrder: updateWorkOrderFinancials(String(req.params.id), req.auth!.id, workOrderFinancialSchema.parse(req.body)) }); } catch (error) { next(error); } });
-router.delete("/work-orders/:id", requirePermission("turns:review", (req) => propertyFrom("work_orders", String(req.params.id))),
+router.patch("/work-orders/:id/financials", requirePermission("workorders:manage", (req) => propertyFrom("work_orders", String(req.params.id))),
+  (req: AuthenticatedRequest, res, next) => {
+    try {
+      const propertyId = propertyFrom("work_orders", String(req.params.id));
+      if (!propertyId || !canEditFinancials(req.auth!.id, propertyId)) throw forbidden();
+      res.json({ workOrder: updateWorkOrderFinancials(String(req.params.id), req.auth!.id, workOrderFinancialSchema.parse(req.body)) });
+    } catch (error) { next(error); }
+  });
+router.delete("/work-orders/:id", requirePermission("workorders:manage", (req) => propertyFrom("work_orders", String(req.params.id))),
   (req: AuthenticatedRequest, res, next) => { try { softDeleteWorkOrder(String(req.params.id), req.auth!.id); res.status(204).end(); } catch (error) { next(error); } });
 router.get("/work-orders/:id/export.pdf", requirePermission("workorders:view", (req) => propertyFrom("work_orders", String(req.params.id))),
   async (req, res, next) => { try { const pdf = await renderWorkOrderPdf(String(req.params.id)); res.type("application/pdf"); res.setHeader("Content-Disposition", `attachment; filename="${pdf.filename}"`); res.send(pdf.buffer); } catch (error) { next(error); } });
@@ -115,15 +122,13 @@ router.get("/properties/:propertyId/inventory", requirePermission("inventory:vie
 const inventoryAdjustSchema = z.object({ quantityDelta: z.number().finite().refine((value) => value !== 0), reason: z.string().trim().min(3).max(300) });
 router.post("/inventory/:id/adjustments", requirePermission("inventory:manage", (req) => propertyFrom("inventory_items", String(req.params.id))),
   (req: AuthenticatedRequest, res, next) => { try { const input = inventoryAdjustSchema.parse(req.body); res.json({ item: adjustInventory(String(req.params.id), req.auth!.id, input.quantityDelta, input.reason) }); } catch (error) { next(error); } });
-router.get("/properties/:propertyId/inventory-reorders", requirePermission("turns:review", (req) => String(req.params.propertyId)),
+router.get("/properties/:propertyId/inventory-reorders", requirePermission("purchasing:manage", (req) => String(req.params.propertyId)),
   (req, res) => res.json({ reorders: listInventoryReorders(String(req.params.propertyId)) }));
 const inventoryReorderCreateSchema = z.object({ inventoryItemId: z.string().min(1), quantity: z.number().finite().positive().max(100000), supplier: z.string().trim().max(160).nullable().optional() });
-router.post("/properties/:propertyId/inventory-reorders", requirePermission("inventory:manage", (req) => String(req.params.propertyId)),
-  requirePermission("turns:review", (req) => String(req.params.propertyId)),
+router.post("/properties/:propertyId/inventory-reorders", requirePermission("purchasing:manage", (req) => String(req.params.propertyId)),
   (req: AuthenticatedRequest, res, next) => { try { const input = inventoryReorderCreateSchema.parse(req.body); res.status(201).json({ reorder: createInventoryReorder(String(req.params.propertyId), input.inventoryItemId, req.auth!.id, input.quantity, input.supplier) }); } catch (error) { next(error); } });
 const inventoryReorderStatusSchema = z.object({ status: z.enum(["ordered", "received", "cancelled"]) });
-router.patch("/inventory-reorders/:id", requirePermission("inventory:manage", (req) => propertyFrom("inventory_reorders", String(req.params.id))),
-  requirePermission("turns:review", (req) => propertyFrom("inventory_reorders", String(req.params.id))),
+router.patch("/inventory-reorders/:id", requirePermission("purchasing:manage", (req) => propertyFrom("inventory_reorders", String(req.params.id))),
   (req: AuthenticatedRequest, res, next) => { try { const input = inventoryReorderStatusSchema.parse(req.body); res.json({ reorder: updateInventoryReorder(String(req.params.id), req.auth!.id, input.status) }); } catch (error) { next(error); } });
 
 router.get("/properties/:propertyId/vendors", requirePermission("vendors:view", (req) => String(req.params.propertyId)),
@@ -137,7 +142,7 @@ router.post("/properties/:propertyId/vendors", requirePermission("vendors:manage
 router.get("/properties/:propertyId/inspections", requirePermission("inspections:view", (req) => String(req.params.propertyId)),
   (req, res) => res.json({ inspections: listInspections(String(req.params.propertyId)) }));
 const inspectionCreateSchema = z.object({ propertyId: z.string().min(1), unitId: z.string().min(1),
-  type: z.enum(["pre_move_out", "final", "other"]), inspectionDate: z.iso.date(), notes: z.string().trim().max(4000).nullable().optional() });
+  type: z.enum(["pre_move_out", "final", "other", "move_in", "move_in_final"]), inspectionDate: z.iso.date(), notes: z.string().trim().max(4000).nullable().optional() });
 router.post("/inspections", requirePermission("inspections:manage", (req) => req.body?.propertyId as string | undefined),
   (req: AuthenticatedRequest, res, next) => { try { const input = inspectionCreateSchema.parse(req.body); res.status(201).json({ inspection: createInspection({ ...input, inspectorUserId: req.auth!.id }) }); } catch (error) { next(error); } });
 router.get("/inspections/:id", requirePermission("inspections:view", (req) => propertyFrom("move_out_inspections", String(req.params.id))),
@@ -161,5 +166,42 @@ const poolSchema = z.object({ logDate: z.iso.date(), freeChlorine: nullableReadi
   waterTempF: nullableReading, weatherSummary: z.string().trim().max(200).nullable().optional(), notes: z.string().trim().max(3000).nullable().optional() });
 router.post("/properties/:propertyId/pool-logs", requirePermission("pool:manage", (req) => String(req.params.propertyId)),
   (req: AuthenticatedRequest, res, next) => { try { res.status(201).json({ poolLog: createPoolLog(String(req.params.propertyId), req.auth!.id, poolSchema.parse(req.body)) }); } catch (error) { next(error); } });
+router.get("/properties/:propertyId/pool-logs/export.csv", requirePermission("pool:view", (req) => String(req.params.propertyId)),
+  (req, res) => {
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="pool-logs-${req.params.propertyId}.csv"`);
+    res.send(exportPoolLogsCsv(String(req.params.propertyId)));
+  });
+
+router.get("/properties/:propertyId/recurring-jobs", requirePermission("workorders:view", (req) => String(req.params.propertyId)),
+  (req, res) => res.json({ recurringJobs: listRecurringJobs(String(req.params.propertyId)) }));
+const recurringJobSchema = z.object({
+  propertyId: z.string().min(1), unitId: z.string().nullable().optional(), title: z.string().trim().min(3).max(160),
+  description: z.string().trim().max(4000).nullable().optional(), category: z.string().trim().min(2).max(80),
+  frequency: z.enum(["weekly", "biweekly", "monthly", "quarterly", "yearly"]), nextRunDate: z.iso.date(),
+  priority: z.enum(["low", "normal", "high", "emergency"]).default("normal"), assignedToUserId: z.string().nullable().optional(),
+});
+router.post("/recurring-jobs", requirePermission("workorders:manage", (req) => req.body?.propertyId as string | undefined),
+  (req: AuthenticatedRequest, res, next) => { try { const input = recurringJobSchema.parse(req.body); res.status(201).json({ recurringJob: createRecurringJob({ ...input, createdByUserId: req.auth!.id }) }); } catch (error) { next(error); } });
+router.post("/properties/:propertyId/recurring-jobs/run-due", requirePermission("workorders:manage", (req) => String(req.params.propertyId)),
+  (req: AuthenticatedRequest, res) => res.json({ generated: runDueRecurringJobs(String(req.params.propertyId), req.auth!.id) }));
+router.patch("/recurring-jobs/:id", requirePermission("workorders:manage", (req) => {
+  const row = db.prepare("SELECT property_id FROM recurring_jobs WHERE id = ?").get(String(req.params.id)) as { property_id: string } | undefined;
+  return row?.property_id;
+}), (req, res, next) => {
+  try {
+    const body = z.object({
+      title: z.string().trim().min(3).max(160).optional(),
+      description: z.string().trim().max(4000).nullable().optional(),
+      category: z.string().trim().min(2).max(80).optional(),
+      frequency: z.enum(["weekly", "biweekly", "monthly", "quarterly", "yearly"]).optional(),
+      nextRunDate: z.iso.date().optional(),
+      priority: z.enum(["low", "normal", "high", "emergency"]).optional(),
+      assignedToUserId: z.string().nullable().optional(),
+      status: z.enum(["active", "paused", "archived"]).optional(),
+    }).parse(req.body);
+    res.json({ recurringJob: updateRecurringJob(String(req.params.id), body) });
+  } catch (error) { next(error); }
+});
 
 export default router;

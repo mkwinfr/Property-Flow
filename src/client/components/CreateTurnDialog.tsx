@@ -49,7 +49,7 @@ export function CreateTurnDialog({ open, onClose, onCreated }: { open: boolean; 
 
   return <div className="modal-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
     <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="create-turn-title">
-      <header className="dialog__header"><span className="dialog__icon"><ClipboardPlus /></span><div><p className="eyebrow">New make-ready</p><h2 id="create-turn-title">Plan a unit turn</h2></div><button className="icon-button" onClick={onClose}><X /></button></header>
+      <header className="dialog__header"><span className="dialog__icon"><ClipboardPlus /></span><div><p className="eyebrow">New Make Ready</p><h2 id="create-turn-title">Plan a Unit Turn</h2></div><button className="icon-button" onClick={onClose}><X /></button></header>
       <form onSubmit={submit}>
         <div className="form-grid">
           <label className="field field--full"><span>Unit</span><AppSelect required searchable ariaLabel="Unit" value={unitId} onChange={setUnitId} options={[{ value: "", label: "Select an available unit" }, ...availableUnits.map((unit) => ({ value: unit.id, label: `Unit ${unit.unitNumber} · ${unit.floorPlanName} · ${unit.occupancyStatus}` }))]} /></label>

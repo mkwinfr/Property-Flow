@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
+  Bot,
   Cloud,
   ExternalLink,
   HardDrive,
@@ -17,7 +18,7 @@ import {
   X,
 } from "lucide-react";
 
-const ICONS = { application: Server, cloudflare: Cloud };
+const ICONS = { application: Server, cloudflare: Cloud, ollama: Bot };
 
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes) || bytes < 0) return "n/a";
