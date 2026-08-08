@@ -25,6 +25,7 @@ import { NotificationPreferencesDialog } from "../components/NotificationPrefere
 import { AppSelect } from "../components/AppSelect";
 import { GlobalSearch } from "../components/GlobalSearch";
 import { AssistantPanel } from "../components/AssistantPanel";
+import { ViewAsControl } from "../components/ViewAsControl";
 import { isInspectionsNavActive } from "../lib/staffRoutes";
 
 interface NavChild {
@@ -127,7 +128,7 @@ const navigation: NavEntry[] = [
 ];
 
 function ShellContent({ children }: { children: ReactNode }) {
-  const { user, can, logout } = useAuth();
+  const { user, can, logout, canUseViewAs, displayRoles, isViewingAs, viewAsRole, setViewAsRoleId } = useAuth();
   const { properties, propertyId, setPropertyId, property, isModuleEnabled } = useProperty();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -213,14 +214,20 @@ function ShellContent({ children }: { children: ReactNode }) {
                 >
                   <span>{child.label}</span>
                 </Link>)}
+                {entry.id === "administration" && canUseViewAs && <ViewAsControl />}
               </div>}
             </section>;
           })}
+          {canUseViewAs && !visibleNavigation.some((entry) => entry.type === "group" && entry.id === "administration") && (
+            <section className="nav-group nav-group--view-as">
+              <ViewAsControl />
+            </section>
+          )}
         </nav>
         <div className="sidebar__footer">
           <div className="user-block">
             <span className="avatar">{user?.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</span>
-            <span><strong>{user?.name}</strong><small>{user?.roles.join(" · ")}</small></span>
+            <span><strong>{user?.name}</strong><small>{displayRoles.join(" · ")}</small></span>
           </div>
           <div className="user-actions">
             <button className="icon-button" onClick={() => setPreferencesOpen(true)} aria-label="Notification preferences" title="Notification preferences"><Bell size={17} /></button>
@@ -245,6 +252,10 @@ function ShellContent({ children }: { children: ReactNode }) {
           <NotificationCenter />
           <span className="topbar__address">{property?.address}</span>
         </header>
+        {isViewingAs && viewAsRole && <div className="view-as-banner" role="status">
+          <span>Previewing navigation and actions as <strong>{viewAsRole.name}</strong>. API access still uses your signed-in account.</span>
+          <button type="button" className="button button--small button--secondary" onClick={() => setViewAsRoleId(null)}>Exit preview</button>
+        </div>}
         <div className="page-frame">{children}</div>
       </main>
       {passwordOpen && <ChangePasswordDialog onClose={() => setPasswordOpen(false)} />}

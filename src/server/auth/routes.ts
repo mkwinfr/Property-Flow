@@ -2,7 +2,7 @@ import { Router } from "express";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { db } from "../db/index.js";
-import { badRequest, tooManyRequests, unauthorized } from "../lib/errors.js";
+import { badRequest, forbidden, tooManyRequests, unauthorized } from "../lib/errors.js";
 import {
   hashPassword,
   passwordValidationMessage,
@@ -20,6 +20,7 @@ import {
 import { LoginThrottle } from "./loginThrottle.js";
 import { config } from "../config.js";
 import { buildSsoLoginRedirect, hashSsoState, resolveSsoUser, ssoStateCookieName } from "./sso.js";
+import { listRolePreviews } from "./rolePreviews.js";
 
 const router = Router();
 const loginSchema = z.object({ email: z.email(), password: z.string().min(1).max(200) });
@@ -95,6 +96,15 @@ router.post("/password", authenticate, (req: AuthenticatedRequest, res, next) =>
 
 router.get("/session", authenticate, (req: AuthenticatedRequest, res) => {
   res.json({ user: req.auth });
+});
+
+router.get("/role-previews", authenticate, (req: AuthenticatedRequest, res, next) => {
+  try {
+    if (!req.auth?.permissions.includes("users:view")) throw forbidden();
+    res.json({ roles: listRolePreviews() });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/sso/config", (_req, res) => {

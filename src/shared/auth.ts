@@ -6,3 +6,10 @@ export interface SessionUser {
   propertyIds: string[];
   roles: string[];
 }
+
+export interface RolePreview {
+  id: string;
+  name: string;
+  description: string;
+  permissions: string[];
+}
